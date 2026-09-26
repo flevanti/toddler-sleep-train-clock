@@ -100,6 +100,20 @@ with sync_playwright() as pw:
         p.clock.run_for(1100)
         check(tag + 'breathing 8/min, deep, no glow', p.evaluate(BREATH, '#face') == ['7.5s', '1;1.07;1', False], p.evaluate(BREATH, '#face'))
 
+        # moon & sky
+        p.evaluate("() => %s.setS({night: {scene: 'moon'}})" % H)
+        p.clock.run_for(1100)
+        sky = p.evaluate("""() => { var l = document.getElementById('layer');
+            return { stars: l.querySelectorAll('circle').length, anim: [].map.call(l.querySelectorAll('animate'), function (a) { return a.getAttribute('dur'); }),
+                     pos: [].map.call(l.querySelectorAll('circle'), function (c) { return [parseFloat(c.getAttribute('cx')), parseFloat(c.getAttribute('cy'))]; }),
+                     face: document.querySelectorAll('#face path').length }; }""")
+        check(tag + 'moon default: 25 sky stars, slow twinkle, face', sky['stars'] == 25 and sky['anim'] == ['7s', '9s', '11s'] and sky['face'] == 2, sky['anim'])
+        check(tag + 'sky stars keep clear of moon and time', all(not (22 < x < 78 and 8 < y < 88) for x, y in sky['pos']))
+        p.evaluate("() => %s.setS({nightDim: 30, night: {scene: 'moon', scenes: {moon: {sky: 50, twinkle: 'off', face: false}}}})" % H)
+        p.clock.run_for(1100)
+        sky = p.evaluate("() => { var l = document.getElementById('layer'); return [l.querySelectorAll('circle').length, l.querySelectorAll('animate').length, document.querySelectorAll('#face path').length, l.style.opacity]; }")
+        check(tag + 'moon 50 stars, no twinkle, no face, dimmed', sky == [50, 0, 0, '0.3'], sky)
+
         # night brightness reaches every area
         p.evaluate("() => %s.setS({nightDim: 40})" % H)
         p.clock.run_for(1100)
