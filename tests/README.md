@@ -28,5 +28,12 @@ Each file can also be run on its own: `.venv/bin/python tests/test_sim.py . test
 | `test_sim.py` | live mini preview and the day simulation |
 | `test_fade.py` | the phase-change crossfade |
 | `test_regroup.py` | settings layout and the preview following the section you touch |
+| `test_night_settings.py` | night animation storage: defaults, validation, per-scene memory, export/import |
+| `test_night_render.py` | night timing (since/frac), per-area redraw, ids, dimming, fade, every scene |
+| `test_night_ui.py` | night animation controls built from the registry |
+| `test_night_extras.py` | star countdown, fireflies, shooting stars, in the simulation too |
+| `test_night_animals.py` | the 14 sleeping animals, plus `animals_sheet.png` for a visual review |
+
+`tests/check_static.sh` runs the syntax check and the grep for features Safari 12 lacks.
 
 Headless Chromium isn't Safari 12. Also check on the real iPad, and grep for the forbidden features listed in `REQUIREMENTS.md` §1.

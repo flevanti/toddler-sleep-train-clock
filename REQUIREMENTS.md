@@ -121,7 +121,8 @@ The code already exists: `index.html` (everything, including the icon) and `sw.j
 
 ### Night animations (v1.4)
 - Only during the night (sleep) phase, including naps. The design is in `docs/superpowers/specs/2026-09-26-night-animations-design.md`.
-- **Scene** (choose one): Off, Z's & stars (default, same look as before), Breathing, Moon & sky. Each scene keeps its own settings.
+- **Scene** (choose one): Off, Z's & stars (default, same look as before), Breathing, Moon & sky, Sleeping animal. Each scene keeps its own settings.
+- **Sleeping animal:** 14 animals (bunny, bear, cat, owl, dog, turtle, hedgehog, chicken, pig, horse, cow, robin, blackbird, lion). They share one drawing style (`kitBody`, `kitHead`, `kitEyes`, `birdParts`), use the night colour, and appear **at night only**. Settings: breathing on/off, little movements off / rare (every 20 s) / normal (every 8 s).
 - **Extras** (any number, all off by default):
   - **Star countdown:** stars go out one by one from bedtime (or nap start) to wake. Gone stars stay as faint outlines. In the simulation it follows the pretend clock.
   - **Fireflies:** seeded per night; redrawn when the screen size changes.
@@ -230,4 +231,11 @@ Details:
   - Off means a hard change; an invalid saved value becomes 3 s
   - the mini tab fades exactly over the preview
   - the simulation caps fades at 500 ms
+- (v1.4) Night animations:
+  - `test_night_settings`: storage and validation
+  - `test_night_render`: timing, redraw keys, ids, dimming, fade, every scene
+  - `test_night_ui`: controls
+  - `test_night_extras`: countdown, fireflies, shooting stars, simulation
+  - `test_night_animals`: 14 animals, plus `tests/screenshots/animals_sheet.png` for visual review
+  - `tests/check_static.sh`: syntax check and the Safari 12 forbidden-feature grep
 - This is not a substitute for testing on real Safari 12.
