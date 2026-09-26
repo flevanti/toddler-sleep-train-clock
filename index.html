@@ -228,6 +228,48 @@
     white: { face: '#f2f2f2', bg: '#141414' }
   };
 
+  // ---------- sleeping animals: one shared curled-up pose, each animal adds its own features ----------
+  // draw(c, mv) returns SVG parts: back (behind), body (breathes), head, front. c = night colour;
+  // DK / LT = dark / light details; mv(px, py, deg, markup) wraps a part in a little movement around px,py.
+  var DK = 'rgba(0,0,0,.55)', LT = 'rgba(255,255,255,.22)';
+  function kitBody(c) { return '<ellipse cx="110" cy="160" rx="92" ry="48" fill="' + c + '"/>'; }
+  function kitHead(c, x, y, r) { return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + c + '"/>'; }
+  function kitEyes(x, y) { // two closed eyes centred on x,y
+    return '<path d="M' + (x - 22) + ' ' + y + ' q8 8 16 0 M' + (x + 6) + ' ' + y + ' q8 8 16 0" fill="none" stroke="' + DK + '" stroke-width="5" stroke-linecap="round"/>';
+  }
+  var ANIMALS = {
+    bunny: { name: 'Bunny', draw: function (c, mv) { return {
+      back: '<ellipse cx="38" cy="78" rx="13" ry="42" fill="' + c + '" transform="rotate(-18 38 78)"/>' +
+        mv(72, 110, -14, '<ellipse cx="72" cy="74" rx="13" ry="42" fill="' + c + '" transform="rotate(14 72 74)"/><ellipse cx="72" cy="78" rx="6" ry="30" fill="' + DK + '" opacity=".35" transform="rotate(14 72 78)"/>'),
+      body: kitBody(c) + '<circle cx="202" cy="150" r="16" fill="' + c + '"/><circle cx="202" cy="150" r="16" fill="' + LT + '"/>',
+      head: kitHead(c, 58, 140, 44) + kitEyes(58, 136) + '<ellipse cx="58" cy="156" rx="5" ry="4" fill="' + DK + '"/>'
+    }; } },
+    bear: { name: 'Bear', draw: function (c, mv) { return {
+      back: mv(30, 108, -10, '<circle cx="24" cy="104" r="17" fill="' + c + '"/><circle cx="24" cy="104" r="8" fill="' + DK + '" opacity=".4"/>') +
+        '<circle cx="92" cy="104" r="17" fill="' + c + '"/><circle cx="92" cy="104" r="8" fill="' + DK + '" opacity=".4"/>',
+      body: kitBody(c) + '<ellipse cx="150" cy="176" rx="34" ry="18" fill="' + LT + '"/>',
+      head: kitHead(c, 58, 140, 44) + kitEyes(58, 134) + '<ellipse cx="58" cy="158" rx="17" ry="12" fill="' + LT + '"/><ellipse cx="58" cy="153" rx="6" ry="4.5" fill="' + DK + '"/>'
+    }; } },
+    cat: { name: 'Cat', draw: function (c, mv) { return {
+      back: '<path d="M22 124 L28 84 L52 106 Z M64 106 L88 84 L94 124 Z" fill="' + c + '"/><path d="M30 112 L32 94 L44 106 Z M72 106 L84 94 L86 112 Z" fill="' + DK + '" opacity=".35"/>',
+      body: kitBody(c),
+      head: kitHead(c, 58, 140, 42) + kitEyes(58, 136) + '<path d="M54 152 l4 4 4 -4 Z" fill="' + DK + '"/>' +
+        '<path d="M20 152 L44 156 M20 162 L44 160 M96 152 L72 156 M96 162 L72 160" stroke="' + DK + '" stroke-width="1.5" opacity=".6"/>',
+      front: mv(196, 176, 16, '<path d="M196 176 Q226 204 176 212 Q120 218 96 204" fill="none" stroke="' + c + '" stroke-width="15" stroke-linecap="round"/>')
+    }; } },
+    owl: { name: 'Owl', draw: function (c, mv) { return {
+      back: '<path d="M-20 214 L230 214" stroke="' + DK + '" stroke-width="10" stroke-linecap="round"/>',
+      body: mv(100, 200, 3, '<ellipse cx="100" cy="140" rx="66" ry="72" fill="' + c + '"/><path d="M42 130 Q30 180 66 206 M158 130 Q170 180 134 206" fill="none" stroke="' + DK + '" stroke-width="5" opacity=".45"/>' +
+        '<path d="M80 150 q6 6 12 0 M108 150 q6 6 12 0 M86 170 q6 6 12 0 M102 170 q6 6 12 0 M94 188 q6 6 12 0" fill="none" stroke="' + LT + '" stroke-width="3"/>'),
+      head: '<path d="M52 70 L60 34 L80 62 Z M148 70 L140 34 L120 62 Z" fill="' + c + '"/>' + kitHead(c, 100, 86, 50) +
+        '<circle cx="80" cy="84" r="17" fill="' + LT + '"/><circle cx="120" cy="84" r="17" fill="' + LT + '"/>' + kitEyes(100, 84) +
+        '<path d="M94 98 L106 98 L100 110 Z" fill="#e0a13a"/>' +
+        '<path d="M82 212 l0 6 M92 212 l0 6 M108 212 l0 6 M118 212 l0 6" stroke="#e0a13a" stroke-width="4" stroke-linecap="round"/>'
+    }; } }
+  };
+  var ANIMAL_LIST = [];
+  for (var animalId in ANIMALS) ANIMAL_LIST.push([animalId, ANIMALS[animalId].name]);
+
   // ---------- night animations: registry ----------
   // A scene replaces the night face (choose one); extras draw on top (any number).
   // opt: { key, label, type: 'choice' | 'toggle', values: [[value, label], ...] (choice only), def }
@@ -247,6 +289,11 @@
       { key: 'sky', label: 'Sky stars', type: 'choice', values: [[10, '10'], [25, '25'], [50, '50']], def: 25 },
       { key: 'twinkle', label: 'Twinkle', type: 'choice', values: [['off', 'Off'], ['slow', 'Slow'], ['normal', 'Normal']], def: 'slow' },
       { key: 'face', label: 'Sleepy face on the moon', type: 'toggle', def: true }
+    ] },
+    animal: { name: 'Sleeping animal', face: sceneAnimal, opts: [
+      { key: 'animal', label: 'Animal', type: 'choice', values: ANIMAL_LIST, def: 'bunny' },
+      { key: 'breath', label: 'Breathing', type: 'toggle', def: true },
+      { key: 'moves', label: 'Little movements', type: 'choice', values: [['off', 'Off'], ['rare', 'Rare'], ['normal', 'Normal']], def: 'rare' }
     ] }
   };
   var EXTRAS = {
@@ -517,6 +564,22 @@
     for (i = 0; i < 3; i++) h += '<g opacity=".8">' + (o.twinkle === 'off' ? '' :
       '<animate attributeName="opacity" values=".25;1;.25" dur="' + TWINKLE_DUR[o.twinkle][i] + 's" begin="' + (i * 1.3).toFixed(1) + 's" repeatCount="indefinite"/>') + groups[i] + '</g>';
     return h + '</g></svg>';
+  }
+
+  // An animal asleep: the body breathes (scaled from its bottom centre, so the belly rises), parts twitch now and then.
+  function sceneAnimal(o, c) {
+    var dur = o.moves === 'normal' ? 8 : 20;
+    function mv(px, py, deg, part) {
+      if (o.moves === 'off') return part;
+      var z = '0 ' + px + ' ' + py;
+      return '<g data-move="1"><animateTransform attributeName="transform" type="rotate" values="' + z + ';' + z + ';' + deg + ' ' + px + ' ' + py + ';' + z + ';' + z +
+        '" keyTimes="0;.9;.93;.96;1" dur="' + dur + 's" repeatCount="indefinite"/>' + part + '</g>';
+    }
+    var a = ANIMALS[o.animal], p = a.draw(c.color, mv);
+    var breath = !o.breath ? '' : '<animateTransform attributeName="transform" type="scale" values="1 1;1.03 1.05;1 1" keyTimes="0;.5;1" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1" dur="10s" repeatCount="indefinite"/>';
+    return '<svg viewBox="-40 -40 280 280" xmlns="http://www.w3.org/2000/svg" data-animal="' + o.animal + '">' + (p.back || '') +
+      '<g transform="translate(100 205)"><g data-part="body">' + breath + '<g transform="translate(-100 -205)">' + p.body + '</g></g></g>' +
+      p.head + (p.front || '') + '</svg>';
   }
 
   // ---------- night extras ----------
@@ -1385,7 +1448,7 @@
   // test hook (used only by automated tests)
   window.__toddlerSleepTrainClock = { S: function () { return S; }, computeState: computeState, setS: function (o) { S = defaults(); merge(S, o); save(); MAIN.keys = {}; tick(); },
     sim: function () { return sim; }, firedKey: function () { return firedKey; }, alarmPlaying: alarmPlaying,
-    night: { SCENES: SCENES, EXTRAS: EXTRAS, defaults: nightDefaults, countdownLit: countdownLit, shootingTimes: shootingTimes },
+    night: { SCENES: SCENES, EXTRAS: EXTRAS, defaults: nightDefaults, countdownLit: countdownLit, shootingTimes: shootingTimes, ANIMALS: ANIMALS, sceneAnimal: sceneAnimal },
     nightFrac: nightFrac, repaint: function () { MAIN.keys = {}; MAIN.lastMode = null; tick(); } };
 })();
 </script>
