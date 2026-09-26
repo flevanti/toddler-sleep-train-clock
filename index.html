@@ -250,6 +250,11 @@
     ] }
   };
   var EXTRAS = {
+    countdown: { name: 'Star countdown', place: 'below', draw: drawCountdown, key: function (o, c) { return countdownLit(o.count, c.frac); }, opts: [
+      { key: 'count', label: 'Number of stars', type: 'choice', values: [[5, '5'], [8, '8'], [10, '10'], [12, '12']], def: 8 },
+      { key: 'layout', label: 'Layout', type: 'choice', values: [['arc', 'Arc'], ['row', 'Row']], def: 'arc' },
+      { key: 'out', label: 'How a star goes out', type: 'choice', values: [['fade', 'Fade'], ['pop', 'Pop']], def: 'fade' }
+    ] }
   };
 
   function has(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
@@ -503,6 +508,33 @@
     for (i = 0; i < 3; i++) h += '<g opacity=".8">' + (o.twinkle === 'off' ? '' :
       '<animate attributeName="opacity" values=".25;1;.25" dur="' + TWINKLE_DUR[o.twinkle][i] + 's" begin="' + (i * 1.3).toFixed(1) + 's" repeatCount="indefinite"/>') + groups[i] + '</g>';
     return h + '</g></svg>';
+  }
+
+  // ---------- night extras ----------
+  // Stars still lit: all at bedtime, none at wake, going out at equal steps.
+  function countdownLit(n, frac) { return Math.max(0, Math.min(n, Math.ceil(n * (1 - frac)))); }
+  function starPath(cx, cy, r) {
+    var d = '', i;
+    for (i = 0; i < 10; i++) {
+      var a = Math.PI / 5 * i - Math.PI / 2, rr = i % 2 ? r * 0.45 : r;
+      d += (i ? 'L' : 'M') + (cx + rr * Math.cos(a)).toFixed(1) + ' ' + (cy + rr * Math.sin(a)).toFixed(1);
+    }
+    return d + 'Z';
+  }
+  // Lit stars on the left, gone ones as faint outlines; only the star that just went out animates.
+  function drawCountdown(o, c) {
+    var n = o.count, lit = countdownLit(n, c.frac), r = Math.min(13, 250 / n / 2.1), h = '', i;
+    for (i = 0; i < n; i++) {
+      var f = n === 1 ? 0.5 : i / (n - 1), x = 20 + 260 * f, y = o.layout === 'row' ? 30 : 48 - 30 * Math.sin(Math.PI * f), d = starPath(x, y, r);
+      if (i < lit) { h += '<path data-star="lit" d="' + d + '" fill="' + c.color + '"/>'; continue; }
+      h += '<path data-star="gone" d="' + d + '" fill="none" stroke="' + c.color + '" stroke-width="1.5" opacity=".15"/>';
+      if (i !== lit) continue;
+      h += o.out === 'pop'
+        ? '<g data-star="going" transform="translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ')"><g transform="scale(0)">' +
+          '<animateTransform attributeName="transform" type="scale" values="1;1.3;0" dur=".5s" fill="freeze"/><path d="' + starPath(0, 0, r) + '" fill="' + c.color + '"/></g></g>'
+        : '<path data-star="going" d="' + d + '" fill="' + c.color + '" opacity="0"><animate attributeName="opacity" values="1;0" dur="3s" fill="freeze"/></path>';
+    }
+    return '<svg viewBox="0 0 300 64" xmlns="http://www.w3.org/2000/svg">' + h + '</svg>';
   }
 
   // ---------- rendering ----------
@@ -1297,7 +1329,7 @@
   // test hook (used only by automated tests)
   window.__toddlerSleepTrainClock = { S: function () { return S; }, computeState: computeState, setS: function (o) { S = defaults(); merge(S, o); save(); MAIN.keys = {}; tick(); },
     sim: function () { return sim; }, firedKey: function () { return firedKey; }, alarmPlaying: alarmPlaying,
-    night: { SCENES: SCENES, EXTRAS: EXTRAS, defaults: nightDefaults },
+    night: { SCENES: SCENES, EXTRAS: EXTRAS, defaults: nightDefaults, countdownLit: countdownLit },
     nightFrac: nightFrac, repaint: function () { MAIN.keys = {}; MAIN.lastMode = null; tick(); } };
 })();
 </script>
