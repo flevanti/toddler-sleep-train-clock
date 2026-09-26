@@ -39,7 +39,7 @@ with sync_playwright() as pw:
     for vp in VIEWPORTS:
         tag = '%dx%d ' % vp
         p.set_viewport_size({'width': vp[0], 'height': vp[1]})
-        p.evaluate("() => %s.setS({showTimeNight: true, night: {extras: {countdown: {on: true}}}})" % H)
+        p.evaluate("() => %s.setS({fadeSec: 0, showTimeNight: true, night: {extras: {countdown: {on: true}}}})" % H)
         at(p, 2026, 9, 23, 19, 0, 0)
         check(tag + 'bedtime: all 8 lit', p.evaluate(LIT, '#below') == [8, 0, 0], p.evaluate(LIT, '#below'))
         check(tag + 'face shrinks to make room', 'below-on' in p.evaluate("() => document.getElementById('clock').className"))
@@ -60,7 +60,7 @@ with sync_playwright() as pw:
         check(tag + 'green: countdown gone', p.evaluate("() => document.getElementById('below').innerHTML") == '' and
               'below-on' not in p.evaluate("() => document.getElementById('clock').className"))
 
-        p.evaluate("() => %s.setS({night: {extras: {countdown: {on: true, count: 12, layout: 'row', out: 'pop'}}}})" % H)
+        p.evaluate("() => %s.setS({fadeSec: 0, night: {extras: {countdown: {on: true, count: 12, layout: 'row', out: 'pop'}}}})" % H)
         at(p, 2026, 9, 24, 19, 0, 0)
         check(tag + '12 stars at bedtime', p.evaluate(LIT, '#below') == [12, 0, 0], p.evaluate(LIT, '#below'))
         at(p, 2026, 9, 25, 1, 0, 0)
@@ -71,12 +71,12 @@ with sync_playwright() as pw:
 
         # nap: counts from nap start to nap end
         at(p, 2026, 9, 25, 13, 0, 0)
-        p.evaluate("() => { var t = Date.now(); %s.setS({night: {extras: {countdown: {on: true}}}, nap: {start: t, end: t + 45 * 60000}}); }" % H)
+        p.evaluate("() => { var t = Date.now(); %s.setS({fadeSec: 0, night: {extras: {countdown: {on: true}}}, nap: {start: t, end: t + 45 * 60000}}); }" % H)
         p.clock.run_for(1100)
         check(tag + 'nap start: all lit', p.evaluate(LIT, '#below')[0] == 8, p.evaluate(LIT, '#below'))
         p.clock.run_for(int(22.5 * 60000))
         check(tag + 'nap half-way: 4 lit', p.evaluate(LIT, '#below')[0] == 4, p.evaluate(LIT, '#below'))
-        p.evaluate("() => %s.setS({night: {extras: {countdown: {on: true}}}})" % H)
+        p.evaluate("() => %s.setS({fadeSec: 0, night: {extras: {countdown: {on: true}}}})" % H)
 
         # preview shows a half-finished night
         open_settings(p, vp)
