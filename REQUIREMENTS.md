@@ -119,6 +119,13 @@ The code already exists: `index.html` (everything, including the icon) and `sw.j
   - The 2 s CSS fades are turned off during the simulation.
   - Short phases pass quickly (10 min of amber is about 0.2 s at 30 s speed). Use pause or the timeline to look at them.
 
+### Night animations (v1.4)
+- Only during the night (sleep) phase, including naps. The design is in `docs/superpowers/specs/2026-09-26-night-animations-design.md`.
+- **Scene** (choose one): Off, Z's & stars (default, same look as before), Breathing. Each scene keeps its own settings.
+- The controls are built from the `SCENES` / `EXTRAS` registry in `index.html`. Saved values are checked against it, and unknown or invalid ones fall back to the defaults.
+- Each paint target has three areas: face, `.below` and `.layer`. Each is redrawn only when its key changes, never on every tick.
+- `computeState()` sleep states carry `since`: tonight's bedtime, yesterday's bedtime from yesterday's schedule, or the nap start. `nightFrac()` goes from 0 at bedtime to 1 at wake.
+
 ### Settings layout (v1.3)
 Grouped so each control sits with the phase it affects. The mini preview and the "Simulate a day" button are pinned above the list.
 

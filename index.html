@@ -100,6 +100,9 @@
   .swc.on { box-shadow: 0 0 0 3px #fff; }
   .sec h2 small { text-transform: none; letter-spacing: 0; font-weight: 400; margin-left: 6px; color: #6b7080; }
   .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: 0; }
+  .sec h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #8a8f9c; margin: 16px 0 2px; font-weight: 600; }
+  .row.sub { padding-left: 18px; }
+  .row.sub label.l { color: #b9bdc7; }
   .status { font-size: 14px; padding: 8px 12px; border-radius: 8px; background: #2a2e37; margin-top: 8px; }
   .status.bad { background: #4a1f1f; }
   .status.good { background: #1e3b28; }
@@ -868,6 +871,40 @@
   }
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
 
+  // Night animation controls, built from the registry. ids: na-scene, na-<scene>-<key>, nx-<extra>-on, nx-<extra>-<key>.
+  // A choice's <option> value is its index in opt.values, so numbers stay numbers when saved.
+  function optRow(id, opt, val) {
+    if (opt.type === 'toggle') return '<div class="row sub"><label class="l">' + opt.label + '</label>' + sw(id, val) + '</div>';
+    var h = '<div class="row sub"><label class="l">' + opt.label + '</label><select id="' + id + '">';
+    for (var i = 0; i < opt.values.length; i++) h += '<option value="' + i + '"' + (opt.values[i][0] === val ? ' selected' : '') + '>' + opt.values[i][1] + '</option>';
+    return h + '</select></div>';
+  }
+  function nightSettingsHTML() {
+    var n = S.night, so = SCENES[n.scene].opts, k, i;
+    var h = '<h3>Animation</h3><div class="row"><label class="l">Scene</label><select id="na-scene">';
+    for (k in SCENES) h += '<option value="' + k + '"' + (k === n.scene ? ' selected' : '') + '>' + SCENES[k].name + '</option>';
+    h += '</select></div>';
+    for (i = 0; i < so.length; i++) h += optRow('na-' + n.scene + '-' + so[i].key, so[i], n.scenes[n.scene][so[i].key]);
+    if (Object.keys(EXTRAS).length) h += '<h3>Extras</h3>';
+    for (k in EXTRAS) {
+      var x = n.extras[k], xo = EXTRAS[k].opts;
+      h += '<div class="row"><label class="l">' + EXTRAS[k].name + '</label>' + sw('nx-' + k + '-on', x.on) + '</div>';
+      if (x.on) for (i = 0; i < xo.length; i++) h += optRow('nx-' + k + '-' + xo[i].key, xo[i], x[xo[i].key]);
+    }
+    return h;
+  }
+  function optByKey(opts, key) { for (var i = 0; i < opts.length; i++) if (opts[i].key === key) return opts[i]; return null; }
+  function rerenderSettings() { var y = $('sbody').scrollTop; renderSettings(); $('sbody').scrollTop = y; }
+  function onNightControl(e) {
+    var el = e.target, p = el.id.split('-');
+    if (el.id === 'na-scene') { S.night.scene = el.value; save(); rerenderSettings(); return; }
+    var isScene = p[0] === 'na', reg = isScene ? SCENES[p[1]] : EXTRAS[p[1]], store = isScene ? S.night.scenes[p[1]] : S.night.extras[p[1]];
+    if (p[2] === 'on') { store.on = el.checked; save(); rerenderSettings(); return; }
+    var opt = optByKey(reg.opts, p[2]);
+    store[p[2]] = opt.type === 'toggle' ? el.checked : opt.values[+el.value][0];
+    save();
+  }
+
   function renderSettings() {
     var today = new Date().getDay();
     var standalone = !!window.navigator.standalone;
@@ -907,7 +944,8 @@
       '<p class="hint">Red, orange and amber are the most sleep-friendly. Blue and purple light is more stimulating at night.</p>' +
       '<div class="row"><label class="l">Show the time at night</label>' + sw('showTimeNight', S.showTimeNight) + '</div>' +
       '<div class="row"><label class="l">Soft noise</label>' + sw('noise', S.noise) + '</div>' +
-      '<div class="row"><label class="l">Noise volume</label><input type="range" min="5" max="100" step="5" id="noiseVol" value="' + S.noiseVol + '"><span class="val" id="noiseVolV">' + S.noiseVol + '%</span></div></div>';
+      '<div class="row"><label class="l">Noise volume</label><input type="range" min="5" max="100" step="5" id="noiseVol" value="' + S.noiseVol + '"><span class="val" id="noiseVolV">' + S.noiseVol + '%</span></div>' +
+      nightSettingsHTML() + '</div>';
 
     h += '<div class="sec" data-pv="soon"><h2><span class="dot" style="background:#ffb300"></span>Almost time <small>amber, before wake</small></h2>' +
       '<div class="row"><label class="l">Show amber before wake</label><select id="soonMin">' +
@@ -992,6 +1030,8 @@
       var sib = w.querySelectorAll('[data-sw="' + key + '"]');
       for (var j = 0; j < sib.length; j++) sib[j].className = 'swc' + (sib[j] === b ? ' on' : '');
     });
+    var nc = w.querySelectorAll('[id^="na-"], [id^="nx-"]');
+    for (i = 0; i < nc.length; i++) nc[i].addEventListener('change', onNightControl);
     ['napSound', 'dayMode'].forEach(function (id) { on(id, 'change', function (e) { S[id] = e.target.value; save(); MAIN.keys = {}; }); });
     ['fadeIn', 'noise', 'showTime', 'showTimeNight', 'h24', 'showLabel'].forEach(function (id) { on(id, 'change', function (e) { S[id] = e.target.checked; save(); }); });
     ['volume', 'noiseVol', 'nightDim', 'dayDim'].forEach(function (id) {
@@ -1051,16 +1091,22 @@
   // Which preview tab a settings control belongs to.
   var PV_FOR = { nightColor: 'sleep', nightDim: 'sleep', showTimeNight: 'sleep', noise: 'sleep', dayColor: 'day', dayDim: 'day', dayMode: 'day',
     greenMin: 'wake', soonMin: 'soon', bed: 'sleep', wake: 'wake' };
+  // The preview's night is tonight (today's bedtime to tomorrow's wake), so the countdown shows half its stars.
+  function pvState(mode) {
+    if (mode !== 'sleep') return { mode: mode };
+    var now = new Date(), tmr = new Date(now.getTime()); tmr.setDate(tmr.getDate() + 1);
+    return { mode: 'sleep', since: at(now, S.days[now.getDay()].bed).getTime(), until: at(tmr, S.days[tmr.getDay()].wake).getTime() };
+  }
   function pvTime(mode) {
     var now = new Date(), c = S.days[now.getDay()], W = at(now, c.wake).getTime();
-    if (mode === 'sleep') return at(now, c.bed);
+    if (mode === 'sleep') { var ns = pvState('sleep'); return new Date((ns.since + ns.until) / 2); } // middle of tonight
     if (mode === 'soon') return new Date(W - (S.soonMin || 10) * 60000);
     if (mode === 'wake') return new Date(W);
     return new Date(W + S.greenMin * 60000);
   }
   function updatePreview() {
     var c = S.days[new Date().getDay()], note;
-    paint(MINI, pvTime(pvMode), { mode: pvMode }, S.fadeSec * 1000);
+    paint(MINI, pvTime(pvMode), pvState(pvMode), S.fadeSec * 1000);
     var tabs = $('pvtabs').querySelectorAll('[data-pv]');
     for (var i = 0; i < tabs.length; i++) tabs[i].className = 'b' + (tabs[i].getAttribute('data-pv') === pvMode ? '' : ' g');
     if (pvMode === 'sleep') note = 'Night, today from ' + fmtStr(c.bed);
