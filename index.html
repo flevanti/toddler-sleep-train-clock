@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sleep Clock">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#000000">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<title>Sleep Clock</title>
+<style>
+  /* Written for Safari 12 (iPad mini 2): no flex gap, no inset, no aspect-ratio. */
+  html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden;
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0); touch-action: manipulation;
+    font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; color: #fff; }
+  .clk { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; }
+  .clk .face { width: 72vmin; height: 72vmin; }
+  .face svg { width: 100%; height: 100%; display: block; }
+  .clk .time { font-size: 11vmin; font-weight: 200; letter-spacing: 0.02em; margin-top: 2vmin; font-variant-numeric: tabular-nums; }
+  .clk .label { font-size: 4vmin; font-weight: 300; margin-top: 1vmin; opacity: .8; }
+  .snap { pointer-events: none; }
+  .twinkle { -webkit-animation: tw 4s ease-in-out infinite; animation: tw 4s ease-in-out infinite; }
+  @-webkit-keyframes tw { 0%,100% { opacity: .25 } 50% { opacity: 1 } }
+  @keyframes tw { 0%,100% { opacity: .25 } 50% { opacity: 1 } }
+  .zz { -webkit-animation: zz 5s ease-in-out infinite; animation: zz 5s ease-in-out infinite; }
+  @-webkit-keyframes zz { 0% { opacity: 0; -webkit-transform: translateY(8px) } 40%,70% { opacity: 1 } 100% { opacity: 0; -webkit-transform: translateY(-10px) } }
+  @keyframes zz { 0% { opacity: 0; transform: translateY(8px) } 40%,70% { opacity: 1 } 100% { opacity: 0; transform: translateY(-10px) } }
+
+  /* hidden settings hotspot: top-right corner, long press */
+  #hot { position: fixed; top: 0; right: 0; width: 110px; height: 110px; z-index: 5; }
+  #hotring { position: fixed; top: 20px; right: 20px; width: 60px; height: 60px; z-index: 6; opacity: 0; pointer-events: none; }
+
+  /* sound-locked badge */
+  #badge { position: fixed; z-index: 7; display: none; background: rgba(255,255,255,.12); color: #fff;
+    border-radius: 999px; padding: 10px 18px; font-size: 16px; left: 50%; bottom: 18px;
+    -webkit-transform: translateX(-50%); transform: translateX(-50%); white-space: nowrap; }
+  #badge.big { top: 50%; bottom: auto; -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);
+    background: rgba(20,20,20,.92); border: 2px solid #fff; font-size: 26px; padding: 24px 36px; border-radius: 22px; text-align: center; }
+  #badge.big small { display: block; font-size: 15px; opacity: .7; margin-top: 8px; }
+  #badge.night { background: rgba(255,255,255,.06); color: rgba(255,255,255,.35); font-size: 13px; padding: 6px 12px; }
+
+  /* overlays */
+  .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 20; background: #111; display: none;
+    overflow-y: auto; -webkit-overflow-scrolling: touch; -webkit-user-select: text; user-select: text; }
+  .overlay.show { display: block; }
+  #pinpad { background: rgba(0,0,0,.94); text-align: center; z-index: 30; }
+  #pinpad .inner { margin: 8vh auto 0; width: 300px; }
+  #pinpad h2 { font-weight: 300; margin: 0 0 10px; }
+  #pindots { font-size: 34px; letter-spacing: 12px; height: 48px; }
+  #pinpad .keys { margin-top: 10px; }
+  #pinpad button.k { width: 80px; height: 80px; margin: 8px; border-radius: 50%; border: 1px solid #555; background: #222;
+    color: #fff; font-size: 30px; font-weight: 300; }
+  #pinmsg { color: #ff6b6b; height: 22px; margin-top: 6px; }
+
+  #settings { background: #15171c; color: #e8e8ea; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 18px 60px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .topbar h1 { font-size: 26px; font-weight: 600; margin: 0; }
+  .sec { background: #1f2229; border-radius: 14px; padding: 14px 16px; margin-top: 16px; }
+  .sec h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #8a8f9c; margin: 0 0 10px; font-weight: 600; }
+  .row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-top: 1px solid #2a2e37; }
+  .row:first-of-type { border-top: 0; }
+  .row label.l { -webkit-flex: 1; flex: 1; font-size: 16px; }
+  .hint { font-size: 13px; color: #8a8f9c; margin: 6px 0 0; line-height: 1.45; }
+  input[type=time], select, input[type=text], textarea, input[type=tel] { font-size: 16px; background: #2a2e37; color: #fff;
+    border: 1px solid #3a3f4b; border-radius: 8px; padding: 6px 8px; font-family: inherit; }
+  input[type=range] { width: 220px; }
+  textarea { width: 100%; box-sizing: border-box; height: 80px; font-family: Menlo, monospace; font-size: 12px; }
+  button.b { font-size: 16px; background: #2f6fed; color: #fff; border: 0; border-radius: 10px; padding: 10px 16px; margin: 4px 6px 4px 0; font-family: inherit; }
+  button.b.g { background: #2a2e37; }
+  button.b.r { background: #b3261e; }
+  button.b.ok { background: #1f9d55; }
+  table.sched { width: 100%; border-collapse: collapse; }
+  table.sched th { font-size: 12px; color: #8a8f9c; font-weight: 600; text-align: left; padding: 4px 4px; }
+  table.sched td { padding: 6px 4px; border-top: 1px solid #2a2e37; font-size: 16px; }
+  table.sched td.d { font-weight: 600; width: 50px; }
+  table.sched tr.today td.d { color: #4cd964; }
+  .val { color: #8a8f9c; min-width: 48px; text-align: right; display: inline-block; }
+  .sw { position: relative; width: 52px; height: 30px; }
+  .sw input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .sw span { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #3a3f4b; border-radius: 30px; transition: .2s; }
+  .sw span:before { content: ""; position: absolute; width: 26px; height: 26px; left: 2px; top: 2px; background: #fff; border-radius: 50%; transition: .2s; }
+  .sw input:checked + span { background: #34c759; }
+  .sw input:checked + span:before { -webkit-transform: translateX(22px); transform: translateX(22px); }
+  .swc { width: 34px; height: 34px; border-radius: 50%; border: 3px solid #15171c; box-shadow: 0 0 0 2px #3a3f4b; margin: 3px 0 3px 10px; padding: 0; vertical-align: middle; }
+  .swc.on { box-shadow: 0 0 0 3px #fff; }
+  .sec h2 small { text-transform: none; letter-spacing: 0; font-weight: 400; margin-left: 6px; color: #6b7080; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: 0; }
+  .status { font-size: 14px; padding: 8px 12px; border-radius: 8px; background: #2a2e37; margin-top: 8px; }
+  .status.bad { background: #4a1f1f; }
+  .status.good { background: #1e3b28; }
+  ol.setup { margin: 4px 0 0; padding-left: 22px; line-height: 1.55; font-size: 15px; }
+  /* settings: fixed header with live mini preview, scrolling body below */
+  #settings { overflow: hidden; }
+  #shead { position: absolute; top: 0; left: 0; right: 0; height: 250px; background: #15171c; border-bottom: 1px solid #2a2e37; z-index: 2; }
+  #shead .hwrap { max-width: 720px; margin: 0 auto; padding: 14px 18px 0; }
+  #sbody { position: absolute; top: 251px; left: 0; right: 0; bottom: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  #sbody .wrap { padding-top: 4px; }
+  .pv { display: flex; align-items: center; }
+  .miniwrap { position: relative; -webkit-flex-shrink: 0; flex-shrink: 0; }
+  .mini { width: 250px; height: 164px; border-radius: 12px; overflow: hidden; border: 1px solid #2a2e37; -webkit-flex-shrink: 0; flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; }
+  .mini .face { width: 96px; height: 96px; }
+  .mini .time { font-size: 22px; font-weight: 200; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .mini .label { font-size: 11px; font-weight: 300; }
+  .pvside { -webkit-flex: 1; flex: 1; margin-left: 16px; }
+  #pvtabs button.b { padding: 8px 12px; margin: 0 4px 6px 0; }
+  #pvnote { min-height: 18px; margin: 2px 0 6px; }
+
+  /* day simulation */
+  #simbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 8; display: none; background: rgba(21,23,28,.92);
+    border-top: 1px solid #2a2e37; padding: 8px 14px 10px; color: #e8e8ea; font-size: 15px; }
+  #simbar .srow { display: flex; align-items: center; -webkit-flex-wrap: wrap; flex-wrap: wrap; }
+  #simbar .srow > * { margin: 2px 8px 2px 0; }
+  #simbar button.b { margin: 2px 8px 2px 0; padding: 8px 12px; min-width: 44px; }
+  #simbar input[type=range] { width: 140px; }
+  #simNow { min-width: 170px; font-variant-numeric: tabular-nums; }
+  #simbar .grow { -webkit-flex: 1; flex: 1; }
+  #simline { position: relative; height: 26px; margin-top: 6px; border-radius: 6px; overflow: hidden; background: #2a2e37; cursor: pointer; }
+  #simline .seg { position: absolute; top: 0; bottom: 0; }
+  #simhead { position: absolute; top: 0; bottom: 0; width: 3px; margin-left: -1px; background: #fff; box-shadow: 0 0 4px #000; }
+  #simbar .slabels { display: flex; justify-content: space-between; font-size: 12px; color: #8a8f9c; margin-top: 3px; }
+  body.sim .clk { bottom: 120px; }
+  body.sim .clk .face { width: 52vmin; height: 52vmin; }
+  #toast { position: fixed; left: 50%; top: 20px; z-index: 40; -webkit-transform: translateX(-50%); transform: translateX(-50%);
+    background: #2f6fed; color: #fff; padding: 10px 18px; border-radius: 10px; display: none; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<div id="clock" class="clk">
+  <div id="face" class="face"></div>
+  <div id="time" class="time"></div>
+  <div id="label" class="label"></div>
+</div>
+<div id="hot"></div>
+<svg id="hotring" viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="4"/>
+  <circle id="hotarc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="163.4" stroke-dashoffset="163.4" transform="rotate(-90 30 30)"/></svg>
+<div id="badge"></div>
+<div id="simbar">
+  <div class="srow">
+    <select id="simDay"></select>
+    <button class="b g" id="simPlay">⏸</button>
+    <button class="b g" id="simMute">🔊</button>
+    <span id="simNow"></span>
+    <span class="grow"></span>
+    <span>Full day in</span>
+    <input type="range" id="simSpeed" min="30" max="120" step="10" value="60">
+    <span class="val" id="simSpeedV">60 s</span>
+    <button class="b r" id="simExit">✕ Exit</button>
+  </div>
+  <div id="simline"><div id="simsegs"></div><div id="simhead"></div></div>
+  <div class="slabels"><span id="simFrom"></span><span>Tap the strip to jump there</span><span id="simTo"></span></div>
+</div>
+<div id="toast"></div>
+
+<div id="pinpad" class="overlay">
+  <div class="inner">
+    <h2 id="pintitle">Enter PIN</h2>
+    <div id="pindots"></div>
+    <div id="pinmsg"></div>
+    <div class="keys" id="pinkeys"></div>
+  </div>
+</div>
+
+<div id="settings" class="overlay">
+  <div id="shead"><div class="hwrap">
+    <div class="topbar"><h1>Sleep Clock</h1><button class="b ok" id="done">Done</button></div>
+    <div class="pv">
+      <div class="miniwrap"><div id="mini" class="mini"><div id="miniFace" class="face"></div><div id="miniTime" class="time"></div><div id="miniLabel" class="label"></div></div></div>
+      <div class="pvside">
+        <div id="pvtabs"><button class="b g" data-pv="sleep">Night</button><button class="b g" data-pv="soon">Amber</button><button class="b g" data-pv="wake">Green</button><button class="b g" data-pv="day">Day</button></div>
+        <div class="hint" id="pvnote"></div>
+        <button class="b" id="simBtn">▶︎ Simulate a day</button>
+      </div>
+    </div>
+  </div></div>
+  <div id="sbody"><div class="wrap" id="swrap"></div></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  /* Written for Safari 12: no optional chaining, no ??, no class fields, no replaceAll. */
+
+  var VERSION = '1.3';
+  var KEY = 'toddler-sleep-train-clock.settings.v1';
+  var FIRED_KEY = 'toddler-sleep-train-clock.fired';
+  var CODE_PREFIX = 'toddler-sleep-train-clock.v1:';
+  var OLD_CODE_PREFIX = 'OKC1:'; // export codes made before the rename
+  // one-time move of data saved under the old "okclock" keys
+  try {
+    [['okclock.settings.v1', KEY], ['okclock.fired', FIRED_KEY]].forEach(function (p) {
+      var old = window.localStorage.getItem(p[0]);
+      if (old !== null && window.localStorage.getItem(p[1]) === null) window.localStorage.setItem(p[1], old);
+      if (old !== null) window.localStorage.removeItem(p[0]);
+    });
+  } catch (e) {}
+  var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var ORDER = [1, 2, 3, 4, 5, 6, 0]; // show Monday first
+  var FADE_OPTS = [0, 1, 3, 5, 10];
+  var TONES = { chime: 'Chime', musicbox: 'Music box', birds: 'Birds', dingdong: 'Ding-dong' };
+  var NIGHT_COLORS = { red: '#ff3b1f', orange: '#ff7a1a', amber: '#ffb000', pink: '#ff5c8a', purple: '#a66bff', blue: '#5b8cff' };
+  // day: face colour + a very dark tint of it for the background
+  var DAY_COLORS = {
+    blue: { face: '#7aa7ff', bg: '#0b1220' }, green: { face: '#5ad17a', bg: '#0a1a0f' },
+    yellow: { face: '#ffd84d', bg: '#1a1606' }, pink: { face: '#ff8fb8', bg: '#1c0b12' },
+    purple: { face: '#b48cff', bg: '#130d1f' }, teal: { face: '#4fd1c5', bg: '#071a18' },
+    white: { face: '#f2f2f2', bg: '#141414' }
+  };
+
+  function defaults() {
+    var days = [];
+    for (var i = 0; i < 7; i++) {
+      var weekend = (i === 0 || i === 6);
+      days.push({ bed: '19:00', wake: weekend ? '07:30' : '07:00', tone: 'off' });
+    }
+    return {
+      days: days,
+      greenMin: 60,        // how long the green "OK to wake" face stays
+      soonMin: 0,          // amber "almost time" before wake (0 = off)
+      nightColor: 'red',
+      nightDim: 35,        // % brightness of face at night
+      dayMode: 'face',     // face | clock | dark
+      dayColor: 'blue',
+      dayDim: 100,         // % brightness of face/time in the day
+      fadeSec: 3,          // crossfade length at each phase change (0 = hard change)
+      showTime: true,
+      showTimeNight: false,
+      h24: true,
+      showLabel: false,
+      volume: 60,
+      alarmLen: 60,        // seconds the wake sound plays (0 = until tapped, max 5 min)
+      fadeIn: true,
+      noise: false,
+      noiseVol: 25,
+      napSound: 'chime',
+      pin: '',
+      nap: null            // {start, end} ms timestamps
+    };
+  }
+
+  // ---------- storage ----------
+  function load() {
+    var s = defaults();
+    try {
+      var raw = window.localStorage.getItem(KEY);
+      if (raw) merge(s, JSON.parse(raw));
+    } catch (e) {}
+    return s;
+  }
+  function merge(s, o) {
+    if (!o || typeof o !== 'object') return;
+    for (var k in s) {
+      if (!Object.prototype.hasOwnProperty.call(o, k)) continue;
+      if (k === 'days') {
+        if (o.days && o.days.length === 7) {
+          for (var i = 0; i < 7; i++) {
+            var d = o.days[i] || {};
+            if (/^\d\d:\d\d$/.test(d.bed)) s.days[i].bed = d.bed;
+            if (/^\d\d:\d\d$/.test(d.wake)) s.days[i].wake = d.wake;
+            if (d.tone === 'off' || TONES[d.tone]) s.days[i].tone = d.tone;
+          }
+        }
+      } else if (typeof o[k] === typeof s[k] || s[k] === null) {
+        s[k] = o[k];
+      }
+    }
+    if (!NIGHT_COLORS[s.nightColor]) s.nightColor = 'red';
+    if (!DAY_COLORS[s.dayColor]) s.dayColor = 'blue';
+    s.dayDim = Math.min(100, Math.max(20, Math.round(+s.dayDim) || 100));
+    s.nightDim = Math.min(100, Math.max(5, Math.round(+s.nightDim) || 35));
+    if (FADE_OPTS.indexOf(s.fadeSec) < 0) s.fadeSec = 3;
+  }
+  var storageOK = true;
+  function save() {
+    try { window.localStorage.setItem(KEY, JSON.stringify(S)); storageOK = true; }
+    catch (e) { storageOK = false; }
+  }
+  var S = load();
+
+  // ---------- time helpers ----------
+  function hm(str) { var p = str.split(':'); return (+p[0]) * 60 + (+p[1]); }
+  function at(base, str) { var d = new Date(base.getTime()); var m = hm(str); d.setHours(Math.floor(m / 60), m % 60, 0, 0); return d; }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function fmt(d, withSec) {
+    var h = d.getHours(), m = d.getMinutes();
+    if (S.h24) return pad(h) + ':' + pad(m);
+    h = h % 12; if (h === 0) h = 12;
+    return h + ':' + pad(m);
+  }
+  function fmtStr(str) { return fmt(at(new Date(), str)); }
+
+  // ---------- state machine ----------
+  // Each day: wake = morning of that day, bed = evening of that day.
+  // Sleep runs from bedtime until the next morning's wake time.
+  // ignoreNap: the day simulation runs on pretend time, so a real nap must not leak into it.
+  function computeState(now, ignoreNap) {
+    var t = now.getTime();
+    var greenMs = S.greenMin * 60000;
+    if (S.nap && !ignoreNap) {
+      if (t < S.nap.end) return { mode: 'sleep', nap: true, until: S.nap.end };
+      if (t < S.nap.end + Math.min(greenMs, 30 * 60000)) return { mode: 'wake', nap: true, since: S.nap.end };
+    }
+    var cfg = S.days[now.getDay()];
+    var W = at(now, cfg.wake).getTime();
+    var B = at(now, cfg.bed).getTime();
+    var soonMs = S.soonMin * 60000;
+    if (t < W) {
+      if (soonMs > 0 && t >= W - soonMs) return { mode: 'soon', until: W };
+      return { mode: 'sleep', until: W };
+    }
+    if (t < W + greenMs) return { mode: 'wake', since: W, tone: cfg.tone };
+    if (t >= B) {
+      var tmr = new Date(now.getTime()); tmr.setDate(tmr.getDate() + 1);
+      return { mode: 'sleep', until: at(tmr, S.days[tmr.getDay()].wake).getTime() };
+    }
+    return { mode: 'day', until: B };
+  }
+
+  // ---------- face drawing ----------
+  function rays(color) {
+    var s = '';
+    for (var i = 0; i < 12; i++) {
+      s += '<line x1="100" y1="-6" x2="100" y2="-24" stroke="' + color + '" stroke-width="7" stroke-linecap="round" transform="rotate(' + (i * 30) + ' 100 100)"/>';
+    }
+    return s;
+  }
+  // gid: gradient id, unique per face on screen (Safari mixes up duplicate ids)
+  function faceSVG(mode, gid) {
+    var dark = 'rgba(0,0,0,.72)';
+    var c, eyes, mouth, extra = '', cheeks = '';
+    if (mode === 'sleep') {
+      c = NIGHT_COLORS[S.nightColor] || NIGHT_COLORS.red;
+      eyes = '<path d="M52 92 Q68 106 84 92" fill="none" stroke="' + dark + '" stroke-width="7" stroke-linecap="round"/>' +
+             '<path d="M116 92 Q132 106 148 92" fill="none" stroke="' + dark + '" stroke-width="7" stroke-linecap="round"/>';
+      mouth = '<ellipse cx="100" cy="138" rx="9" ry="7" fill="' + dark + '"/>';
+      extra = '<g fill="' + c + '">' +
+        '<text class="zz" x="186" y="30" font-size="30" font-family="Helvetica" font-weight="bold">z</text>' +
+        '<text class="zz" style="animation-delay:1.6s;-webkit-animation-delay:1.6s" x="208" y="4" font-size="22" font-family="Helvetica" font-weight="bold">z</text>' +
+        '<circle class="twinkle" cx="-14" cy="20" r="3"/>' +
+        '<circle class="twinkle" style="animation-delay:1.3s;-webkit-animation-delay:1.3s" cx="-26" cy="160" r="2.5"/>' +
+        '<circle class="twinkle" style="animation-delay:2.2s;-webkit-animation-delay:2.2s" cx="224" cy="170" r="3"/>' +
+        '</g>';
+    } else if (mode === 'soon') {
+      c = '#ffb300';
+      eyes = '<path d="M54 94 L82 94" stroke="' + dark + '" stroke-width="7" stroke-linecap="round"/>' +
+             '<path d="M118 94 L146 94" stroke="' + dark + '" stroke-width="7" stroke-linecap="round"/>';
+      mouth = '<path d="M84 136 Q100 144 116 136" fill="none" stroke="' + dark + '" stroke-width="7" stroke-linecap="round"/>';
+    } else if (mode === 'wake') {
+      c = '#34c759';
+      extra = rays('#ffd60a');
+      eyes = '<circle cx="68" cy="88" r="11" fill="' + dark + '"/><circle cx="132" cy="88" r="11" fill="' + dark + '"/>' +
+             '<circle cx="72" cy="84" r="3.5" fill="#fff"/><circle cx="136" cy="84" r="3.5" fill="#fff"/>';
+      mouth = '<path d="M56 122 Q100 176 144 122 Z" fill="' + dark + '"/><path d="M78 146 Q100 160 122 146 Q100 168 78 146" fill="#ff8fa3"/>';
+      cheeks = '<circle cx="46" cy="118" r="12" fill="#ff8fa3" opacity=".45"/><circle cx="154" cy="118" r="12" fill="#ff8fa3" opacity=".45"/>';
+    } else {
+      c = (DAY_COLORS[S.dayColor] || DAY_COLORS.blue).face;
+      eyes = '<circle cx="68" cy="90" r="9" fill="' + dark + '"/><circle cx="132" cy="90" r="9" fill="' + dark + '"/>';
+      mouth = '<path d="M72 128 Q100 150 128 128" fill="none" stroke="' + dark + '" stroke-width="7" stroke-linecap="round"/>';
+    }
+    return '<svg viewBox="-40 -40 280 280" xmlns="http://www.w3.org/2000/svg">' + extra +
+      '<circle cx="100" cy="100" r="92" fill="' + c + '"/>' +
+      '<circle cx="100" cy="100" r="92" fill="url(#' + gid + ')"/>' +
+      '<defs><radialGradient id="' + gid + '" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></radialGradient></defs>' +
+      cheeks + eyes + mouth + '</svg>';
+  }
+
+  // ---------- rendering ----------
+  var $ = function (id) { return document.getElementById(id); };
+  var elClock = $('clock');
+  // A paint target is one copy of the clock: the real one, or the mini preview in settings.
+  var MAIN = { clock: elClock, face: $('face'), time: $('time'), label: $('label'), gid: 'shMain', bigTime: '26vmin', key: null };
+  var MINI = { clock: $('mini'), face: $('miniFace'), time: $('miniTime'), label: $('miniLabel'), gid: 'shMini', bigTime: '56px', key: null, overlay: true };
+
+  function render(now, st) { paint(MAIN, now, st, S.fadeSec * 1000); updateBadge(st.mode); }
+
+  // Crossfade: lay a copy of the old screen on top and fade it out while the new one is already underneath.
+  var snapN = 0;
+  function snapshot(t, ms) {
+    if (t.snap && t.snap.parentNode) t.snap.parentNode.removeChild(t.snap);
+    var c = t.clock.cloneNode(true);
+    c.removeAttribute('id');
+    var ids = c.querySelectorAll('[id]');
+    for (var i = 0; i < ids.length; i++) ids[i].removeAttribute('id');
+    var grad = c.querySelector('radialGradient'), shade = c.querySelector('circle[fill^="url"]');
+    if (grad && shade) { var gid = t.gid + 'Snap' + (++snapN); grad.setAttribute('id', gid); shade.setAttribute('fill', 'url(#' + gid + ')'); }
+    c.className += ' snap';
+    if (t.overlay) { c.style.position = 'absolute'; c.style.top = '0'; c.style.left = '0'; }
+    t.clock.parentNode.insertBefore(c, t.clock.nextSibling);
+    t.snap = c;
+    void c.offsetWidth; // commit opacity 1 before starting the transition
+    c.style.webkitTransition = 'opacity ' + ms + 'ms ease-in-out';
+    c.style.transition = 'opacity ' + ms + 'ms ease-in-out';
+    c.style.opacity = '0';
+    setTimeout(function () { if (c.parentNode) c.parentNode.removeChild(c); if (t.snap === c) t.snap = null; }, ms + 100);
+  }
+
+  // fadeMs: crossfade length if the phase changed since this target's last paint (0 = hard change).
+  function paint(t, now, st, fadeMs) {
+    var mode = st.mode;
+    if (t.lastMode && t.lastMode !== mode && fadeMs > 0) snapshot(t, fadeMs);
+    t.lastMode = mode;
+    var night = (mode === 'sleep' || mode === 'soon');
+    var bg = '#000', faceOp = 1, timeOp = 1, timeColor = '#fff', showFace = true, showTime = S.showTime;
+    if (mode === 'sleep') { faceOp = S.nightDim / 100; timeOp = faceOp * 0.8; timeColor = NIGHT_COLORS[S.nightColor]; showTime = S.showTime && S.showTimeNight; }
+    else if (mode === 'soon') { faceOp = Math.max(S.nightDim / 100, 0.5); timeOp = faceOp * 0.8; timeColor = '#ffb300'; showTime = S.showTime && S.showTimeNight; }
+    else if (mode === 'wake') { bg = '#0c3a1b'; }
+    else if (mode === 'day') {
+      var dc = DAY_COLORS[S.dayColor] || DAY_COLORS.blue;
+      bg = dc.bg; faceOp = S.dayDim / 100; timeOp = faceOp;
+      if (S.dayMode === 'clock') { showFace = false; timeColor = dc.face; }
+      if (S.dayMode === 'dark') { showFace = false; showTime = false; bg = '#000'; }
+    }
+    var faceKey = mode + '|' + S.nightColor + '|' + S.dayColor;
+    if (faceKey !== t.key) { t.face.innerHTML = faceSVG(mode, t.gid); t.key = faceKey; }
+    t.clock.style.backgroundColor = bg;
+    t.face.style.display = showFace ? '' : 'none';
+    t.face.style.opacity = faceOp;
+    t.time.style.display = showTime ? '' : 'none';
+    t.time.style.opacity = timeOp;
+    t.time.style.color = timeColor;
+    t.time.style.fontSize = showFace ? '' : t.bigTime;
+    t.time.textContent = fmt(now);
+    var lbl = '';
+    if (S.showLabel) {
+      lbl = mode === 'sleep' ? (st.nap ? 'Nap time' : 'Stay in bed') : mode === 'soon' ? 'Almost time' : mode === 'wake' ? 'Good morning!' : '';
+      if (mode === 'wake' && st.nap) lbl = 'Nap over!';
+    }
+    t.label.textContent = lbl;
+    t.label.style.opacity = night ? faceOp * 0.7 : 0.8 * (mode === 'day' ? faceOp : 1);
+    t.label.style.color = night ? timeColor : '#fff';
+  }
+
+  // ---------- audio (Web Audio; webkit prefix on iOS 12) ----------
+  var AC = window.AudioContext || window.webkitAudioContext;
+  var ctx = null, keepSrc = null, noiseSrc = null, noiseGain = null, alarmGain = null, alarmTimer = null, alarmStopAt = 0;
+
+  function audioReady() { return !!(ctx && ctx.state === 'running'); }
+  function ensureCtx() {
+    if (!ctx && AC) {
+      try { ctx = new AC(); } catch (e) { ctx = null; }
+      if (ctx) ctx.onstatechange = function () { refresh(); };
+    }
+    return ctx;
+  }
+  // Must run inside a touchend/click handler.
+  function unlockAudio() {
+    var c = ensureCtx(); if (!c) return;
+    try {
+      if (c.state !== 'running' && c.resume) { var p = c.resume(); if (p && p.then) p.then(refresh, function () {}); }
+      var b = c.createBuffer(1, 1, c.sampleRate), s = c.createBufferSource();
+      s.buffer = b; s.connect(c.destination); s.start(0);
+    } catch (e) {}
+    startKeepAlive();
+    setTimeout(refresh, 250);
+  }
+  // A silent looping source keeps iOS from suspending the context overnight.
+  function startKeepAlive() {
+    if (keepSrc || !ctx) return;
+    try {
+      var b = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+      keepSrc = ctx.createBufferSource(); keepSrc.buffer = b; keepSrc.loop = true;
+      keepSrc.connect(ctx.destination); keepSrc.start(0);
+    } catch (e) { keepSrc = null; }
+  }
+  function vol(v) { v = v / 100; return v * v; } // perceptual curve
+
+  function bell(dest, f, t, dur, v, type) {
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(v, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(dest); o.start(t); o.stop(t + dur + 0.05);
+    // soft upper partial for a bell-ish tone
+    var o2 = ctx.createOscillator(), g2 = ctx.createGain();
+    o2.frequency.setValueAtTime(f * 2.76, t);
+    g2.gain.setValueAtTime(0.0001, t);
+    g2.gain.linearRampToValueAtTime(v * 0.18, t + 0.01);
+    g2.gain.exponentialRampToValueAtTime(0.0001, t + dur * 0.5);
+    o2.connect(g2); g2.connect(dest); o2.start(t); o2.stop(t + dur);
+  }
+  function chirp(dest, t, f1, f2, d, v) {
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + d);
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g); g.connect(dest); o.start(t); o.stop(t + d + 0.02);
+  }
+  // Plays one pass of a tone pattern; returns its length in seconds.
+  function pattern(name, dest, t0) {
+    var i, t = t0;
+    if (name === 'chime') {
+      var n = [523.25, 659.25, 783.99, 1046.5];
+      for (i = 0; i < n.length; i++) bell(dest, n[i], t + i * 0.32, 2.2, 0.35);
+      return 3.6;
+    }
+    if (name === 'dingdong') {
+      bell(dest, 659.25, t, 2.4, 0.45); bell(dest, 523.25, t + 0.7, 2.8, 0.45);
+      return 4.0;
+    }
+    if (name === 'musicbox') {
+      // Twinkle Twinkle (traditional)
+      var C = 1046.5, D = 1174.66, E = 1318.51, F = 1396.91, G = 1567.98, A = 1760;
+      var mel = [C, C, G, G, A, A, G, 0, F, F, E, E, D, D, C];
+      for (i = 0; i < mel.length; i++) if (mel[i]) bell(dest, mel[i], t + i * 0.36, 1.4, 0.22, 'triangle');
+      return mel.length * 0.36 + 1.6;
+    }
+    if (name === 'birds') {
+      var starts = [0, 0.18, 0.36, 1.3, 1.44, 2.3, 2.45, 2.6, 2.75];
+      for (i = 0; i < starts.length; i++) chirp(dest, t + starts[i], 2600 + (i % 3) * 300, 3900 + (i % 2) * 500, 0.1, 0.22);
+      return 3.8;
+    }
+    return 3;
+  }
+
+  function playAlarm(tone, seconds, noFade) {
+    if (!audioReady() || !tone || tone === 'off') return false;
+    stopAlarm();
+    alarmGain = ctx.createGain();
+    alarmGain.connect(ctx.destination);
+    var v = vol(S.volume), now = ctx.currentTime;
+    if (S.fadeIn && !noFade) {
+      alarmGain.gain.setValueAtTime(Math.max(v * 0.12, 0.0001), now);
+      alarmGain.gain.linearRampToValueAtTime(v, now + 20);
+    } else alarmGain.gain.setValueAtTime(v, now);
+    alarmStopAt = Date.now() + (seconds > 0 ? seconds : 300) * 1000;
+    var g = alarmGain;
+    (function loop() {
+      if (g !== alarmGain) return;
+      if (Date.now() >= alarmStopAt) { stopAlarm(); return; }
+      var len = pattern(tone, g, ctx.currentTime + 0.05);
+      alarmTimer = setTimeout(loop, len * 1000);
+    })();
+    return true;
+  }
+  function stopAlarm() {
+    if (alarmTimer) { clearTimeout(alarmTimer); alarmTimer = null; }
+    if (alarmGain) {
+      var g = alarmGain; alarmGain = null;
+      try { g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setValueAtTime(g.gain.value, ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + 0.4); } catch (e) {}
+      setTimeout(function () { try { g.disconnect(); } catch (e) {} }, 600);
+    }
+  }
+  function alarmPlaying() { return !!alarmGain; }
+
+  // Soft brown noise for the night (optional)
+  function setNoise(on) {
+    if (!audioReady()) on = false;
+    if (on && !noiseSrc) {
+      var len = ctx.sampleRate * 4, b = ctx.createBuffer(1, len, ctx.sampleRate), d = b.getChannelData(0), last = 0;
+      for (var i = 0; i < len; i++) { var w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d[i] = last * 3.2; }
+      noiseSrc = ctx.createBufferSource(); noiseSrc.buffer = b; noiseSrc.loop = true;
+      noiseGain = ctx.createGain(); noiseGain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      noiseGain.gain.linearRampToValueAtTime(vol(S.noiseVol) * 0.8, ctx.currentTime + 8);
+      noiseSrc.connect(noiseGain); noiseGain.connect(ctx.destination); noiseSrc.start(0);
+    } else if (on && noiseGain) {
+      noiseGain.gain.setTargetAtTime(vol(S.noiseVol) * 0.8, ctx.currentTime, 0.5);
+    } else if (!on && noiseSrc) {
+      var s = noiseSrc, g = noiseGain; noiseSrc = null; noiseGain = null;
+      try { g.gain.setTargetAtTime(0.0001, ctx.currentTime, 1.5); } catch (e) {}
+      setTimeout(function () { try { s.stop(0); s.disconnect(); g.disconnect(); } catch (e) {} }, 6000);
+    }
+  }
+
+  // ---------- sound-locked badge ----------
+  function soundNeeded() {
+    if (S.noise) return true;
+    if (S.napSound !== 'off' && S.nap) return true;
+    for (var i = 0; i < 7; i++) if (S.days[i].tone !== 'off') return true;
+    return false;
+  }
+  function updateBadge(mode) {
+    var b = $('badge');
+    if (!AC || !soundNeeded() || audioReady()) { b.style.display = 'none'; return; }
+    var night = (mode === 'sleep' || mode === 'soon');
+    if (night) { b.className = 'night'; b.innerHTML = '🔇 tap to enable sound'; }
+    else { b.className = 'big'; b.innerHTML = '🔇 Tap to enable sound<small>The page reloaded, so iOS muted it. One tap fixes it.</small>'; }
+    b.style.display = 'block';
+  }
+
+  // ---------- main tick ----------
+  var firedKey = '';
+  try { firedKey = window.localStorage.getItem(FIRED_KEY) || ''; } catch (e) {}
+  var curState = null;
+
+  function tick() {
+    if (sim) return; // the simulation drives the display; real alarm/nap logic waits until it ends
+    var now = new Date();
+    var st = computeState(now);
+    // alarm: fire once, only within the first 90 s of the green phase
+    if (st.mode === 'wake' && st.since && Date.now() - st.since < 90000) {
+      var key = 'w' + st.since;
+      if (key !== firedKey) {
+        firedKey = key;
+        try { window.localStorage.setItem(FIRED_KEY, key); } catch (e) {}
+        var tone = st.nap ? S.napSound : st.tone;
+        playAlarm(tone, S.alarmLen);
+      }
+    }
+    // tidy finished nap
+    if (S.nap && !st.nap) { S.nap = null; save(); }
+    setNoise(S.noise && st.mode === 'sleep' && !alarmPlaying());
+    curState = st;
+    render(now, st);
+  }
+  function refresh() { if (curState && !sim) render(new Date(), curState); if (settingsOpen) renderAudioStatus(); }
+
+  // ---------- touches on the clock ----------
+  var pressTimer = null, pressStart = 0, ringTimer = null;
+  var HOLD_MS = 2500;
+  function startPress() {
+    pressStart = Date.now();
+    var ring = $('hotring'), arc = $('hotarc');
+    ring.style.opacity = '1';
+    ringTimer = setInterval(function () {
+      var p = Math.min(1, (Date.now() - pressStart) / HOLD_MS);
+      arc.setAttribute('stroke-dashoffset', String(163.4 * (1 - p)));
+    }, 50);
+    pressTimer = setTimeout(function () { endPress(); openGate(); }, HOLD_MS);
+  }
+  function endPress() {
+    if (pressTimer) clearTimeout(pressTimer); pressTimer = null;
+    if (ringTimer) clearInterval(ringTimer); ringTimer = null;
+    $('hotring').style.opacity = '0'; $('hotarc').setAttribute('stroke-dashoffset', '163.4');
+  }
+  var hot = $('hot');
+  hot.addEventListener('touchstart', function (e) { e.preventDefault(); startPress(); }, { passive: false });
+  hot.addEventListener('touchend', function (e) { e.preventDefault(); endPress(); onAnyTap(); }, { passive: false });
+  hot.addEventListener('touchcancel', endPress);
+  hot.addEventListener('mousedown', startPress);
+  hot.addEventListener('mouseup', function () { endPress(); onAnyTap(); });
+
+  function onAnyTap() {
+    if (anyOverlayOpen()) return;
+    unlockAudio();
+    if (alarmPlaying()) stopAlarm();
+    setTimeout(tick, 300);
+  }
+  // Clock surface ignores taps except to unlock sound / silence the alarm.
+  document.addEventListener('touchmove', function (e) { if (!anyOverlayOpen() && !$('simbar').contains(e.target)) e.preventDefault(); }, { passive: false });
+  document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+  elClock.addEventListener('touchend', function (e) { e.preventDefault(); onAnyTap(); }, { passive: false });
+  elClock.addEventListener('click', onAnyTap);
+  $('badge').addEventListener('touchend', function (e) { e.preventDefault(); onAnyTap(); }, { passive: false });
+  $('badge').addEventListener('click', onAnyTap);
+
+  function anyOverlayOpen() { return settingsOpen || $('pinpad').className.indexOf('show') >= 0; }
+
+  // ---------- PIN pad ----------
+  var pinBuf = '', pinMode = 'unlock', pinFirst = '', pinFails = 0, pinLockUntil = 0;
+  function buildPinKeys() {
+    var k = $('pinkeys'), h = '';
+    var labels = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '×', '0', '⌫'];
+    for (var i = 0; i < labels.length; i++) h += '<button class="k" data-k="' + labels[i] + '">' + labels[i] + '</button>' + ((i % 3 === 2) ? '<br>' : '');
+    k.innerHTML = h;
+    k.addEventListener('click', function (e) {
+      var t = e.target; if (!t || !t.getAttribute) return;
+      var key = t.getAttribute('data-k'); if (!key) return;
+      pinKey(key);
+    });
+  }
+  function showPin(mode) {
+    pinMode = mode; pinBuf = ''; pinFirst = '';
+    $('pintitle').textContent = mode === 'unlock' ? 'Enter PIN' : 'Choose a 4-digit PIN';
+    $('pinmsg').textContent = '';
+    drawPin();
+    $('pinpad').className = 'overlay show';
+  }
+  function hidePin() { $('pinpad').className = 'overlay'; }
+  function drawPin() { var s = ''; for (var i = 0; i < 4; i++) s += i < pinBuf.length ? '●' : '○'; $('pindots').textContent = s; }
+  function pinKey(k) {
+    if (k === '×') { hidePin(); return; }
+    if (k === '⌫') { pinBuf = pinBuf.slice(0, -1); drawPin(); return; }
+    if (Date.now() < pinLockUntil) { $('pinmsg').textContent = 'Wait a moment…'; return; }
+    if (pinBuf.length >= 4) return;
+    pinBuf += k; drawPin();
+    if (pinBuf.length < 4) return;
+    setTimeout(function () {
+      if (pinMode === 'unlock') {
+        if (pinBuf === S.pin) { pinFails = 0; hidePin(); openSettings(); }
+        else {
+          pinFails++; pinBuf = ''; drawPin();
+          if (pinFails >= 3) { pinLockUntil = Date.now() + 30000; pinFails = 0; $('pinmsg').textContent = 'Wrong PIN. Locked for 30 s.'; }
+          else $('pinmsg').textContent = 'Wrong PIN';
+        }
+      } else { // set
+        if (!pinFirst) { pinFirst = pinBuf; pinBuf = ''; drawPin(); $('pintitle').textContent = 'Type it again'; }
+        else if (pinFirst === pinBuf) { S.pin = pinBuf; save(); hidePin(); toast('PIN saved'); renderSettings(); }
+        else { pinFirst = ''; pinBuf = ''; drawPin(); $('pintitle').textContent = 'Choose a 4-digit PIN'; $('pinmsg').textContent = "Didn't match, try again"; }
+      }
+    }, 120);
+  }
+  function openGate() { if (S.pin) showPin('unlock'); else openSettings(); }
+
+  // ---------- settings ----------
+  var settingsOpen = false;
+  var settingsScroll = 0;
+  // keepScroll: coming back from the day simulation, so return to where the parent was.
+  function openSettings(keepScroll) {
+    if (sim) exitSim(false);
+    settingsOpen = true; stopAlarm(); unlockAudio(); renderSettings();
+    pvMode = curState ? curState.mode : 'day'; MINI.key = null; MINI.lastMode = null; updatePreview();
+    $('settings').className = 'overlay show'; $('sbody').scrollTop = keepScroll ? settingsScroll : 0;
+  }
+  function closeSettings() { settingsOpen = false; $('settings').className = 'overlay'; save(); MAIN.key = null; tick(); }
+
+  function sw(id, on) { return '<label class="sw"><input type="checkbox" id="' + id + '"' + (on ? ' checked' : '') + '><span></span></label>'; }
+  function opts(map, sel, extra) {
+    var h = '';
+    if (extra) for (var e in extra) h += '<option value="' + e + '"' + (e === sel ? ' selected' : '') + '>' + extra[e] + '</option>';
+    for (var k in map) h += '<option value="' + k + '"' + (k === sel ? ' selected' : '') + '>' + map[k] + '</option>';
+    return h;
+  }
+  function numOpts(list, sel, unit) {
+    var h = '';
+    for (var i = 0; i < list.length; i++) h += '<option value="' + list[i][0] + '"' + (list[i][0] === sel ? ' selected' : '') + '>' + list[i][1] + '</option>';
+    return h;
+  }
+  function swatches(key, map, sel) {
+    var h = '<span>';
+    for (var k in map) h += '<button class="swc' + (k === sel ? ' on' : '') + '" data-sw="' + key + '" data-c="' + k + '" aria-label="' + k + '" style="background:' + (map[k].face || map[k]) + '"></button>';
+    return h + '</span>';
+  }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+
+  function renderSettings() {
+    var today = new Date().getDay();
+    var standalone = !!window.navigator.standalone;
+    var h = '';
+    if (!standalone) h += '<div class="status bad">Opened in a normal Safari tab. Use Share → <b>Add to Home Screen</b> and run it from that icon. Settings saved here are separate from the home-screen version.</div>';
+    if (!storageOK) h += '<div class="status bad">Settings could not be saved on this iPad (storage blocked). Use Export below as a backup.</div>';
+
+    // general
+    h += '<div class="sec"><h2>General</h2>' +
+      '<div id="audioStatus"></div>' +
+      '<div class="row"><label class="l">Alarm volume</label><input type="range" min="5" max="100" step="5" id="volume" value="' + S.volume + '"><span class="val" id="volumeV">' + S.volume + '%</span></div>' +
+      '<div class="row"><label class="l">Test a sound</label><select id="testTone">' + opts(TONES, 'chime') + '</select>&nbsp;<button class="b g" id="testBtn">▶︎ Play</button><button class="b g" id="stopBtn">■</button></div>' +
+      '<p class="hint">The slider can only go as loud as the iPad’s own volume. Set the iPad volume with its buttons first, then fine-tune here. Tapping the clock silences a ringing alarm.</p>' +
+      '<div class="row"><label class="l">Show the time</label>' + sw('showTime', S.showTime) + '</div>' +
+      '<div class="row"><label class="l">24-hour clock</label>' + sw('h24', S.h24) + '</div>' +
+      '<div class="row"><label class="l">Words under the face (“Stay in bed”)</label>' + sw('showLabel', S.showLabel) + '</div>' +
+      '<div class="row"><label class="l">Phase change fade</label><select id="fadeSec">' +
+        numOpts([[0, 'Off'], [1, '1 s'], [3, '3 s'], [5, '5 s'], [10, '10 s']], S.fadeSec) + '</select></div>' +
+      '<p class="hint">A web page can’t change the real screen brightness. Set the iPad’s brightness once (about right for the green face); the brightness sliders below then dim only what’s drawn.</p></div>';
+
+    // weekly schedule
+    h += '<div class="sec"><h2>Weekly schedule</h2><table class="sched"><tr><th></th><th>Wake (green)</th><th>Bedtime (red)</th><th>Wake sound</th></tr>';
+    for (var i = 0; i < 7; i++) {
+      var d = ORDER[i], c = S.days[d];
+      h += '<tr' + (d === today ? ' class="today"' : '') + '><td class="d">' + DAYS[d] + '</td>' +
+        '<td><input type="time" data-day="' + d + '" data-f="wake" value="' + c.wake + '"></td>' +
+        '<td><input type="time" data-day="' + d + '" data-f="bed" value="' + c.bed + '"></td>' +
+        '<td><select data-day="' + d + '" data-f="tone">' + opts(TONES, c.tone, { off: 'Off' }) + '</select></td></tr>';
+    }
+    h += '</table><div style="margin-top:8px"><button class="b g" id="copyWk">Copy Monday → Tue–Fri</button><button class="b g" id="copyWe">Copy Saturday → Sunday</button></div>' +
+      '<p class="hint">Wake = the morning of that day. Bedtime = the evening of that day. Red runs from bedtime until the next morning’s wake time.</p></div>';
+
+    // one section per phase; data-pv makes the mini preview follow whatever is touched inside it
+    h += '<div class="sec" data-pv="sleep"><h2><span class="dot" id="dotNight"></span>Night <small>bedtime → wake</small></h2>' +
+      '<div class="row"><label class="l">Colour</label>' + swatches('nightColor', NIGHT_COLORS, S.nightColor) + '</div>' +
+      '<div class="row"><label class="l">Brightness</label><input type="range" min="5" max="100" step="5" id="nightDim" value="' + S.nightDim + '"><span class="val" id="nightDimV">' + S.nightDim + '%</span></div>' +
+      '<p class="hint">Red, orange and amber are the most sleep-friendly. Blue and purple light is more stimulating at night.</p>' +
+      '<div class="row"><label class="l">Show the time at night</label>' + sw('showTimeNight', S.showTimeNight) + '</div>' +
+      '<div class="row"><label class="l">Soft noise</label>' + sw('noise', S.noise) + '</div>' +
+      '<div class="row"><label class="l">Noise volume</label><input type="range" min="5" max="100" step="5" id="noiseVol" value="' + S.noiseVol + '"><span class="val" id="noiseVolV">' + S.noiseVol + '%</span></div></div>';
+
+    h += '<div class="sec" data-pv="soon"><h2><span class="dot" style="background:#ffb300"></span>Almost time <small>amber, before wake</small></h2>' +
+      '<div class="row"><label class="l">Show amber before wake</label><select id="soonMin">' +
+        numOpts([[0, 'Off'], [10, '10 min'], [15, '15 min'], [20, '20 min'], [30, '30 min']], S.soonMin) + '</select></div></div>';
+
+    h += '<div class="sec" data-pv="wake"><h2><span class="dot" style="background:#34c759"></span>Wake <small>green, OK to get up</small></h2>' +
+      '<div class="row"><label class="l">Green stays on for</label><select id="greenMin">' +
+        numOpts([[15, '15 min'], [30, '30 min'], [45, '45 min'], [60, '1 hour'], [90, '1½ hours'], [120, '2 hours']], S.greenMin) + '</select></div>' +
+      '<div class="row"><label class="l">Wake sound plays for</label><select id="alarmLen">' +
+        numOpts([[20, '20 seconds'], [60, '1 minute'], [120, '2 minutes'], [300, '5 minutes'], [0, 'Until tapped (max 5 min)']], S.alarmLen) + '</select></div>' +
+      '<div class="row"><label class="l">Start quiet and fade in (20 s)</label>' + sw('fadeIn', S.fadeIn) + '</div>' +
+      '<p class="hint">Which sound plays is set per day in the weekly schedule.</p></div>';
+
+    h += '<div class="sec" data-pv="day"><h2><span class="dot" id="dotDay"></span>Day <small>after green until bedtime</small></h2>' +
+      '<div class="row"><label class="l">Shows</label><select id="dayMode">' + opts({ face: 'Face', clock: 'Just the time', dark: 'Nothing (black)' }, S.dayMode) + '</select></div>' +
+      '<div class="row"><label class="l">Colour</label>' + swatches('dayColor', DAY_COLORS, S.dayColor) + '</div>' +
+      '<div class="row"><label class="l">Brightness</label><input type="range" min="20" max="100" step="5" id="dayDim" value="' + S.dayDim + '"><span class="val" id="dayDimV">' + S.dayDim + '%</span></div></div>';
+
+    // nap
+    var napTxt = S.nap ? ('Nap running, green at ' + fmt(new Date(S.nap.end))) : 'No nap running';
+    h += '<div class="sec"><h2>Nap</h2><div class="status' + (S.nap ? ' good' : '') + '">' + napTxt + '</div><div style="margin-top:8px">' +
+      '<button class="b" data-nap="30">30 min</button><button class="b" data-nap="45">45 min</button><button class="b" data-nap="60">1 h</button>' +
+      '<button class="b" data-nap="90">1½ h</button><button class="b" data-nap="120">2 h</button>' +
+      (S.nap ? '<button class="b r" id="napCancel">Cancel nap</button>' : '') + '</div>' +
+      '<div class="row"><label class="l">Sound when nap ends</label><select id="napSound">' + opts(TONES, S.napSound, { off: 'Off' }) + '</select></div>' +
+      '<p class="hint">The nap starts now and shows red, then green for up to 30 minutes when it ends.</p></div>';
+
+    // device & safety
+    h += '<div class="sec"><h2>Device &amp; safety</h2>' +
+      '<div class="row"><label class="l">' + (S.pin ? 'PIN is set' : 'No PIN. Anyone who long-presses the corner can open settings.') + '</label>' +
+      '<span><button class="b g" id="pinSet">' + (S.pin ? 'Change PIN' : 'Set PIN') + '</button>' + (S.pin ? '<button class="b r" id="pinDel">Remove</button>' : '') + '</span></div>' +
+      '<p class="hint">Settings open with a 2.5-second press in the top-right corner. The PIN stops toddlers, not grown-ups.</p>' +
+      '<div class="row"><label class="l">Backup</label><span><button class="b g" id="expBtn">Export</button><button class="b g" id="impBtn">Import</button><button class="b r" id="resetBtn">Reset all</button></span></div>' +
+      '<textarea id="codeBox" placeholder="Export puts a code here to copy somewhere safe. To restore, paste a code and tap Import."></textarea></div>';
+
+    // setup help
+    h += '<div class="sec"><h2>iPad setup checklist</h2><ol class="setup">' +
+      '<li>Settings → Display &amp; Brightness → <b>Auto-Lock: Never</b>; turn Auto-Brightness off (Accessibility → Display Accommodations).</li>' +
+      '<li>Settings → General → <b>Use Side Switch To: Lock Rotation</b>, so the switch can’t mute the alarm. Check Control Centre isn’t on mute.</li>' +
+      '<li>Set the iPad volume with its buttons, then test the sound under General.</li>' +
+      '<li>Open Sleep Clock from the home-screen icon and <b>tap once</b> so sound is enabled.</li>' +
+      '<li>Triple-click Home → <b>Guided Access</b>. Under Options, turn off Volume Buttons and Sleep/Wake. Leave Touch on (the clock ignores taps; this lets you re-enable sound after a reload).</li>' +
+      '<li>Keep it on charge, and check the battery for swelling now and then.</li></ol>' +
+      '<p class="hint">Sleep Clock (toddler-sleep-train-clock) v' + VERSION + (standalone ? ' · home-screen mode' : '') + '</p></div>';
+
+    $('swrap').innerHTML = h;
+    renderAudioStatus();
+    wireSettings();
+    if (settingsOpen) updatePreview(); // e.g. after import or reset
+  }
+
+  function renderAudioStatus() {
+    var el = $('audioStatus'); if (!el) return;
+    if (!AC) { el.innerHTML = '<div class="status bad">This browser has no Web Audio, so sound won’t work.</div>'; return; }
+    el.innerHTML = audioReady() ? '<div class="status good">🔊 Sound is enabled</div>'
+      : '<div class="status bad">🔇 Sound is locked. Tap anywhere to enable it.</div>';
+  }
+
+  function wireSettings() {
+    var w = $('swrap');
+    function on(id, ev, fn) { var e = $(id); if (e) e.addEventListener(ev, fn); }
+
+    var inputs = w.querySelectorAll('[data-day]');
+    for (var i = 0; i < inputs.length; i++) {
+      inputs[i].addEventListener('change', function (e) {
+        var t = e.target, d = +t.getAttribute('data-day'), f = t.getAttribute('data-f');
+        if (f === 'tone') S.days[d].tone = t.value;
+        else if (/^\d\d:\d\d$/.test(t.value)) S.days[d][f] = t.value;
+        else { t.value = S.days[d][f]; return; }
+        if (hm(S.days[d].bed) <= hm(S.days[d].wake)) toast('Bedtime should be later than wake time');
+        save();
+      });
+    }
+    on('copyWk', 'click', function () { for (var d = 2; d <= 5; d++) { S.days[d].wake = S.days[1].wake; S.days[d].bed = S.days[1].bed; S.days[d].tone = S.days[1].tone; } save(); renderSettings(); toast('Copied to Tue–Fri'); });
+    on('copyWe', 'click', function () { S.days[0].wake = S.days[6].wake; S.days[0].bed = S.days[6].bed; S.days[0].tone = S.days[6].tone; save(); renderSettings(); toast('Copied to Sunday'); });
+
+    ['greenMin', 'soonMin', 'alarmLen', 'fadeSec'].forEach(function (id) { on(id, 'change', function (e) { S[id] = +e.target.value; save(); }); });
+    var sws = w.querySelectorAll('[data-sw]');
+    for (i = 0; i < sws.length; i++) sws[i].addEventListener('click', function (e) {
+      var b = e.target, key = b.getAttribute('data-sw');
+      S[key] = b.getAttribute('data-c'); save(); MAIN.key = null;
+      var sib = w.querySelectorAll('[data-sw="' + key + '"]');
+      for (var j = 0; j < sib.length; j++) sib[j].className = 'swc' + (sib[j] === b ? ' on' : '');
+    });
+    ['napSound', 'dayMode'].forEach(function (id) { on(id, 'change', function (e) { S[id] = e.target.value; save(); MAIN.key = null; }); });
+    ['fadeIn', 'noise', 'showTime', 'showTimeNight', 'h24', 'showLabel'].forEach(function (id) { on(id, 'change', function (e) { S[id] = e.target.checked; save(); }); });
+    ['volume', 'noiseVol', 'nightDim', 'dayDim'].forEach(function (id) {
+      on(id, 'input', function (e) { S[id] = +e.target.value; $(id + 'V').textContent = S[id] + '%'; if (id === 'noiseVol' && noiseGain) setNoise(true); });
+      on(id, 'change', function () { save(); });
+    });
+    on('testBtn', 'click', function () {
+      unlockAudio();
+      setTimeout(function () { if (!playAlarm($('testTone').value, 8)) toast('Sound is locked. Tap again.'); renderAudioStatus(); }, 150);
+    });
+    on('stopBtn', 'click', stopAlarm);
+
+    var naps = w.querySelectorAll('[data-nap]');
+    for (i = 0; i < naps.length; i++) naps[i].addEventListener('click', function (e) {
+      var m = +e.target.getAttribute('data-nap'), t = Date.now();
+      S.nap = { start: t, end: t + m * 60000 }; save(); toast('Nap started, ' + m + ' min'); closeSettings();
+    });
+    on('napCancel', 'click', function () { S.nap = null; save(); renderSettings(); });
+
+
+    on('pinSet', 'click', function () { showPin('set'); });
+    on('pinDel', 'click', function () { S.pin = ''; save(); renderSettings(); toast('PIN removed'); });
+
+    on('expBtn', 'click', function () {
+      var o = JSON.parse(JSON.stringify(S)); o.nap = null;
+      var code = CODE_PREFIX + btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+      var box = $('codeBox'); box.value = code; box.focus(); box.setSelectionRange(0, code.length);
+      toast('Code ready. Copy it somewhere safe.');
+    });
+    on('impBtn', 'click', function () {
+      var v = $('codeBox').value.replace(/\s+/g, '');
+      var plen = v.indexOf(CODE_PREFIX) === 0 ? CODE_PREFIX.length : v.indexOf(OLD_CODE_PREFIX) === 0 ? OLD_CODE_PREFIX.length : 0;
+      if (!plen) { toast('That isn’t a Sleep Clock code'); return; }
+      try {
+        var o = JSON.parse(decodeURIComponent(escape(atob(v.slice(plen)))));
+        var fresh = defaults(); merge(fresh, o); fresh.nap = null; S = fresh; save(); renderSettings(); toast('Settings imported');
+      } catch (e) { toast('Code is damaged'); }
+    });
+    on('resetBtn', 'click', function () {
+      var b = $('resetBtn');
+      if (b.getAttribute('data-sure')) { S = defaults(); save(); renderSettings(); toast('Reset to defaults'); }
+      else { b.setAttribute('data-sure', '1'); b.textContent = 'Tap again to reset'; }
+    });
+  }
+
+  var toastTimer = null;
+  function toast(msg) {
+    var t = $('toast'); t.textContent = msg; t.style.display = 'block';
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.style.display = 'none'; }, 2200);
+  }
+
+  // ---------- start ----------
+  // ---------- live preview in settings ----------
+  var pvMode = 'day';
+  var PHASE_NAMES = { sleep: 'Night', soon: 'Almost time', wake: 'Green', day: 'Day' };
+  // Which preview tab a settings control belongs to.
+  var PV_FOR = { nightColor: 'sleep', nightDim: 'sleep', showTimeNight: 'sleep', noise: 'sleep', dayColor: 'day', dayDim: 'day', dayMode: 'day',
+    greenMin: 'wake', soonMin: 'soon', bed: 'sleep', wake: 'wake' };
+  function pvTime(mode) {
+    var now = new Date(), c = S.days[now.getDay()], W = at(now, c.wake).getTime();
+    if (mode === 'sleep') return at(now, c.bed);
+    if (mode === 'soon') return new Date(W - (S.soonMin || 10) * 60000);
+    if (mode === 'wake') return new Date(W);
+    return new Date(W + S.greenMin * 60000);
+  }
+  function updatePreview() {
+    var c = S.days[new Date().getDay()], note;
+    paint(MINI, pvTime(pvMode), { mode: pvMode }, S.fadeSec * 1000);
+    var tabs = $('pvtabs').querySelectorAll('[data-pv]');
+    for (var i = 0; i < tabs.length; i++) tabs[i].className = 'b' + (tabs[i].getAttribute('data-pv') === pvMode ? '' : ' g');
+    if (pvMode === 'sleep') note = 'Night, today from ' + fmtStr(c.bed);
+    else if (pvMode === 'soon') note = S.soonMin ? 'Almost time, ' + S.soonMin + ' min before wake' : 'Almost time is off (turn it on under Almost time)';
+    else if (pvMode === 'wake') note = 'Green, today at ' + fmtStr(c.wake) + ' for ' + S.greenMin + ' min';
+    else note = 'Day, today until ' + fmtStr(c.bed);
+    $('pvnote').textContent = note;
+    var dn = $('dotNight'), dd = $('dotDay');
+    if (dn) dn.style.background = NIGHT_COLORS[S.nightColor];
+    if (dd) dd.style.background = (DAY_COLORS[S.dayColor] || DAY_COLORS.blue).face;
+  }
+  $('pvtabs').addEventListener('click', function (e) {
+    var m = e.target.getAttribute && e.target.getAttribute('data-pv'); if (!m) return;
+    pvMode = m; updatePreview();
+  });
+  // Element handlers update S first; these bubble up afterwards and refresh the preview.
+  function pvFollow(e) {
+    var t = e.target; if (!t || !t.getAttribute) return;
+    var k = t.getAttribute('data-sw') || t.getAttribute('data-f') || t.id;
+    if (PV_FOR[k]) pvMode = PV_FOR[k];
+    else for (var n = t; n && n.getAttribute; n = n.parentNode) { var pv = n.getAttribute('data-pv'); if (pv) { pvMode = pv; break; } }
+    updatePreview();
+  }
+  $('sbody').addEventListener('input', pvFollow);
+  $('sbody').addEventListener('change', pvFollow);
+  $('sbody').addEventListener('click', function (e) {
+    for (var n = e.target; n && n.getAttribute; n = n.parentNode) if (n.getAttribute('data-pv')) { pvFollow(e); return; }
+  });
+  $('done').addEventListener('click', closeSettings);
+
+  // ---------- day simulation (pretend clock, nothing saved) ----------
+  var DAY_MS = 86400000, SIM_STEP_MS = 100, SIM_MAX_REAL_MS = 10 * 60000;
+  var sim = null, simTimer = null, simSpeed = 60;
+  function simStartFor(day) {
+    var d = new Date(); d.setHours(12, 0, 0, 0);
+    while (d.getDay() !== day) d.setDate(d.getDate() + 1);
+    return at(d, S.days[day].wake).getTime() - Math.max(30, S.soonMin + 15) * 60000;
+  }
+  function startSim(day) {
+    stopAlarm();
+    var t0 = simStartFor(day);
+    sim = { day: day, t0: t0, v: t0, real: Date.now(), began: Date.now(), playing: true, muted: sim ? sim.muted : false,
+      mode: computeState(new Date(t0), true).mode, done: false };
+    document.body.className = 'sim';
+    $('badge').style.display = 'none';
+    $('simbar').style.display = 'block';
+    $('simDay').value = String(day);
+    drawSimLine();
+    if (!simTimer) simTimer = setInterval(function () { simStep(false); }, SIM_STEP_MS);
+    simStep(true);
+  }
+  // The simulation belongs to settings: every way out returns there (no PIN, it was opened from settings).
+  function exitSim(toSettings) {
+    if (!sim) return;
+    sim = null;
+    if (simTimer) { clearInterval(simTimer); simTimer = null; }
+    stopAlarm(); setNoise(false);
+    document.body.className = '';
+    $('simbar').style.display = 'none';
+    MAIN.key = null; tick();
+    if (toSettings !== false) openSettings(true);
+  }
+  // jump: moved by the user (start or timeline tap). No sound for jumps, only for natural playback.
+  function simStep(jump) {
+    if (!sim) return;
+    var real = Date.now();
+    if (real - sim.began > SIM_MAX_REAL_MS) { exitSim(); return; } // never leave the wall clock on pretend time
+    if (sim.playing && !jump) sim.v += Math.min(real - sim.real, 250) * DAY_MS / (simSpeed * 1000);
+    sim.real = real;
+    var end = sim.t0 + DAY_MS;
+    if (sim.v >= end) { sim.v = end; if (!sim.done) simFinished(); }
+    var now = new Date(sim.v), st = computeState(now, true);
+    if (!jump && st.mode === 'wake' && sim.mode !== 'wake' && !sim.muted) playAlarm(st.tone, 3, true);
+    sim.mode = st.mode;
+    setNoise(S.noise && !sim.muted && st.mode === 'sleep' && !alarmPlaying());
+    paint(MAIN, now, st, Math.min(S.fadeSec * 1000, 500)); // sped-up time: keep fades short
+    $('simNow').textContent = DAYS[now.getDay()] + ' ' + fmt(now) + ' · ' + PHASE_NAMES[st.mode];
+    $('simhead').style.left = ((sim.v - sim.t0) / DAY_MS * 100) + '%';
+    $('simPlay').textContent = sim.playing ? '⏸' : (sim.done ? '↺' : '▶︎');
+  }
+  function simFinished() {
+    var s0 = sim;
+    sim.playing = false; sim.done = true;
+    toast('Simulation finished. Back to settings in a few seconds.');
+    setTimeout(function () { if (sim === s0 && sim.done) exitSim(); }, 5000);
+  }
+  function simColor(mode) {
+    if (mode === 'sleep') return NIGHT_COLORS[S.nightColor];
+    if (mode === 'soon') return '#ffb300';
+    if (mode === 'wake') return '#34c759';
+    return (DAY_COLORS[S.dayColor] || DAY_COLORS.blue).face;
+  }
+  // Coloured phase strip: sample every 5 pretend minutes and merge runs.
+  function drawSimLine() {
+    var h = '', step = 5 * 60000, runStart = 0, runMode = null;
+    for (var t = 0; t <= DAY_MS; t += step) {
+      var m = t < DAY_MS ? computeState(new Date(sim.t0 + t), true).mode : null;
+      if (m !== runMode) {
+        if (runMode) h += '<div class="seg" style="left:' + (runStart / DAY_MS * 100) + '%;width:' + ((t - runStart) / DAY_MS * 100) + '%;background:' + simColor(runMode) + '"></div>';
+        runMode = m; runStart = t;
+      }
+    }
+    $('simsegs').innerHTML = h;
+    var a = new Date(sim.t0), b = new Date(sim.t0 + DAY_MS);
+    $('simFrom').textContent = DAYS[a.getDay()] + ' ' + fmt(a);
+    $('simTo').textContent = DAYS[b.getDay()] + ' ' + fmt(b);
+  }
+  (function buildSimBar() {
+    var h = '';
+    for (var i = 0; i < 7; i++) h += '<option value="' + ORDER[i] + '">' + DAYS[ORDER[i]] + '</option>';
+    $('simDay').innerHTML = h;
+  })();
+  $('simBtn').addEventListener('click', function () {
+    settingsScroll = $('sbody').scrollTop;
+    unlockAudio(); closeSettings(); startSim(new Date().getDay());
+  });
+  $('simDay').addEventListener('change', function (e) { startSim(+e.target.value); });
+  $('simPlay').addEventListener('click', function () {
+    if (!sim) return;
+    if (sim.done) { startSim(sim.day); return; }
+    sim.playing = !sim.playing; sim.real = Date.now(); simStep(true);
+  });
+  $('simMute').addEventListener('click', function () {
+    if (!sim) return;
+    unlockAudio();
+    sim.muted = !sim.muted; $('simMute').textContent = sim.muted ? '🔇' : '🔊';
+    if (sim.muted) stopAlarm();
+    simStep(true);
+  });
+  $('simSpeed').addEventListener('input', function (e) { simSpeed = +e.target.value; $('simSpeedV').textContent = simSpeed + ' s'; });
+  $('simExit').addEventListener('click', function () { exitSim(); });
+  $('simline').addEventListener('click', function (e) {
+    if (!sim) return;
+    var r = $('simline').getBoundingClientRect();
+    var f = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    sim.v = sim.t0 + f * DAY_MS; sim.playing = false; sim.done = false; stopAlarm();
+    simStep(true);
+  });
+
+  buildPinKeys();
+  tick();
+  setInterval(tick, 1000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) { MAIN.key = null; MAIN.lastMode = null; tick(); } });
+
+  // Offline support (iOS 11.3+). Harmless if unsupported.
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    try { navigator.serviceWorker.register('sw.js'); } catch (e) {}
+  }
+
+  // test hook (used only by automated tests)
+  window.__toddlerSleepTrainClock = { S: function () { return S; }, computeState: computeState, setS: function (o) { S = defaults(); merge(S, o); save(); MAIN.key = null; tick(); },
+    sim: function () { return sim; }, firedKey: function () { return firedKey; }, alarmPlaying: alarmPlaying };
+})();
+</script>
+</body>
+</html>
