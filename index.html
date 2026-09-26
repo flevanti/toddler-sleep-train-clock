@@ -213,6 +213,55 @@
     white: { face: '#f2f2f2', bg: '#141414' }
   };
 
+  // ---------- night animations: registry ----------
+  // A scene replaces the night face (choose one); extras draw on top (any number).
+  // opt: { key, label, type: 'choice' | 'toggle', values: [[value, label], ...] (choice only), def }
+  var SCENES = {
+    off: { name: 'Off', opts: [] },
+    classic: { name: 'Z’s & stars', opts: [
+      { key: 'stars', label: 'Stars', type: 'choice', values: [[3, '3'], [6, '6'], [10, '10']], def: 3 },
+      { key: 'zz', label: 'Floating z’s', type: 'toggle', def: true },
+      { key: 'speed', label: 'Speed', type: 'choice', values: [['slow', 'Slow'], ['normal', 'Normal']], def: 'normal' }
+    ] },
+    breathing: { name: 'Breathing', opts: [
+      { key: 'pace', label: 'Pace', type: 'choice', values: [[4, '4 breaths a minute'], [6, '6 breaths a minute'], [8, '8 breaths a minute']], def: 6 },
+      { key: 'depth', label: 'Depth', type: 'choice', values: [['subtle', 'Subtle'], ['medium', 'Medium'], ['deep', 'Deep']], def: 'medium' },
+      { key: 'glow', label: 'Glow on in-breath', type: 'toggle', def: true }
+    ] }
+  };
+  var EXTRAS = {
+  };
+
+  function has(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
+  function optDefaults(opts) { var o = {}; for (var i = 0; i < opts.length; i++) o[opts[i].key] = opts[i].def; return o; }
+  function optValid(opt, v) {
+    if (opt.type === 'toggle') return typeof v === 'boolean';
+    for (var i = 0; i < opt.values.length; i++) if (opt.values[i][0] === v) return true;
+    return false;
+  }
+  function mergeOpts(target, opts, src) {
+    if (!src || typeof src !== 'object') return;
+    for (var i = 0; i < opts.length; i++) if (has(src, opts[i].key) && optValid(opts[i], src[opts[i].key])) target[opts[i].key] = src[opts[i].key];
+  }
+  function nightDefaults() {
+    var n = { scene: 'classic', scenes: {}, extras: {} }, k;
+    for (k in SCENES) n.scenes[k] = optDefaults(SCENES[k].opts);
+    for (k in EXTRAS) { n.extras[k] = optDefaults(EXTRAS[k].opts); n.extras[k].on = false; }
+    return n;
+  }
+  // Checks saved night settings against the registry: unknown names and keys are dropped, invalid values keep the default.
+  function mergeNight(n, o) {
+    if (!o || typeof o !== 'object') return;
+    if (typeof o.scene === 'string' && has(SCENES, o.scene)) n.scene = o.scene;
+    var k, src;
+    for (k in SCENES) mergeOpts(n.scenes[k], SCENES[k].opts, o.scenes && typeof o.scenes === 'object' && has(o.scenes, k) ? o.scenes[k] : null);
+    for (k in EXTRAS) {
+      src = o.extras && typeof o.extras === 'object' && has(o.extras, k) ? o.extras[k] : null;
+      mergeOpts(n.extras[k], EXTRAS[k].opts, src);
+      if (src && typeof src === 'object' && typeof src.on === 'boolean') n.extras[k].on = src.on;
+    }
+  }
+
   function defaults() {
     var days = [];
     for (var i = 0; i < 7; i++) {
@@ -229,6 +278,7 @@
       dayColor: 'blue',
       dayDim: 100,         // % brightness of face/time in the day
       fadeSec: 3,          // crossfade length at each phase change (0 = hard change)
+      night: nightDefaults(), // night scene + extras, see SCENES / EXTRAS
       showTime: true,
       showTimeNight: false,
       h24: true,
@@ -266,6 +316,8 @@
             if (d.tone === 'off' || TONES[d.tone]) s.days[i].tone = d.tone;
           }
         }
+      } else if (k === 'night') {
+        mergeNight(s.night, o.night);
       } else if (typeof o[k] === typeof s[k] || s[k] === null) {
         s[k] = o[k];
       }
@@ -1074,7 +1126,8 @@
 
   // test hook (used only by automated tests)
   window.__toddlerSleepTrainClock = { S: function () { return S; }, computeState: computeState, setS: function (o) { S = defaults(); merge(S, o); save(); MAIN.key = null; tick(); },
-    sim: function () { return sim; }, firedKey: function () { return firedKey; }, alarmPlaying: alarmPlaying };
+    sim: function () { return sim; }, firedKey: function () { return firedKey; }, alarmPlaying: alarmPlaying,
+    night: { SCENES: SCENES, EXTRAS: EXTRAS, defaults: nightDefaults } };
 })();
 </script>
 </body>
