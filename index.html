@@ -23,6 +23,16 @@
   .clk .time { font-size: 11vmin; font-weight: 200; letter-spacing: 0.02em; margin-top: 2vmin; font-variant-numeric: tabular-nums; }
   .clk .label { font-size: 4vmin; font-weight: 300; margin-top: 1vmin; opacity: .8; }
   .snap { pointer-events: none; }
+  .clk .below { width: 60vmin; }
+  .mini .below { width: 150px; }
+  .below svg { width: 100%; height: auto; display: block; }
+  .layer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; overflow: hidden; }
+  .layer svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  .clk.below-on .face { width: 58vmin; height: 58vmin; }
+  .mini.below-on .face { width: 76px; height: 76px; }
+  body.sim .clk.below-on .face { width: 42vmin; height: 42vmin; }
+  .slow .twinkle { -webkit-animation-duration: 7s; animation-duration: 7s; }
+  .slow .zz { -webkit-animation-duration: 8s; animation-duration: 8s; }
   .twinkle { -webkit-animation: tw 4s ease-in-out infinite; animation: tw 4s ease-in-out infinite; }
   @-webkit-keyframes tw { 0%,100% { opacity: .25 } 50% { opacity: 1 } }
   @keyframes tw { 0%,100% { opacity: .25 } 50% { opacity: 1 } }
@@ -102,7 +112,7 @@
   #sbody .wrap { padding-top: 4px; }
   .pv { display: flex; align-items: center; }
   .miniwrap { position: relative; -webkit-flex-shrink: 0; flex-shrink: 0; }
-  .mini { width: 250px; height: 164px; border-radius: 12px; overflow: hidden; border: 1px solid #2a2e37; -webkit-flex-shrink: 0; flex-shrink: 0;
+  .mini { position: relative; width: 250px; height: 164px; border-radius: 12px; overflow: hidden; border: 1px solid #2a2e37; -webkit-flex-shrink: 0; flex-shrink: 0;
     display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; }
   .mini .face { width: 96px; height: 96px; }
   .mini .time { font-size: 22px; font-weight: 200; margin-top: 4px; font-variant-numeric: tabular-nums; }
@@ -134,8 +144,10 @@
 
 <div id="clock" class="clk">
   <div id="face" class="face"></div>
+  <div id="below" class="below"></div>
   <div id="time" class="time"></div>
   <div id="label" class="label"></div>
+  <div id="layer" class="layer"></div>
 </div>
 <div id="hot"></div>
 <svg id="hotring" viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="4"/>
@@ -171,7 +183,7 @@
   <div id="shead"><div class="hwrap">
     <div class="topbar"><h1>Sleep Clock</h1><button class="b ok" id="done">Done</button></div>
     <div class="pv">
-      <div class="miniwrap"><div id="mini" class="mini"><div id="miniFace" class="face"></div><div id="miniTime" class="time"></div><div id="miniLabel" class="label"></div></div></div>
+      <div class="miniwrap"><div id="mini" class="mini"><div id="miniFace" class="face"></div><div id="miniBelow" class="below"></div><div id="miniTime" class="time"></div><div id="miniLabel" class="label"></div><div id="miniLayer" class="layer"></div></div></div>
       <div class="pvside">
         <div id="pvtabs"><button class="b g" data-pv="sleep">Night</button><button class="b g" data-pv="soon">Amber</button><button class="b g" data-pv="wake">Green</button><button class="b g" data-pv="day">Day</button></div>
         <div class="hint" id="pvnote"></div>
@@ -217,13 +229,13 @@
   // A scene replaces the night face (choose one); extras draw on top (any number).
   // opt: { key, label, type: 'choice' | 'toggle', values: [[value, label], ...] (choice only), def }
   var SCENES = {
-    off: { name: 'Off', opts: [] },
-    classic: { name: 'Z’s & stars', opts: [
+    off: { name: 'Off', face: sceneOff, opts: [] },
+    classic: { name: 'Z’s & stars', face: sceneClassic, opts: [
       { key: 'stars', label: 'Stars', type: 'choice', values: [[3, '3'], [6, '6'], [10, '10']], def: 3 },
       { key: 'zz', label: 'Floating z’s', type: 'toggle', def: true },
       { key: 'speed', label: 'Speed', type: 'choice', values: [['slow', 'Slow'], ['normal', 'Normal']], def: 'normal' }
     ] },
-    breathing: { name: 'Breathing', opts: [
+    breathing: { name: 'Breathing', face: sceneBreathing, opts: [
       { key: 'pace', label: 'Pace', type: 'choice', values: [[4, '4 breaths a minute'], [6, '6 breaths a minute'], [8, '8 breaths a minute']], def: 6 },
       { key: 'depth', label: 'Depth', type: 'choice', values: [['subtle', 'Subtle'], ['medium', 'Medium'], ['deep', 'Deep']], def: 'medium' },
       { key: 'glow', label: 'Glow on in-breath', type: 'toggle', def: true }
@@ -355,7 +367,7 @@
     var t = now.getTime();
     var greenMs = S.greenMin * 60000;
     if (S.nap && !ignoreNap) {
-      if (t < S.nap.end) return { mode: 'sleep', nap: true, until: S.nap.end };
+      if (t < S.nap.end) return { mode: 'sleep', nap: true, since: S.nap.start, until: S.nap.end };
       if (t < S.nap.end + Math.min(greenMs, 30 * 60000)) return { mode: 'wake', nap: true, since: S.nap.end };
     }
     var cfg = S.days[now.getDay()];
@@ -364,14 +376,21 @@
     var soonMs = S.soonMin * 60000;
     if (t < W) {
       if (soonMs > 0 && t >= W - soonMs) return { mode: 'soon', until: W };
-      return { mode: 'sleep', until: W };
+      var yd = new Date(t); yd.setDate(yd.getDate() - 1); // this night began at yesterday's bedtime (yesterday's schedule)
+      return { mode: 'sleep', since: at(yd, S.days[yd.getDay()].bed).getTime(), until: W };
     }
     if (t < W + greenMs) return { mode: 'wake', since: W, tone: cfg.tone };
     if (t >= B) {
       var tmr = new Date(now.getTime()); tmr.setDate(tmr.getDate() + 1);
-      return { mode: 'sleep', until: at(tmr, S.days[tmr.getDay()].wake).getTime() };
+      return { mode: 'sleep', since: B, until: at(tmr, S.days[tmr.getDay()].wake).getTime() };
     }
     return { mode: 'day', until: B };
+  }
+
+  // How far through this night (or nap) we are: 0 at bedtime, 1 at wake.
+  function nightFrac(st, now) {
+    if (!st.since || !st.until || st.until <= st.since) return 0;
+    return Math.min(1, Math.max(0, (now.getTime() - st.since) / (st.until - st.since)));
   }
 
   // ---------- face drawing ----------
@@ -383,7 +402,10 @@
     return s;
   }
   // gid: gradient id, unique per face on screen (Safari mixes up duplicate ids)
-  function faceSVG(mode, gid) {
+  var SVG_OPEN = '<svg viewBox="-40 -40 280 280" xmlns="http://www.w3.org/2000/svg">';
+  function faceSVG(mode, gid, sleepExtra) { return SVG_OPEN + faceInner(mode, gid, sleepExtra) + '</svg>'; }
+  // The round face without its <svg> wrapper; sleepExtra = decoration drawn behind the night face (from the scene).
+  function faceInner(mode, gid, sleepExtra) {
     var dark = 'rgba(0,0,0,.72)';
     var c, eyes, mouth, extra = '', cheeks = '';
     if (mode === 'sleep') {
@@ -391,13 +413,7 @@
       eyes = '<path d="M52 92 Q68 106 84 92" fill="none" stroke="' + dark + '" stroke-width="7" stroke-linecap="round"/>' +
              '<path d="M116 92 Q132 106 148 92" fill="none" stroke="' + dark + '" stroke-width="7" stroke-linecap="round"/>';
       mouth = '<ellipse cx="100" cy="138" rx="9" ry="7" fill="' + dark + '"/>';
-      extra = '<g fill="' + c + '">' +
-        '<text class="zz" x="186" y="30" font-size="30" font-family="Helvetica" font-weight="bold">z</text>' +
-        '<text class="zz" style="animation-delay:1.6s;-webkit-animation-delay:1.6s" x="208" y="4" font-size="22" font-family="Helvetica" font-weight="bold">z</text>' +
-        '<circle class="twinkle" cx="-14" cy="20" r="3"/>' +
-        '<circle class="twinkle" style="animation-delay:1.3s;-webkit-animation-delay:1.3s" cx="-26" cy="160" r="2.5"/>' +
-        '<circle class="twinkle" style="animation-delay:2.2s;-webkit-animation-delay:2.2s" cx="224" cy="170" r="3"/>' +
-        '</g>';
+      extra = sleepExtra || '';
     } else if (mode === 'soon') {
       c = '#ffb300';
       eyes = '<path d="M54 94 L82 94" stroke="' + dark + '" stroke-width="7" stroke-linecap="round"/>' +
@@ -415,19 +431,45 @@
       eyes = '<circle cx="68" cy="90" r="9" fill="' + dark + '"/><circle cx="132" cy="90" r="9" fill="' + dark + '"/>';
       mouth = '<path d="M72 128 Q100 150 128 128" fill="none" stroke="' + dark + '" stroke-width="7" stroke-linecap="round"/>';
     }
-    return '<svg viewBox="-40 -40 280 280" xmlns="http://www.w3.org/2000/svg">' + extra +
+    return extra +
       '<circle cx="100" cy="100" r="92" fill="' + c + '"/>' +
       '<circle cx="100" cy="100" r="92" fill="url(#' + gid + ')"/>' +
       '<defs><radialGradient id="' + gid + '" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></radialGradient></defs>' +
-      cheeks + eyes + mouth + '</svg>';
+      cheeks + eyes + mouth;
+  }
+
+  // ---------- night scenes ----------
+  function sceneOff(o, c) { return faceSVG('sleep', c.gid, ''); }
+  // [cx, cy, r, twinkle delay s]; the first three are the original Z's & stars positions
+  var STAR_SPOTS = [[-14, 20, 3, 0], [-26, 160, 2.5, 1.3], [224, 170, 3, 2.2], [232, 70, 2.5, 0.6], [-32, 92, 2, 1.8],
+    [18, -26, 2.5, 2.8], [150, 230, 2, 0.3], [-8, 222, 2.5, 1.1], [64, 234, 2, 2.5], [238, 124, 2, 3.1]];
+  function sceneClassic(o, c) {
+    var h = '<g fill="' + c.color + '"' + (o.speed === 'slow' ? ' class="slow"' : '') + '>', i;
+    if (o.zz) h += '<text class="zz" x="186" y="30" font-size="30" font-family="Helvetica" font-weight="bold">z</text>' +
+      '<text class="zz" style="animation-delay:1.6s;-webkit-animation-delay:1.6s" x="208" y="4" font-size="22" font-family="Helvetica" font-weight="bold">z</text>';
+    for (i = 0; i < o.stars; i++) {
+      var s = STAR_SPOTS[i];
+      h += '<circle class="twinkle"' + (s[3] ? ' style="animation-delay:' + s[3] + 's;-webkit-animation-delay:' + s[3] + 's"' : '') +
+        ' cx="' + s[0] + '" cy="' + s[1] + '" r="' + s[2] + '"/>';
+    }
+    return faceSVG('sleep', c.gid, h + '</g>');
+  }
+  var BREATH_DEPTH = { subtle: 1.02, medium: 1.04, deep: 1.07 };
+  function sceneBreathing(o, c) {
+    var ease = ' calcMode="spline" keyTimes="0;0.5;1" keySplines=".42 0 .58 1;.42 0 .58 1" dur="' + (60 / o.pace) + 's" repeatCount="indefinite"';
+    var halo = !o.glow ? '' :
+      '<defs><radialGradient id="' + c.gid + 'Halo"><stop offset=".6" stop-color="' + c.color + '" stop-opacity=".45"/><stop offset="1" stop-color="' + c.color + '" stop-opacity="0"/></radialGradient></defs>' +
+      '<circle cx="100" cy="100" r="128" fill="url(#' + c.gid + 'Halo)" opacity="0"><animate attributeName="opacity" values="0;1;0"' + ease + '/></circle>';
+    return SVG_OPEN + halo + '<g transform="translate(100 100)"><g><animateTransform attributeName="transform" type="scale" values="1;' + BREATH_DEPTH[o.depth] + ';1"' + ease + '/>' +
+      '<g transform="translate(-100 -100)">' + faceInner('sleep', c.gid, '') + '</g></g></g></svg>';
   }
 
   // ---------- rendering ----------
   var $ = function (id) { return document.getElementById(id); };
   var elClock = $('clock');
   // A paint target is one copy of the clock: the real one, or the mini preview in settings.
-  var MAIN = { clock: elClock, face: $('face'), time: $('time'), label: $('label'), gid: 'shMain', bigTime: '26vmin', key: null };
-  var MINI = { clock: $('mini'), face: $('miniFace'), time: $('miniTime'), label: $('miniLabel'), gid: 'shMini', bigTime: '56px', key: null, overlay: true };
+  var MAIN = { clock: elClock, face: $('face'), below: $('below'), time: $('time'), label: $('label'), layer: $('layer'), gid: 'shMain', bigTime: '26vmin', keys: {} };
+  var MINI = { clock: $('mini'), face: $('miniFace'), below: $('miniBelow'), time: $('miniTime'), label: $('miniLabel'), layer: $('miniLayer'), gid: 'shMini', bigTime: '56px', keys: {}, overlay: true };
 
   function render(now, st) { paint(MAIN, now, st, S.fadeSec * 1000); updateBadge(st.mode); }
 
@@ -437,10 +479,17 @@
     if (t.snap && t.snap.parentNode) t.snap.parentNode.removeChild(t.snap);
     var c = t.clock.cloneNode(true);
     c.removeAttribute('id');
-    var ids = c.querySelectorAll('[id]');
-    for (var i = 0; i < ids.length; i++) ids[i].removeAttribute('id');
-    var grad = c.querySelector('radialGradient'), shade = c.querySelector('circle[fill^="url"]');
-    if (grad && shade) { var gid = t.gid + 'Snap' + (++snapN); grad.setAttribute('id', gid); shade.setAttribute('fill', 'url(#' + gid + ')'); }
+    // Gradients keep working under new unique ids; every other id is dropped.
+    var ids = c.querySelectorAll('[id]'), map = {}, i, n = ++snapN;
+    for (i = 0; i < ids.length; i++) {
+      if (/Gradient$/.test(ids[i].tagName)) { map[ids[i].id] = ids[i].id + 'Snap' + n; ids[i].setAttribute('id', map[ids[i].id]); }
+      else ids[i].removeAttribute('id');
+    }
+    var refs = c.querySelectorAll('[fill^="url"]');
+    for (i = 0; i < refs.length; i++) {
+      var m = /^url\(#(.+)\)$/.exec(refs[i].getAttribute('fill'));
+      if (m && map[m[1]]) refs[i].setAttribute('fill', 'url(#' + map[m[1]] + ')');
+    }
     c.className += ' snap';
     if (t.overlay) { c.style.position = 'absolute'; c.style.top = '0'; c.style.left = '0'; }
     t.clock.parentNode.insertBefore(c, t.clock.nextSibling);
@@ -468,11 +517,12 @@
       if (S.dayMode === 'clock') { showFace = false; timeColor = dc.face; }
       if (S.dayMode === 'dark') { showFace = false; showTime = false; bg = '#000'; }
     }
-    var faceKey = mode + '|' + S.nightColor + '|' + S.dayColor;
-    if (faceKey !== t.key) { t.face.innerHTML = faceSVG(mode, t.gid); t.key = faceKey; }
+    drawParts(t, st, now);
     t.clock.style.backgroundColor = bg;
     t.face.style.display = showFace ? '' : 'none';
     t.face.style.opacity = faceOp;
+    t.below.style.opacity = faceOp;
+    t.layer.style.opacity = faceOp;
     t.time.style.display = showTime ? '' : 'none';
     t.time.style.opacity = timeOp;
     t.time.style.color = timeColor;
@@ -486,6 +536,40 @@
     t.label.textContent = lbl;
     t.label.style.opacity = night ? faceOp * 0.7 : 0.8 * (mode === 'day' ? faceOp : 1);
     t.label.style.color = night ? timeColor : '#fff';
+  }
+
+  // Night scene + extras. Each area (face, below, layer) is redrawn only when its key changes,
+  // so nothing is rebuilt every tick: keys change when a setting changes, a star goes out, the hour turns or the screen is resized.
+  function nightCtx(t, st, now) {
+    return { color: NIGHT_COLORS[S.nightColor], gid: t.gid, frac: nightFrac(st, now), now: now.getTime(), since: st.since, until: st.until,
+      scale: st.scale || 1, w: t.layer.clientWidth || 1024, h: t.layer.clientHeight || 768 };
+  }
+  function extrasMarkup(place, c) {
+    var h = '', k;
+    for (k in EXTRAS) if (EXTRAS[k].place === place && S.night.extras[k].on) h += EXTRAS[k].draw(S.night.extras[k], c);
+    return h;
+  }
+  function drawParts(t, st, now) {
+    var mode = st.mode, keys = { face: mode + '|' + S.nightColor + '|' + S.dayColor, below: '', layer: '' };
+    var n = S.night, sc = SCENES[n.scene], so = n.scenes[n.scene], c = null, k;
+    if (mode === 'sleep') {
+      c = nightCtx(t, st, now);
+      keys.face += '|' + n.scene + JSON.stringify(so);
+      if (sc.layer) keys.layer = n.scene + JSON.stringify(so) + (sc.layerKey ? sc.layerKey(so, c) : '');
+      for (k in EXTRAS) {
+        if (!n.extras[k].on) continue;
+        keys[EXTRAS[k].place] += '|' + k + JSON.stringify(n.extras[k]) + (EXTRAS[k].key ? EXTRAS[k].key(n.extras[k], c) : '');
+      }
+      if (keys.below) keys.below += '|' + S.nightColor;
+      if (keys.layer) keys.layer += '|' + S.nightColor + '|' + c.w + 'x' + c.h;
+    }
+    if (keys.face !== t.keys.face) t.face.innerHTML = c ? sc.face(so, c) : faceSVG(mode, t.gid);
+    if (keys.below !== t.keys.below) {
+      t.below.innerHTML = keys.below ? extrasMarkup('below', c) : '';
+      t.clock.className = t.clock.className.replace(/ below-on/g, '') + (keys.below ? ' below-on' : '');
+    }
+    if (keys.layer !== t.keys.layer) t.layer.innerHTML = keys.layer ? (sc.layer ? sc.layer(so, c) : '') + extrasMarkup('layer', c) : '';
+    t.keys = keys;
   }
 
   // ---------- audio (Web Audio; webkit prefix on iOS 12) ----------
@@ -757,11 +841,13 @@
   // keepScroll: coming back from the day simulation, so return to where the parent was.
   function openSettings(keepScroll) {
     if (sim) exitSim(false);
-    settingsOpen = true; stopAlarm(); unlockAudio(); renderSettings();
-    pvMode = curState ? curState.mode : 'day'; MINI.key = null; MINI.lastMode = null; updatePreview();
-    $('settings').className = 'overlay show'; $('sbody').scrollTop = keepScroll ? settingsScroll : 0;
+    settingsOpen = true; stopAlarm(); unlockAudio();
+    $('settings').className = 'overlay show'; // visible first: the preview measures its layer size
+    renderSettings();
+    pvMode = curState ? curState.mode : 'day'; MINI.keys = {}; MINI.lastMode = null; updatePreview();
+    $('sbody').scrollTop = keepScroll ? settingsScroll : 0;
   }
-  function closeSettings() { settingsOpen = false; $('settings').className = 'overlay'; save(); MAIN.key = null; tick(); }
+  function closeSettings() { settingsOpen = false; $('settings').className = 'overlay'; save(); MAIN.keys = {}; tick(); }
 
   function sw(id, on) { return '<label class="sw"><input type="checkbox" id="' + id + '"' + (on ? ' checked' : '') + '><span></span></label>'; }
   function opts(map, sel, extra) {
@@ -902,11 +988,11 @@
     var sws = w.querySelectorAll('[data-sw]');
     for (i = 0; i < sws.length; i++) sws[i].addEventListener('click', function (e) {
       var b = e.target, key = b.getAttribute('data-sw');
-      S[key] = b.getAttribute('data-c'); save(); MAIN.key = null;
+      S[key] = b.getAttribute('data-c'); save(); MAIN.keys = {};
       var sib = w.querySelectorAll('[data-sw="' + key + '"]');
       for (var j = 0; j < sib.length; j++) sib[j].className = 'swc' + (sib[j] === b ? ' on' : '');
     });
-    ['napSound', 'dayMode'].forEach(function (id) { on(id, 'change', function (e) { S[id] = e.target.value; save(); MAIN.key = null; }); });
+    ['napSound', 'dayMode'].forEach(function (id) { on(id, 'change', function (e) { S[id] = e.target.value; save(); MAIN.keys = {}; }); });
     ['fadeIn', 'noise', 'showTime', 'showTimeNight', 'h24', 'showLabel'].forEach(function (id) { on(id, 'change', function (e) { S[id] = e.target.checked; save(); }); });
     ['volume', 'noiseVol', 'nightDim', 'dayDim'].forEach(function (id) {
       on(id, 'input', function (e) { S[id] = +e.target.value; $(id + 'V').textContent = S[id] + '%'; if (id === 'noiseVol' && noiseGain) setNoise(true); });
@@ -1034,7 +1120,7 @@
     stopAlarm(); setNoise(false);
     document.body.className = '';
     $('simbar').style.display = 'none';
-    MAIN.key = null; tick();
+    MAIN.keys = {}; tick();
     if (toSettings !== false) openSettings(true);
   }
   // jump: moved by the user (start or timeline tap). No sound for jumps, only for natural playback.
@@ -1117,7 +1203,7 @@
   buildPinKeys();
   tick();
   setInterval(tick, 1000);
-  document.addEventListener('visibilitychange', function () { if (!document.hidden) { MAIN.key = null; MAIN.lastMode = null; tick(); } });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) { MAIN.keys = {}; MAIN.lastMode = null; tick(); } });
 
   // Offline support (iOS 11.3+). Harmless if unsupported.
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
@@ -1125,9 +1211,10 @@
   }
 
   // test hook (used only by automated tests)
-  window.__toddlerSleepTrainClock = { S: function () { return S; }, computeState: computeState, setS: function (o) { S = defaults(); merge(S, o); save(); MAIN.key = null; tick(); },
+  window.__toddlerSleepTrainClock = { S: function () { return S; }, computeState: computeState, setS: function (o) { S = defaults(); merge(S, o); save(); MAIN.keys = {}; tick(); },
     sim: function () { return sim; }, firedKey: function () { return firedKey; }, alarmPlaying: alarmPlaying,
-    night: { SCENES: SCENES, EXTRAS: EXTRAS, defaults: nightDefaults } };
+    night: { SCENES: SCENES, EXTRAS: EXTRAS, defaults: nightDefaults },
+    nightFrac: nightFrac, repaint: function () { MAIN.keys = {}; MAIN.lastMode = null; tick(); } };
 })();
 </script>
 </body>
