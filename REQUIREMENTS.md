@@ -121,7 +121,11 @@ The code already exists: `index.html` (everything, including the icon) and `sw.j
 
 ### Night animations (v1.4)
 - Only during the night (sleep) phase, including naps. The design is in `docs/superpowers/specs/2026-09-26-night-animations-design.md`.
-- **Scene** (choose one): Off, Z's & stars (default, same look as before), Breathing. Each scene keeps its own settings.
+- **Scene** (choose one): Off, Z's & stars (default, same look as before), Breathing, Moon & sky. Each scene keeps its own settings.
+- **Extras** (any number, all off by default):
+  - **Star countdown:** stars go out one by one from bedtime (or nap start) to wake. Gone stars stay as faint outlines. In the simulation it follows the pretend clock.
+  - **Fireflies:** seeded per night; redrawn when the screen size changes.
+  - **Shooting star:** every 2/5/10 min ±30 %, optionally only in the first hour after bedtime. The schedule is fixed per night, so redraws don't reschedule it.
 - The controls are built from the `SCENES` / `EXTRAS` registry in `index.html`. Saved values are checked against it, and unknown or invalid ones fall back to the defaults.
 - Each paint target has three areas: face, `.below` and `.layer`. Each is redrawn only when its key changes, never on every tick.
 - `computeState()` sleep states carry `since`: tonight's bedtime, yesterday's bedtime from yesterday's schedule, or the nap start. `nightFrac()` goes from 0 at bedtime to 1 at wake.

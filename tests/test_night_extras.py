@@ -97,6 +97,85 @@ with sync_playwright() as pw:
               bool(after_bed) and all(a >= b for a, b in zip(after_bed, after_bed[1:])) and after_bed[-1] <= 2, after_bed[:3] + ['…'] + after_bed[-3:])
         p.clock.run_for(6000)  # simulation ends and returns to settings
         p.click('#done')
+
+    # ---- fireflies ----
+    p.set_viewport_size({'width': 1024, 'height': 768})
+    p.evaluate("() => %s.setS({fadeSec: 0, night: {extras: {fireflies: {on: true}}}})" % H)
+    at(p, 2026, 9, 26, 22, 0, 0)
+    ff = p.evaluate("""() => [].map.call(document.querySelectorAll('#layer circle'), function (c) {
+        var m = c.querySelector('animateMotion'); return { fill: c.getAttribute('fill'), dur: m && parseFloat(m.getAttribute('dur')), path: m && m.getAttribute('path') }; })""")
+    check('fireflies default: 5, night colour, very slow',
+          len(ff) == 5 and all(f['fill'] == '#ff3b1f' and 40 <= f['dur'] <= 70 for f in ff), ff[:1])
+
+    def path_max(fl):
+        nums = [float(v) for f in fl for v in f['path'].replace('M', ' ').replace('Q', ' ').split()]
+        return max(nums[0::2]), max(nums[1::2])
+
+    mx, my = path_max(ff)
+    check('firefly paths inside the screen', mx <= 1024 and my <= 768, (mx, my))
+    p.evaluate("() => { window.__l = document.querySelector('#layer svg'); }")
+    p.clock.run_for(5000)
+    check('fireflies: no redraw between ticks', p.evaluate("() => window.__l === document.querySelector('#layer svg')"))
+    p.evaluate("() => %s.repaint()" % H)
+    p.clock.run_for(200)
+    same = p.evaluate("() => [].map.call(document.querySelectorAll('#layer animateMotion'), function (m) { return m.getAttribute('path'); })")
+    check('fireflies: same paths after a redraw', same == [f['path'] for f in ff])
+    p.set_viewport_size({'width': 768, 'height': 1024})
+    p.clock.run_for(1100)
+    ff2 = p.evaluate("() => [].map.call(document.querySelectorAll('#layer circle'), function (c) { return { path: c.querySelector('animateMotion').getAttribute('path') }; })")
+    mx, my = path_max(ff2)
+    check('rotated: fireflies redrawn for the new size', mx <= 768 and my <= 1024 and ff2 != [{'path': f['path']} for f in ff], (mx, my))
+    p.evaluate("() => %s.setS({fadeSec: 0, nightDim: 20, night: {extras: {fireflies: {on: true, count: 8, speed: 'slow', color: 'warm'}}}})" % H)
+    p.clock.run_for(1100)
+    ff = p.evaluate("() => [].map.call(document.querySelectorAll('#layer circle'), function (c) { return [c.getAttribute('fill'), parseFloat(c.querySelector('animateMotion').getAttribute('dur'))]; })")
+    check('fireflies 8, warm, slow', len(ff) == 8 and all(f[0] == '#ffd27a' and 20 <= f[1] <= 35 for f in ff), ff[:1])
+    check('fireflies dimmed with the night', p.evaluate("() => document.getElementById('layer').style.opacity") == '0.2')
+    p.screenshot(path=os.path.join(SHOTS, 'fireflies_768x1024.png'))
+
+    # ---- shooting stars ----
+    def ms(*a):
+        return int(datetime.datetime(*a).timestamp() * 1000)
+
+    since = ms(2026, 9, 26, 19, 0)
+
+    def times(o, frm, to):
+        return p.evaluate("([o, s, f, t]) => %s.night.shootingTimes(o, s, f, t)" % H, [o, since, frm, to])
+
+    t1 = times({'every': 5, 'firstHour': True}, since, since + 6 * 3600000)
+    gaps = [b_ - a_ for a_, b_ in zip([since] + t1, t1)]
+    check('first hour only: 10–13 times, all within the hour', 10 <= len(t1) <= 13 and all(since < t <= since + 3600000 for t in t1), len(t1))
+    check('spacing 5 min ± 30 % (gaps 2–8 min)', all(0.4 * 300000 <= g <= 1.6 * 300000 for g in gaps[1:]), [round(g / 60000, 1) for g in gaps])
+    check('same inputs, same times', t1 == times({'every': 5, 'firstHour': True}, since, since + 6 * 3600000))
+    t2 = times({'every': 10, 'firstHour': False}, since, since + 6 * 3600000)
+    check('all night when not first hour only', max(t2) > since + 5 * 3600000 and 30 <= len(t2) <= 37, len(t2))
+    check('window respected', all(since + 3600000 <= t < since + 7200000 for t in times({'every': 2, 'firstHour': False}, since + 3600000, since + 7200000)))
+
+    p.evaluate("() => %s.setS({fadeSec: 0, night: {extras: {shooting: {on: true, every: 2}}}})" % H)
+    at(p, 2026, 9, 26, 19, 10, 0)
+    now = ms(2026, 9, 26, 19, 10, 1)
+    shots = p.evaluate("() => [].map.call(document.querySelectorAll('#layer [data-shoot]'), function (g) { return [+g.getAttribute('data-shoot'), parseFloat(g.querySelector('animate').getAttribute('begin'))]; })")
+    expect = times({'every': 2, 'firstHour': True}, now - 1000, since + 3600000 + 60000)
+    check('drawn shooting stars = scheduled ones this hour', [s[0] for s in shots] == expect, (len(shots), len(expect)))
+    check('each starts at its time', all(abs(s[1] - (s[0] - now) / 1000) < 2 for s in shots))
+    p.evaluate("() => { window.__l = document.querySelector('#layer svg'); }")
+    p.clock.run_for(60000)
+    check('shooting: no redraw within the hour', p.evaluate("() => window.__l === document.querySelector('#layer svg')"))
+    at(p, 2026, 9, 26, 21, 0, 0)
+    check('none after the first hour', p.evaluate("() => document.querySelectorAll('#layer [data-shoot]').length") == 0)
+    check('no duplicate ids with all extras', p.evaluate(DUP_IDS) == [], p.evaluate(DUP_IDS))
+
+    # simulation: begin times use the sped-up clock
+    p.evaluate("() => %s.setS({fadeSec: 0, night: {extras: {shooting: {on: true, every: 2, firstHour: false}}}})" % H)
+    open_settings(p, (768, 1024))
+    p.click('#simBtn')
+    begins = []
+    for _ in range(300):
+        p.clock.run_for(100)
+        begins += p.evaluate("() => [].map.call(document.querySelectorAll('#layer [data-shoot] animate'), function (a) { return parseFloat(a.getAttribute('begin')); })")
+    check('sim: shooting stars scheduled in sped-up time', bool(begins) and max(begins) < 3, max(begins) if begins else None)
+    p.click('#simExit')
+    p.click('#done')
+
     check('no page errors', not errs, errs)
     b.close()
 srv.shutdown()

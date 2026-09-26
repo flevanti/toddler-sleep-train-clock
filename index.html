@@ -254,6 +254,15 @@
       { key: 'count', label: 'Number of stars', type: 'choice', values: [[5, '5'], [8, '8'], [10, '10'], [12, '12']], def: 8 },
       { key: 'layout', label: 'Layout', type: 'choice', values: [['arc', 'Arc'], ['row', 'Row']], def: 'arc' },
       { key: 'out', label: 'How a star goes out', type: 'choice', values: [['fade', 'Fade'], ['pop', 'Pop']], def: 'fade' }
+    ] },
+    fireflies: { name: 'Fireflies', place: 'layer', draw: drawFireflies, opts: [
+      { key: 'count', label: 'How many', type: 'choice', values: [[3, '3'], [5, '5'], [8, '8']], def: 5 },
+      { key: 'speed', label: 'Speed', type: 'choice', values: [['vslow', 'Very slow'], ['slow', 'Slow']], def: 'vslow' },
+      { key: 'color', label: 'Colour', type: 'choice', values: [['night', 'Match night colour'], ['warm', 'Warm yellow']], def: 'night' }
+    ] },
+    shooting: { name: 'Shooting star', place: 'layer', draw: drawShooting, key: function (o, c) { return Math.floor((c.now - c.since) / 3600000); }, opts: [
+      { key: 'every', label: 'How often', type: 'choice', values: [[2, 'Every 2 minutes'], [5, 'Every 5 minutes'], [10, 'Every 10 minutes']], def: 5 },
+      { key: 'firstHour', label: 'Only in the first hour after bedtime', type: 'toggle', def: true }
     ] }
   };
 
@@ -535,6 +544,52 @@
         : '<path data-star="going" d="' + d + '" fill="' + c.color + '" opacity="0"><animate attributeName="opacity" values="1;0" dur="3s" fill="freeze"/></path>';
     }
     return '<svg viewBox="0 0 300 64" xmlns="http://www.w3.org/2000/svg">' + h + '</svg>';
+  }
+
+  var FIREFLY_DUR = { vslow: [40, 70], slow: [20, 35] };
+  // A smooth closed loop through 4 random points (quadratic curves between midpoints), in pixels.
+  function loopPath(r, w, h) {
+    var p = [], d, i;
+    for (i = 0; i < 4; i++) p.push([r() * w, r() * h]);
+    function mid(a, b) { return ((a[0] + b[0]) / 2).toFixed(0) + ' ' + ((a[1] + b[1]) / 2).toFixed(0); }
+    d = 'M' + mid(p[0], p[1]);
+    for (i = 1; i <= 4; i++) d += ' Q' + p[i % 4][0].toFixed(0) + ' ' + p[i % 4][1].toFixed(0) + ' ' + mid(p[i % 4], p[(i + 1) % 4]);
+    return d;
+  }
+  // Seeded per night, so a redraw (e.g. a setting change) keeps the same paths; the layer key includes the size, so turning the iPad redraws them.
+  function drawFireflies(o, c) {
+    var r = rng(Math.floor(c.since / 60000) + o.count), col = o.color === 'warm' ? '#ffd27a' : c.color, sp = FIREFLY_DUR[o.speed], h = '', i;
+    for (i = 0; i < o.count; i++) {
+      var dur = (sp[0] + r() * (sp[1] - sp[0])).toFixed(0);
+      h += '<circle r="3" fill="' + col + '" opacity=".6"><animate attributeName="opacity" values=".15;.9;.3;.8;.15" dur="' + (5 + r() * 4).toFixed(1) + 's" repeatCount="indefinite"/>' +
+        '<animateMotion dur="' + dur + 's" repeatCount="indefinite" path="' + loopPath(r, c.w, c.h) + '"/></circle>';
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg">' + h + '</svg>';
+  }
+  // Shooting star times (ms) in [from, to): every `every` minutes after `since`, each moved by up to ±30 %.
+  // The same night always gives the same times, so redraws don't reschedule them.
+  function shootingTimes(o, since, from, to) {
+    var step = o.every * 60000, last = o.firstHour ? since + 3600000 : Infinity, out = [], k, t;
+    for (k = Math.max(1, Math.floor((from - since) / step)); ; k++) {
+      t = since + (k + (rng(Math.floor(since / 60000) * 131 + k)() - 0.5) * 0.6) * step;
+      if (t >= to || t > last) break;
+      if (t >= from) out.push(t);
+    }
+    return out;
+  }
+  // Draws this hour's shooting stars with SMIL begin offsets; the layer key changes each hour, so the next hour is drawn then.
+  // c.scale is real ms per pretend ms (1 normally, much smaller in the day simulation).
+  function drawShooting(o, c) {
+    var hourEnd = c.since + (Math.floor((c.now - c.since) / 3600000) + 1) * 3600000;
+    var times = shootingTimes(o, c.since, c.now, Math.min(hourEnd + 60000, c.until || hourEnd)), h = '', i;
+    for (i = 0; i < times.length; i++) {
+      var r = rng(Math.floor(times[i] / 1000)), x = c.w * (0.1 + r() * 0.5), y = c.h * (0.05 + r() * 0.25);
+      var begin = ((times[i] - c.now) * c.scale / 1000).toFixed(2) + 's';
+      h += '<g data-shoot="' + times[i] + '" opacity="0"><animate attributeName="opacity" values="0;1;1;0" dur="1.5s" begin="' + begin + '"/>' +
+        '<animateTransform attributeName="transform" type="translate" from="0 0" to="' + (c.w / 3).toFixed(0) + ' ' + (c.h / 6).toFixed(0) + '" dur="1.5s" begin="' + begin + '"/>' +
+        '<line x1="' + x.toFixed(0) + '" y1="' + y.toFixed(0) + '" x2="' + (x - 46).toFixed(0) + '" y2="' + (y - 23).toFixed(0) + '" stroke="' + c.color + '" stroke-width="2" stroke-linecap="round"/></g>';
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg">' + h + '</svg>';
   }
 
   // ---------- rendering ----------
@@ -1249,6 +1304,7 @@
     var end = sim.t0 + DAY_MS;
     if (sim.v >= end) { sim.v = end; if (!sim.done) simFinished(); }
     var now = new Date(sim.v), st = computeState(now, true);
+    st.scale = simSpeed * 1000 / DAY_MS; // real ms per pretend ms, for timed night extras
     if (!jump && st.mode === 'wake' && sim.mode !== 'wake' && !sim.muted) playAlarm(st.tone, 3, true);
     sim.mode = st.mode;
     setNoise(S.noise && !sim.muted && st.mode === 'sleep' && !alarmPlaying());
@@ -1329,7 +1385,7 @@
   // test hook (used only by automated tests)
   window.__toddlerSleepTrainClock = { S: function () { return S; }, computeState: computeState, setS: function (o) { S = defaults(); merge(S, o); save(); MAIN.keys = {}; tick(); },
     sim: function () { return sim; }, firedKey: function () { return firedKey; }, alarmPlaying: alarmPlaying,
-    night: { SCENES: SCENES, EXTRAS: EXTRAS, defaults: nightDefaults, countdownLit: countdownLit },
+    night: { SCENES: SCENES, EXTRAS: EXTRAS, defaults: nightDefaults, countdownLit: countdownLit, shootingTimes: shootingTimes },
     nightFrac: nightFrac, repaint: function () { MAIN.keys = {}; MAIN.lastMode = null; tick(); } };
 })();
 </script>
