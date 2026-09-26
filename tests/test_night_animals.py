@@ -8,7 +8,7 @@ from playwright.sync_api import sync_playwright
 from harness import Checks, H, VIEWPORTS, open_settings, serve
 
 ROOT, SHOTS = sys.argv[1], sys.argv[2]
-EXPECTED = ['bunny', 'bear', 'cat', 'owl']
+EXPECTED = ['bunny', 'bear', 'cat', 'owl', 'dog', 'turtle', 'hedgehog', 'chicken', 'pig', 'horse', 'cow', 'robin', 'blackbird', 'lion']
 check = Checks()
 srv, URL = serve(ROOT)
 STRAY = "() => [].filter.call(document.querySelectorAll('#face [id]'), function (e) { return !(e.id.indexOf('shMain') === 0 && /Gradient$/.test(e.tagName)); }).length"

@@ -237,6 +237,20 @@
   function kitEyes(x, y) { // two closed eyes centred on x,y
     return '<path d="M' + (x - 22) + ' ' + y + ' q8 8 16 0 M' + (x + 6) + ' ' + y + ' q8 8 16 0" fill="none" stroke="' + DK + '" stroke-width="5" stroke-linecap="round"/>';
   }
+  // Robin and blackbird: a round bird asleep on a branch. breast = colour or null; darkBody shades the whole bird.
+  function birdParts(c, mv, breast, beak, legs, tail, darkBody) {
+    return {
+      back: '<path d="M-20 212 L230 212" stroke="' + DK + '" stroke-width="8" stroke-linecap="round"/>' +
+        mv(160, 170, 8, '<path d="M160 160 L' + (170 + tail) + ' ' + (190 - tail / 3) + ' L' + (164 + tail) + ' ' + (206 - tail / 4) + ' Z" fill="' + c + '"/>'),
+      body: '<ellipse cx="110" cy="146" rx="64" ry="54" fill="' + c + '"/>' + mv(118, 140, 5, '<path d="M92 134 Q140 112 172 154 Q128 176 92 134 Z" fill="' + DK + '" opacity=".25"/>'),
+      head: '<circle cx="78" cy="104" r="36" fill="' + c + '"/>' +
+        (darkBody ? '<ellipse cx="110" cy="146" rx="64" ry="54" fill="' + DK + '" opacity=".55"/><circle cx="78" cy="104" r="36" fill="' + DK + '" opacity=".55"/>' : '') +
+        (breast ? '<ellipse cx="72" cy="146" rx="30" ry="34" fill="' + breast + '"/>' : '') +
+        '<path d="M50 96 q7 6 14 0" fill="none" stroke="' + (darkBody ? '#ffc400' : DK) + '" stroke-width="4" stroke-linecap="round"/>' +
+        '<path d="M42 104 L24 110 L42 114 Z" fill="' + beak + '"/>' +
+        '<path d="M96 198 l0 14 M116 198 l0 14" stroke="' + legs + '" stroke-width="4" stroke-linecap="round"/>'
+    };
+  }
   var ANIMALS = {
     bunny: { name: 'Bunny', draw: function (c, mv) { return {
       back: '<ellipse cx="38" cy="78" rx="13" ry="42" fill="' + c + '" transform="rotate(-18 38 78)"/>' +
@@ -265,7 +279,66 @@
         '<circle cx="80" cy="84" r="17" fill="' + LT + '"/><circle cx="120" cy="84" r="17" fill="' + LT + '"/>' + kitEyes(100, 84) +
         '<path d="M94 98 L106 98 L100 110 Z" fill="#e0a13a"/>' +
         '<path d="M82 212 l0 6 M92 212 l0 6 M108 212 l0 6 M118 212 l0 6" stroke="#e0a13a" stroke-width="4" stroke-linecap="round"/>'
-    }; } }
+    }; } },
+    dog: { name: 'Dog', draw: function (c, mv) { return {
+      body: kitBody(c) + '<ellipse cx="140" cy="146" rx="26" ry="16" fill="' + DK + '" opacity=".25"/><path d="M198 150 Q222 136 214 118" fill="none" stroke="' + c + '" stroke-width="12" stroke-linecap="round"/>',
+      head: kitHead(c, 58, 140, 42) + kitEyes(58, 132) + '<ellipse cx="58" cy="160" rx="18" ry="13" fill="' + LT + '"/><ellipse cx="58" cy="154" rx="7" ry="5" fill="' + DK + '"/>',
+      front: mv(22, 112, 10, '<ellipse cx="18" cy="140" rx="12" ry="30" fill="' + c + '"/><ellipse cx="18" cy="140" rx="12" ry="30" fill="' + DK + '" opacity=".3"/>') +
+        '<ellipse cx="98" cy="140" rx="12" ry="30" fill="' + c + '"/><ellipse cx="98" cy="140" rx="12" ry="30" fill="' + DK + '" opacity=".3"/>'
+    }; } },
+    turtle: { name: 'Turtle', draw: function (c, mv) { return {
+      back: '<ellipse cx="72" cy="206" rx="14" ry="8" fill="' + c + '"/><ellipse cx="160" cy="206" rx="14" ry="8" fill="' + c + '"/>',
+      body: '<path d="M40 196 Q46 96 120 96 Q194 96 200 196 Z" fill="' + c + '"/><path d="M40 196 Q46 96 120 96 Q194 96 200 196 Z" fill="' + DK + '" opacity=".2"/>' +
+        '<path d="M84 196 L96 140 L144 140 L156 196 M96 140 L120 104 L144 140 M62 170 L96 140 M178 170 L144 140" fill="none" stroke="' + DK + '" stroke-width="4" opacity=".5"/>',
+      head: mv(40, 186, -8, '<circle cx="14" cy="178" r="24" fill="' + c + '"/><path d="M2 176 q7 6 14 0" fill="none" stroke="' + DK + '" stroke-width="4" stroke-linecap="round"/>')
+    }; } },
+    hedgehog: { name: 'Hedgehog', draw: function (c, mv) {
+      var spikes = '', i;
+      for (i = 0; i < 9; i++) spikes += 'M' + (60 + i * 18) + ' ' + (130 - Math.round(Math.sin(i / 8 * Math.PI) * 20)) + ' l10 -24 l10 24 ';
+      return {
+        body: kitBody(c) + '<path d="' + spikes + '" fill="' + c + '"/><path d="' + spikes + '" fill="' + DK + '" opacity=".35"/><ellipse cx="130" cy="150" rx="80" ry="30" fill="' + DK + '" opacity=".25"/>',
+        head: '<ellipse cx="46" cy="160" rx="40" ry="28" fill="' + c + '"/>' + kitEyes(50, 152) + mv(8, 162, 8, '<circle cx="8" cy="162" r="6" fill="' + DK + '"/>')
+      };
+    } },
+    chicken: { name: 'Chicken', draw: function (c, mv) { return {
+      back: '<path d="M170 150 Q206 96 226 118 Q214 132 222 150 Q206 148 196 166 Z" fill="' + c + '"/><path d="M-20 214 L230 214" stroke="' + DK + '" stroke-width="8" stroke-linecap="round"/>',
+      body: '<ellipse cx="120" cy="160" rx="84" ry="52" fill="' + c + '"/>' + mv(120, 150, 6, '<path d="M92 150 Q130 120 176 156 Q134 190 92 150 Z" fill="' + DK + '" opacity=".25"/>'),
+      head: '<circle cx="50" cy="110" r="10" fill="#ff5a4a"/><circle cx="64" cy="104" r="11" fill="#ff5a4a"/><circle cx="78" cy="110" r="9" fill="#ff5a4a"/>' +
+        kitHead(c, 62, 138, 38) + kitEyes(62, 134) + '<path d="M26 142 L40 136 L40 150 Z" fill="#f2b23a"/><ellipse cx="42" cy="160" rx="6" ry="9" fill="#ff5a4a"/>'
+    }; } },
+    pig: { name: 'Pig', draw: function (c, mv) { return {
+      body: kitBody(c) + '<path d="M200 150 q14 -6 10 -16 q-4 -10 -12 -2 q-6 8 6 10" fill="none" stroke="' + c + '" stroke-width="5" stroke-linecap="round"/>',
+      head: mv(30, 110, -10, '<path d="M20 124 L26 92 L48 108 Z" fill="' + c + '"/>') + '<path d="M68 108 L90 92 L96 124 Z" fill="' + c + '"/>' +
+        kitHead(c, 58, 140, 42) + kitEyes(58, 130) + '<ellipse cx="58" cy="158" rx="17" ry="12" fill="' + LT + '"/>' +
+        '<ellipse cx="52" cy="158" rx="3" ry="4.5" fill="' + DK + '"/><ellipse cx="64" cy="158" rx="3" ry="4.5" fill="' + DK + '"/>'
+    }; } },
+    horse: { name: 'Horse', draw: function (c, mv) { return {
+      back: mv(200, 150, 12, '<path d="M200 150 Q236 170 222 212" fill="none" stroke="' + c + '" stroke-width="14" stroke-linecap="round"/><path d="M200 150 Q236 170 222 212" fill="none" stroke="' + DK + '" stroke-width="14" stroke-linecap="round" opacity=".35"/>'),
+      body: kitBody(c),
+      head: '<path d="M70 150 Q60 96 96 84 L112 124 Z" fill="' + c + '"/><path d="M60 84 L64 62 L76 80 Z" fill="' + c + '"/>' +
+        '<ellipse cx="46" cy="126" rx="26" ry="44" fill="' + c + '" transform="rotate(38 46 126)"/>' +
+        '<path d="M70 86 Q96 80 110 120" fill="none" stroke="' + DK + '" stroke-width="12" stroke-linecap="round" opacity=".45"/>' +
+        '<path d="M44 106 q7 6 14 0" fill="none" stroke="' + DK + '" stroke-width="4" stroke-linecap="round"/><ellipse cx="20" cy="150" rx="4" ry="3" fill="' + DK + '"/>'
+    }; } },
+    cow: { name: 'Cow', draw: function (c, mv) { return {
+      back: '<path d="M34 104 Q22 84 30 72 M82 104 Q94 84 86 72" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="7" stroke-linecap="round"/>' +
+        mv(20, 124, -12, '<ellipse cx="8" cy="126" rx="18" ry="9" fill="' + c + '"/>') + '<ellipse cx="108" cy="126" rx="18" ry="9" fill="' + c + '"/>',
+      body: kitBody(c) + '<ellipse cx="128" cy="148" rx="22" ry="14" fill="' + DK + '" opacity=".3"/><ellipse cx="176" cy="172" rx="16" ry="11" fill="' + DK + '" opacity=".3"/><ellipse cx="100" cy="184" rx="12" ry="8" fill="' + DK + '" opacity=".3"/>',
+      head: kitHead(c, 58, 140, 42) + kitEyes(58, 130) + '<ellipse cx="58" cy="162" rx="24" ry="14" fill="' + LT + '"/>' +
+        '<ellipse cx="50" cy="162" rx="3" ry="4" fill="' + DK + '"/><ellipse cx="66" cy="162" rx="3" ry="4" fill="' + DK + '"/>'
+    }; } },
+    robin: { name: 'Robin', draw: function (c, mv) { return birdParts(c, mv, 'rgba(255,110,60,.85)', DK, 'rgba(60,40,30,.8)', 34, false); } },
+    blackbird: { name: 'Blackbird', draw: function (c, mv) { return birdParts(c, mv, null, '#ffc400', '#ffc400', 52, true); } },
+    lion: { name: 'Lion', draw: function (c, mv) {
+      var mane = '', i;
+      for (i = 0; i < 12; i++) mane += '<circle cx="' + (58 + Math.cos(i / 12 * Math.PI * 2) * 46).toFixed(0) + '" cy="' + (138 + Math.sin(i / 12 * Math.PI * 2) * 46).toFixed(0) + '" r="17"/>';
+      return {
+        back: '<g fill="' + c + '">' + mane + '</g><g fill="' + DK + '" opacity=".35">' + mane + '</g>',
+        body: kitBody(c) + mv(200, 160, 14, '<path d="M200 160 Q226 150 228 126" fill="none" stroke="' + c + '" stroke-width="7" stroke-linecap="round"/><circle cx="228" cy="122" r="9" fill="' + c + '"/><circle cx="228" cy="122" r="9" fill="' + DK + '" opacity=".35"/>'),
+        head: kitHead(c, 58, 138, 40) + '<circle cx="30" cy="104" r="10" fill="' + c + '"/><circle cx="86" cy="104" r="10" fill="' + c + '"/>' +
+          kitEyes(58, 132) + '<ellipse cx="58" cy="156" rx="16" ry="11" fill="' + LT + '"/><path d="M52 150 l6 6 6 -6 Z" fill="' + DK + '"/>'
+      };
+    } }
   };
   var ANIMAL_LIST = [];
   for (var animalId in ANIMALS) ANIMAL_LIST.push([animalId, ANIMALS[animalId].name]);
