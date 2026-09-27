@@ -1,19 +1,24 @@
 # Sleep Clock
 
-**Turn an old iPad into an "OK to wake" clock for a toddler.**
+**Turn an old tablet or phone into an "OK to wake" clock for a toddler.**
 
 Young children can't read the time, so "stay in bed until 7" means nothing to them. A sleep-training clock shows it with colours instead:
 
 - **red** means "it's still night, stay in bed";
 - **green** means "it's morning, you can get up".
 
-Sleep Clock does this on an iPad you already have. It runs as a single web page, added to the home screen and left on the wall or bedside table.
+Sleep Clock does this on a device you already have. It runs as a single web page, added to the home screen and left on the wall or bedside table.
+
+**It works completely offline.** After the first visit the clock keeps running with no internet at all:
+- no account, no app store, no ads;
+- nothing is ever sent anywhere;
+- your schedule and settings stay on the device.
 
 | Night: stay in bed | Morning: OK to get up | Day |
 |---|---|---|
 | <img src="docs/screenshots/night.png" width="260" alt="Red sleeping face at night"> | <img src="docs/screenshots/wake.png" width="260" alt="Green smiling sun face in the morning"> | <img src="docs/screenshots/day.png" width="260" alt="Blue face during the day"> |
 
-It was built for an **iPad mini 2 on iOS 12** (Safari 12), a device that can't run modern apps. It works on any iPad or tablet with a web browser.
+It was built for an **iPad mini 2 on iOS 12** (Safari 12), a device that can't run modern apps anymore. It works on any tablet or phone with a web browser.
 
 ## What it does
 
@@ -39,20 +44,31 @@ It was built for an **iPad mini 2 on iOS 12** (Safari 12), a device that can't r
 
 ## How to use it
 
-### 1. Put it online (HTTPS)
+### 1. Open the clock
 
-The clock is just two files: **`index.html`** and **`sw.js`**. Host them anywhere that serves HTTPS. HTTPS is needed for offline mode and the home-screen app. Some options:
+There are two ways to get it.
 
-- **GitHub Pages:** in the repo's Settings → Pages, publish the `main` branch from the root folder. The clock is then at `https://<user>.github.io/toddler-sleep-train-clock/`. On the free plan the repo has to be public.
-- **Cloudflare Pages**, Netlify, or any web server of your own.
+**A. Just use it (easiest)**
+- On the tablet or phone, open **https://flevanti.github.io/toddler-sleep-train-clock/** in the browser. That's it.
+- The first visit saves the clock on the device, and from then on it works offline.
+- New versions arrive automatically the next time the device is online and the page reloads.
 
-Open the URL in Safari on the iPad once, to check it loads without certificate warnings.
+**B. Host it yourself**
+- The whole clock is two files: **`index.html`** and **`sw.js`**. Copy them together into the same folder on any web host, then open that address on the device.
+- The address must be **HTTPS**, because offline mode and the home-screen app need it. Any web host, Cloudflare Pages, Netlify or your own server will do.
+- To try it on a computer, `python3 -m http.server 8000` in the folder and `http://localhost:8000` also work.
+- The first time, check that the page loads without certificate warnings. Very old devices can have trouble with some HTTPS certificates.
 
-### 2. Add it to the iPad's home screen
+### 2. Add it to the home screen
 
-In Safari, tap **Share → Add to Home Screen**, and from then on always open the clock from that icon. The home-screen app and a normal Safari tab keep **separate settings**.
+- **iPad or iPhone:** in Safari, tap **Share → Add to Home Screen**.
+- **Android:** in Chrome, open the menu and tap **Add to Home screen** (or **Install app**).
 
-### 3. Set up the iPad
+From then on, always open the clock from that icon. The home-screen app and a normal browser tab keep **separate settings**.
+
+### 3. Set up the device
+
+These steps are for an iPad or iPhone. On Android, use the equivalent settings: keep the screen on while charging, and use screen pinning instead of Guided Access.
 
 - **Settings → Display & Brightness → Auto-Lock: Never.** Turn Auto-Brightness off and set the brightness to about right for the green face. A web page can't change the real screen brightness, so night dimming only darkens what is drawn.
 - **Settings → General → Use Side Switch To: Lock Rotation**, so the side switch can't mute the sound. Check that Control Centre isn't on mute.
