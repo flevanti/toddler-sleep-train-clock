@@ -106,6 +106,8 @@
     text-align: center; font-size: 7vmin; font-weight: 200; letter-spacing: .12em; pointer-events: none; }
   #devstats { display: none; position: fixed; left: 10px; bottom: 10px; z-index: 4; pointer-events: none; font: 11px/1.45 Menlo, monospace;
     color: #fff; background: rgba(0,0,0,.55); border-radius: 6px; padding: 6px 8px; white-space: pre; }
+  /* "new version available": subtle, top left, in the picture's colour (never at night) */
+  #updnote { display: none; position: fixed; top: 14px; left: 16px; z-index: 4; pointer-events: none; font-size: 13px; letter-spacing: .04em; }
   #appinfo { font-size: 12px; color: #8a8f9c; margin-top: 2px; }
   a.b { display: inline-block; text-decoration: none; }
   .sec h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #8a8f9c; margin: 16px 0 2px; font-weight: 600; }
@@ -192,6 +194,7 @@
 <svg id="hotring" viewBox="0 0 60 60"><circle id="hotbase" cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="4"/>
   <circle id="hotarc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="163.4" stroke-dashoffset="163.4" transform="rotate(-90 30 30)"/></svg>
 <div id="badge"></div>
+<div id="updnote"></div>
 <div id="simbar">
   <div class="srow">
     <select id="simDay"></select>
@@ -1204,7 +1207,7 @@
   'use strict';
   /* Written for Safari 12: no optional chaining, no ??, no class fields, no replaceAll. */
 
-  var VERSION = '1.7';
+  var VERSION = '1.8';
   var KEY = 'toddler-sleep-train-clock.settings.v1';
   var FIRED_KEY = 'toddler-sleep-train-clock.fired';
   var CODE_PREFIX = 'toddler-sleep-train-clock.v1:';
@@ -1337,6 +1340,7 @@
       dayDim: 100,         // % brightness of face/time in the day
       fadeSec: 3,          // crossfade length at each phase change (0 = hard change)
       keepAwake: true,     // ask the device to keep the screen on
+      updateNotice: false, // check every few hours (day and green only) and say so on the clock when a new version is out
       night: nightDefaults(), // night scene + extras, see SCENES / EXTRAS
       savedAt: 0,          // when the settings last changed (ms); 0 = never
       dev: { on: false, overlay: false, pack: false }, // secret Developer menu (hold the corner 5 s)
@@ -2015,7 +2019,7 @@
     try { for (i = 0; i < window.localStorage.length; i++) { k = window.localStorage.key(i); bytes += (k.length + window.localStorage.getItem(k).length) * 2; } } catch (e) {}
     var st = curState || { mode: 'day' }, sw = navigator.serviceWorker;
     el.textContent = [
-      'v' + VERSION + (APP_UPDATED ? ' · app updated ' + fmtDate(APP_UPDATED) : ''),
+      'v' + VERSION + (APP_UPDATED ? ' · app updated ' + fmtDate(APP_UPDATED) : '') + (newVersion ? ' · v' + newVersion + ' available' : ''),
       'tick delay avg ' + (tickDelays.length ? Math.round(sum / tickDelays.length) : 0) + ' ms · worst ' + worst + ' ms',
       'redraws face ' + devCount.face + ' · countdown ' + devCount.below + ' · layer ' + devCount.layer,
       'animations ' + document.querySelectorAll('#clock animate, #clock animateTransform, #clock animateMotion, #clock .twinkle, #clock .zz').length,
@@ -2413,6 +2417,49 @@
     $('appinfo').textContent = t;
     $('devbadge').style.display = S.dev.on ? 'inline-block' : 'none';
   }
+  // ---------- new version check: nothing installs by itself; the Reload button (or any reload) loads the new copy ----------
+  var UPDATE_EVERY = 3 * 3600000, newVersion = null, lastCheckAt = 0, checking = false, updMsg = '';
+  function newerThan(a, b) {
+    var x = a.split('.'), y = b.split('.'), i, d;
+    for (i = 0; i < Math.max(x.length, y.length); i++) { d = (+x[i] || 0) - (+y[i] || 0); if (d) return d > 0; }
+    return false;
+  }
+  // Fetches the page as published (bypassing the browser cache) and compares its VERSION with this one.
+  function checkUpdate() {
+    if (checking) return;
+    if (!window.fetch) { updMsg = 'This browser can’t check for new versions. Reload to get the latest.'; renderUpdate(); return; }
+    checking = true; lastCheckAt = Date.now();
+    fetch(location.pathname, { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    }).then(function (t) {
+      var m = /var VERSION = '([^']+)';/.exec(t);
+      if (!m) throw new Error('no version');
+      newVersion = newerThan(m[1], VERSION) ? m[1] : null;
+      updMsg = newVersion ? 'Version ' + newVersion + ' is available. Tap Reload to use it.' : 'You have the latest version (v' + VERSION + ').';
+    }).catch(function () {
+      updMsg = 'Couldn’t check (no internet?).';
+    }).then(function () {
+      checking = false;
+      updMsg += ' Checked at ' + fmt(new Date()) + '.';
+      renderUpdate();
+    });
+  }
+  function renderUpdate() {
+    var el = $('updStatus');
+    if (el) el.textContent = checking ? 'Checking…' : updMsg || 'Not checked yet.';
+    updateNotice();
+  }
+  // Runs every second: the auto-check (every few hours) and the note on the clock, only in the green and day phases.
+  function updateNotice() {
+    var n = $('updnote'), m = curState ? curState.mode : '', daytime = !sim && (m === 'wake' || (m === 'day' && S.dayMode !== 'dark'));
+    if (S.updateNotice && daytime && !checking && Date.now() - lastCheckAt > UPDATE_EVERY) checkUpdate();
+    if (!(S.updateNotice && newVersion && daytime)) { n.style.display = 'none'; return; }
+    n.textContent = 'New version available';
+    n.style.color = simColor(m);
+    n.style.opacity = m === 'day' ? 0.6 * S.dayDim / 100 : 0.6;
+    n.style.display = 'block';
+  }
   function issueUrl(template) {
     return REPO + '/issues/new?template=' + template + '&version=' + encodeURIComponent(versionText()) + '&device=' + encodeURIComponent(navigator.userAgent);
   }
@@ -2517,6 +2564,14 @@
       '<div class="row"><label class="l">Dev’s Favourite pictures</label>' + sw('dev-pack', S.dev.pack) + '</div>' +
       '<p class="hint">Hold the top-right corner for 5 seconds to turn dev mode off. The switches are remembered.</p></div>';
 
+    // updates
+    h += '<div class="sec"><h2>Updates</h2>' +
+      '<div class="row"><label class="l">Reload the app</label><button class="b g" id="reloadApp">Reload</button></div>' +
+      '<div class="row"><label class="l">New version</label><button class="b g" id="checkUpd">Check now</button></div>' +
+      '<p class="hint" id="updStatus"></p>' +
+      '<div class="row"><label class="l">Show on the clock when a new version is available</label>' + sw('updateNotice', S.updateNotice) + '</div>' +
+      '<p class="hint">Checks every few hours during the day. A small “New version available” then shows in the corner, in the picture’s colour, never at night. Nothing updates by itself: tap Reload when it suits you.</p></div>';
+
     // about & feedback
     h += '<div class="sec"><h2>About &amp; feedback</h2>' +
       '<p class="hint" style="margin-top:0">Sleep Clock ' + versionText() + (standalone ? ' · home-screen mode' : '') + '. Free and open source (MIT licence), no ads, works offline.</p>' +
@@ -2528,6 +2583,7 @@
     renderAppInfo();
     renderAwakeStatus();
     renderAudioStatus();
+    renderUpdate();
     wireSettings();
     if (settingsOpen) updatePreview(); // e.g. after import or reset
   }
@@ -2571,6 +2627,9 @@
     for (i = 0; i < nc.length; i++) nc[i].addEventListener('change', onNightControl);
     ['napSound', 'dayMode'].forEach(function (id) { on(id, 'change', function (e) { S[id] = e.target.value; save(); MAIN.keys = {}; }); });
     on('keepAwake', 'change', function (e) { S.keepAwake = e.target.checked; save(); keepAwake(); renderAwakeStatus(); });
+    on('reloadApp', 'click', function () { location.reload(); });
+    on('checkUpd', 'click', function () { checkUpdate(); renderUpdate(); });
+    on('updateNotice', 'change', function (e) { S.updateNotice = e.target.checked; save(); updateNotice(); });
     on('goFull', 'click', function () {
       var d = document.documentElement, f = d.requestFullscreen || d.webkitRequestFullscreen;
       try { var r = f.call(d); if (r && r.catch) r.catch(function () { toast('This browser didn’t allow full screen'); }); } catch (e) { toast('This browser didn’t allow full screen'); }
@@ -2794,7 +2853,7 @@
 
   buildPinKeys();
   tick();
-  setInterval(function () { devMeasureTick(); tick(); devStats(); }, 1000);
+  setInterval(function () { devMeasureTick(); tick(); devStats(); updateNotice(); }, 1000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) { MAIN.keys = {}; MAIN.lastMode = null; tick(); keepAwake(); } });
   keepAwake(); // may need a tap on older devices
 
@@ -2807,6 +2866,7 @@
   window.__toddlerSleepTrainClock = { S: function () { return S; }, computeState: computeState, setS: function (o) { S = defaults(); merge(S, o); save(); MAIN.keys = {}; tick(); },
     sim: function () { return sim; }, firedKey: function () { return firedKey; }, alarmPlaying: alarmPlaying,
     night: { SCENES: SCENES, EXTRAS: EXTRAS, defaults: nightDefaults, countdownLit: countdownLit, shootingTimes: shootingTimes, ANIMALS: ANIMALS, sceneAnimal: sceneAnimal },
+    checkUpdate: checkUpdate, newVersion: function () { return newVersion; }, updateNotice: updateNotice,
     nightFrac: nightFrac, repaint: function () { MAIN.keys = {}; MAIN.lastMode = null; tick(); } };
 })();
 </script>

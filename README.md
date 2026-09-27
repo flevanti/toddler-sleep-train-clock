@@ -67,6 +67,8 @@ There are two ways to get it.
 
 From then on, always open the clock from that icon. The home-screen app and a normal browser tab keep **separate settings**.
 
+The home-screen app has no reload button of its own, so settings has an **Updates** section: **Reload**, **Check now** for a new version, and an optional small "New version available" note on the clock (daytime only). Nothing updates by itself.
+
 ### 3. Set up the device
 
 These steps are for an iPad or iPhone. On Android, use the equivalent settings: keep the screen on while charging, and use screen pinning instead of Guided Access.

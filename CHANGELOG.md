@@ -2,6 +2,10 @@
 
 Every version of Sleep Clock, newest first. The version shown in the app (`VERSION` in `index.html`) must match the newest entry here, and `tests/test_changelog.py` checks that it does. Use `tools/release.py` to add a version: it updates both. Each released version has a git tag (`v1.6`…) on the commit where it was finished. 1.0–1.2 were made before the project used git, so they have no tags.
 
+## 1.8 — 2026-09-27
+- **Updates** in settings: a **Reload** button (a home-screen app has no browser reload), **Check now** for a new version, and an optional switch that checks every few hours and shows a small "New version available" on the clock, in the picture's colour, only in the daytime. Nothing ever updates by itself.
+- Fixed a test that failed at random depending on where a Night picture was in its breathing animation.
+
 ## 1.7 — 2026-09-27
 - **Installs as a full-screen app on Android:** the page now has a web app manifest (embedded, still just two files to deploy), so "Install app" / "Add to Home screen" gives the clock its own icon and opens it full screen with no address bar.
 - New app icon: the green morning face with sun rays, with a maskable version that fits Android's round and squircle icon shapes.
