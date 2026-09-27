@@ -21,7 +21,7 @@ with sync_playwright() as pw:
     S = p.evaluate("() => window.__toddlerSleepTrainClock.S()")
     check('settings migrated', S['dayColor'] == 'teal' and S['nightColor'] == 'amber' and S['days'][0]['bed'] == '20:15')
     ls = p.evaluate("() => { var o = {}; for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); o[k] = localStorage.getItem(k); } return o; }")
-    check('old keys removed, new keys present', set(ls) == {'toddler-sleep-train-clock.settings.v1', 'toddler-sleep-train-clock.fired'} and ls['toddler-sleep-train-clock.fired'] == 'w123', list(ls))
+    check('old keys removed, new keys present', set(ls) - {'toddler-sleep-train-clock.loads'} == {'toddler-sleep-train-clock.settings.v1', 'toddler-sleep-train-clock.fired'} and ls['toddler-sleep-train-clock.fired'] == 'w123', list(ls))
     # new key wins if both exist
     p.evaluate("""() => { localStorage.setItem('okclock.settings.v1', JSON.stringify({dayColor:'pink'})); }""")
     p.reload(); p.wait_for_timeout(300)

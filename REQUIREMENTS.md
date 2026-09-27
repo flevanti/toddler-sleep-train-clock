@@ -170,6 +170,33 @@ Details:
   - **settings saved** `<when>`: the time settings last actually changed (`S.savedAt`). Saving with nothing new, e.g. closing settings, doesn't count. The value is included in export/import.
 - **The About & feedback section** links to the GitHub repo and to two GitHub issue forms (`.github/ISSUE_TEMPLATE/`: feature request and bug report). The forms are pre-filled with the version and the device's user agent. The links open in the browser with `rel="noopener"`, need internet, and need a GitHub account to submit.
 
+### Dev mode (v1.5)
+- **Holding the top-right corner does nothing until you let go.** The time held decides what happens:
+
+  | Hold for | Ring | On release |
+  |---|---|---|
+  | under 2.5 s | white, filling | nothing |
+  | 2.5–5 s | green, with a purple arc filling | settings open |
+  | 5–10 s | solid purple | PIN (if one is set), then **dev mode toggles**, then settings open |
+  | over 10 s | fades | nothing (something is resting on the corner) |
+
+- **Toggling dev mode** shows a soft "DEV MODE ON/OFF" message for 1.5 s, in the current phase colour and brightness (dim at night).
+- **Dev mode on its own changes nothing on the clock.** It shows a **DEV** badge and a secret **Developer** section in settings, with one switch per feature:
+  - the stats overlay;
+  - Dev's Favourite pictures.
+
+  Turning dev mode off pauses the features and remembers the switches. They're stored as `S.dev = {on, overlay, pack}`; invalid values are ignored.
+- **Stats overlay:** a dim box in the bottom-left corner that can't be tapped and updates every second. Everything is measured on the device. It shows:
+  - version and app date;
+  - 1-second timer delay (average and worst over the last minute);
+  - redraw counts per area;
+  - running animations;
+  - uptime, and page loads today with their times (the last 30 loads are kept in `toddler-sleep-train-clock.loads`, to spot overnight reloads);
+  - sound state and when the alarm last rang;
+  - online status and whether the offline copy is active;
+  - storage used;
+  - the current phase and the time of the next change.
+
 ### Settings access and PIN
 - A **hidden gesture** opens settings: hold the top-right corner (110×110 px) for **2.5 seconds**. A progress ring fills while you hold.
 - Apart from that, taps on the clock only unlock sound or stop the alarm. Scrolling and pinch-zoom are blocked.

@@ -100,6 +100,11 @@
   .swc.on { box-shadow: 0 0 0 3px #fff; }
   .sec h2 small { text-transform: none; letter-spacing: 0; font-weight: 400; margin-left: 6px; color: #6b7080; }
   .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: 0; }
+  #devbadge { display: none; font-size: 12px; font-weight: 700; vertical-align: middle; background: #a66bff; color: #fff; border-radius: 6px; padding: 2px 6px; }
+  #devflash { display: none; position: fixed; top: 50%; left: 0; right: 0; -webkit-transform: translateY(-50%); transform: translateY(-50%); z-index: 45;
+    text-align: center; font-size: 7vmin; font-weight: 200; letter-spacing: .12em; pointer-events: none; }
+  #devstats { display: none; position: fixed; left: 10px; bottom: 10px; z-index: 4; pointer-events: none; font: 11px/1.45 Menlo, monospace;
+    color: #fff; background: rgba(0,0,0,.55); border-radius: 6px; padding: 6px 8px; white-space: pre; }
   #appinfo { font-size: 12px; color: #8a8f9c; margin-top: 2px; }
   a.b { display: inline-block; text-decoration: none; }
   .sec h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #8a8f9c; margin: 16px 0 2px; font-weight: 600; }
@@ -183,7 +188,7 @@
   <div id="layer" class="layer"></div>
 </div>
 <div id="hot"></div>
-<svg id="hotring" viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="4"/>
+<svg id="hotring" viewBox="0 0 60 60"><circle id="hotbase" cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="4"/>
   <circle id="hotarc" cx="30" cy="30" r="26" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="163.4" stroke-dashoffset="163.4" transform="rotate(-90 30 30)"/></svg>
 <div id="badge"></div>
 <div id="simbar">
@@ -202,6 +207,8 @@
   <div class="slabels"><span id="simFrom"></span><span>Tap the strip to jump there</span><span id="simTo"></span></div>
 </div>
 <div id="toast"></div>
+<div id="devflash"></div>
+<div id="devstats"></div>
 
 <div id="pinpad" class="overlay">
   <div class="inner">
@@ -231,7 +238,7 @@
 
 <div id="settings" class="overlay">
   <div id="shead"><div class="hwrap">
-    <div class="topbar"><div><h1>Sleep Clock</h1><div id="appinfo"></div></div><button class="b ok" id="done">Done</button></div>
+    <div class="topbar"><div><h1>Sleep Clock <span id="devbadge">DEV</span></h1><div id="appinfo"></div></div><button class="b ok" id="done">Done</button></div>
     <div class="pv">
       <div class="miniwrap"><div id="mini" class="mini"><div id="miniFace" class="face"></div><div id="miniBelow" class="below"></div><div id="miniTime" class="time"></div><div id="miniLabel" class="label"></div><div id="miniLayer" class="layer"></div></div></div>
       <div class="pvside">
@@ -1022,6 +1029,7 @@
       fadeSec: 3,          // crossfade length at each phase change (0 = hard change)
       night: nightDefaults(), // night scene + extras, see SCENES / EXTRAS
       savedAt: 0,          // when the settings last changed (ms); 0 = never
+      dev: { on: false, overlay: false, pack: false }, // secret Developer menu (hold the corner 5 s)
       showTime: true,
       showTimeNight: false,
       h24: true,
@@ -1059,6 +1067,8 @@
             if (d.tone === 'off' || TONES[d.tone]) s.days[i].tone = d.tone;
           }
         }
+      } else if (k === 'dev') {
+        if (o.dev && typeof o.dev === 'object') for (var dk in s.dev) if (typeof o.dev[dk] === 'boolean') s.dev[dk] = o.dev[dk];
       } else if (k === 'night') {
         mergeNight(s.night, o.night);
       } else if (typeof o[k] === typeof s[k] || s[k] === null) {
@@ -1498,6 +1508,7 @@
       if (keys.below) keys.below += '|' + S.nightColor;
       if (keys.layer) keys.layer += '|' + S.nightColor + '|' + c.w + 'x' + c.h;
     }
+    if (t === MAIN) { if (keys.face !== t.keys.face) devCount.face++; if (keys.below !== t.keys.below) devCount.below++; if (keys.layer !== t.keys.layer) devCount.layer++; }
     if (keys.face !== t.keys.face) t.face.innerHTML = c ? sc.face(so, c) : faceSVG(mode, t.gid);
     if (keys.below !== t.keys.below) {
       t.below.innerHTML = keys.below ? extrasMarkup('below', c) : '';
@@ -1661,6 +1672,42 @@
   try { firedKey = window.localStorage.getItem(FIRED_KEY) || ''; } catch (e) {}
   var curState = null;
 
+  // ---------- dev mode: stats overlay (all measured on the device, nothing leaves it) ----------
+  var LOAD_AT = Date.now(), LOADS_KEY = 'toddler-sleep-train-clock.loads', devCount = { face: 0, below: 0, layer: 0 };
+  var tickDelays = [], lastTickAt = 0, lastAlarmAt = 0, loads = [];
+  try { loads = JSON.parse(window.localStorage.getItem(LOADS_KEY) || '[]'); } catch (e) { loads = []; }
+  if (!(loads instanceof Array)) loads = [];
+  loads.push(LOAD_AT); loads = loads.slice(-30); // page loads: shows if the device reloaded the clock overnight
+  try { window.localStorage.setItem(LOADS_KEY, JSON.stringify(loads)); } catch (e) {}
+  function devMeasureTick() { // how late the 1-second timer fires: a busy or struggling device shows here first
+    var t = Date.now();
+    if (lastTickAt) { tickDelays.push(Math.max(0, t - lastTickAt - 1000)); if (tickDelays.length > 60) tickDelays.shift(); }
+    lastTickAt = t;
+  }
+  function hms(ms) { var s = Math.floor(ms / 1000); return Math.floor(s / 3600) + ':' + pad(Math.floor(s / 60) % 60) + ':' + pad(s % 60); }
+  function devStats() {
+    var el = $('devstats');
+    if (!(S.dev.on && S.dev.overlay)) { el.style.display = 'none'; return; }
+    var sum = 0, worst = 0, i, today = fmtDate(new Date()), lt = [], bytes = 0, k;
+    for (i = 0; i < tickDelays.length; i++) { sum += tickDelays[i]; worst = Math.max(worst, tickDelays[i]); }
+    for (i = 0; i < loads.length; i++) if (fmtDate(new Date(loads[i])) === today) lt.push(fmt(new Date(loads[i])));
+    try { for (i = 0; i < window.localStorage.length; i++) { k = window.localStorage.key(i); bytes += (k.length + window.localStorage.getItem(k).length) * 2; } } catch (e) {}
+    var st = curState || { mode: 'day' }, sw = navigator.serviceWorker;
+    el.textContent = [
+      'v' + VERSION + (APP_UPDATED ? ' · app updated ' + fmtDate(APP_UPDATED) : ''),
+      'tick delay avg ' + (tickDelays.length ? Math.round(sum / tickDelays.length) : 0) + ' ms · worst ' + worst + ' ms',
+      'redraws face ' + devCount.face + ' · countdown ' + devCount.below + ' · layer ' + devCount.layer,
+      'animations ' + document.querySelectorAll('#clock animate, #clock animateTransform, #clock animateMotion, #clock .twinkle, #clock .zz').length,
+      'up ' + hms(Date.now() - LOAD_AT) + ' · loads today ' + lt.length + (lt.length ? ' (' + lt.join(', ') + ')' : ''),
+      'sound ' + (!AC ? 'none' : audioReady() ? 'on' : 'locked') + (lastAlarmAt ? ' · alarm last ' + fmt(new Date(lastAlarmAt)) : ''),
+      'online ' + (navigator.onLine ? 'yes' : 'no') + ' · offline copy ' + (sw && sw.controller ? 'active' : 'not active'),
+      'storage ' + (bytes / 1024).toFixed(1) + ' KB',
+      'phase ' + PHASE_NAMES[st.mode].toLowerCase() + (st.until ? ' · next ' + fmt(new Date(st.until)) : '')
+    ].join('\n');
+    el.style.opacity = st.mode === 'sleep' ? Math.max(S.nightDim / 100, 0.25) : 0.85;
+    el.style.display = 'block';
+  }
+
   function tick() {
     if (sim) return; // the simulation drives the display; real alarm/nap logic waits until it ends
     var now = new Date();
@@ -1673,6 +1720,7 @@
         try { window.localStorage.setItem(FIRED_KEY, key); } catch (e) {}
         var tone = st.nap ? S.napSound : st.tone;
         playAlarm(tone, S.alarmLen);
+        lastAlarmAt = Date.now();
       }
     }
     // tidy finished nap
@@ -1684,29 +1732,45 @@
   function refresh() { if (curState && !sim) render(new Date(), curState); if (settingsOpen) renderAudioStatus(); }
 
   // ---------- touches on the clock ----------
-  var pressTimer = null, pressStart = 0, ringTimer = null;
-  var HOLD_MS = 2500;
+  // Hold the top-right corner: after 2.5 s letting go opens settings; after 5 s it toggles dev mode (then settings);
+  // after 10 s it gives up (something resting on the corner). Nothing happens until the finger is lifted.
+  var pressStart = 0, ringTimer = null;
+  var HOLD_MS = 2500, DEV_MS = 5000, GIVEUP_MS = 10000, RING = 163.4;
+  function holdStage() {
+    var ms = Date.now() - pressStart;
+    return ms < HOLD_MS ? 0 : ms < DEV_MS ? 1 : ms < GIVEUP_MS ? 2 : 3;
+  }
+  function drawRing() {
+    var ms = Date.now() - pressStart, st = holdStage(), base = $('hotbase'), arc = $('hotarc'), p;
+    $('hotring').style.opacity = st === 3 ? '0' : '1';
+    if (st === 0) { base.setAttribute('stroke', 'rgba(255,255,255,.25)'); arc.setAttribute('stroke', '#fff'); p = ms / HOLD_MS; }
+    else if (st === 1) { base.setAttribute('stroke', '#34c759'); arc.setAttribute('stroke', '#a66bff'); p = (ms - HOLD_MS) / (DEV_MS - HOLD_MS); }
+    else { base.setAttribute('stroke', '#a66bff'); arc.setAttribute('stroke', '#a66bff'); p = 1; }
+    arc.setAttribute('stroke-dashoffset', String(RING * (1 - Math.min(1, p))));
+  }
   function startPress() {
     pressStart = Date.now();
-    var ring = $('hotring'), arc = $('hotarc');
-    ring.style.opacity = '1';
-    ringTimer = setInterval(function () {
-      var p = Math.min(1, (Date.now() - pressStart) / HOLD_MS);
-      arc.setAttribute('stroke-dashoffset', String(163.4 * (1 - p)));
-    }, 50);
-    pressTimer = setTimeout(function () { endPress(); openGate(); }, HOLD_MS);
+    drawRing();
+    ringTimer = setInterval(drawRing, 50);
   }
-  function endPress() {
-    if (pressTimer) clearTimeout(pressTimer); pressTimer = null;
+  function endPress() { // returns the stage reached
+    var st = ringTimer ? holdStage() : 0;
     if (ringTimer) clearInterval(ringTimer); ringTimer = null;
-    $('hotring').style.opacity = '0'; $('hotarc').setAttribute('stroke-dashoffset', '163.4');
+    $('hotring').style.opacity = '0'; $('hotarc').setAttribute('stroke-dashoffset', String(RING));
+    return st;
+  }
+  function release() {
+    var st = endPress();
+    if (st === 1) openGate(false);
+    else if (st === 2) openGate(true);
+    onAnyTap();
   }
   var hot = $('hot');
   hot.addEventListener('touchstart', function (e) { e.preventDefault(); startPress(); }, { passive: false });
-  hot.addEventListener('touchend', function (e) { e.preventDefault(); endPress(); onAnyTap(); }, { passive: false });
+  hot.addEventListener('touchend', function (e) { e.preventDefault(); release(); }, { passive: false });
   hot.addEventListener('touchcancel', endPress);
   hot.addEventListener('mousedown', startPress);
-  hot.addEventListener('mouseup', function () { endPress(); onAnyTap(); });
+  hot.addEventListener('mouseup', release);
 
   function onAnyTap() {
     if (anyOverlayOpen()) return;
@@ -1755,7 +1819,7 @@
     if (pinBuf.length < 4) return;
     setTimeout(function () {
       if (pinMode === 'unlock') {
-        if (pinBuf === S.pin) { pinFails = 0; hidePin(); openSettings(); }
+        if (pinBuf === S.pin) { pinFails = 0; hidePin(); afterGate(); }
         else {
           pinFails++; pinBuf = ''; drawPin();
           if (pinFails >= 3) { pinLockUntil = Date.now() + 30000; pinFails = 0; $('pinmsg').textContent = 'Wrong PIN. Locked for 30 s.'; }
@@ -1768,7 +1832,24 @@
       }
     }, 120);
   }
-  function openGate() { if (S.pin) showPin('unlock'); else openSettings(); }
+  var gateDev = false;
+  function openGate(dev) { gateDev = dev; if (S.pin) showPin('unlock'); else afterGate(); }
+  function afterGate() {
+    if (!gateDev) { openSettings(); return; }
+    S.dev.on = !S.dev.on; save(); MAIN.keys = {};
+    devFlash(S.dev.on ? 'DEV MODE ON' : 'DEV MODE OFF');
+    setTimeout(openSettings, 1500);
+  }
+  // Soft confirmation in the current phase colour and brightness (dim at night).
+  function devFlash(text) {
+    var m = curState ? curState.mode : 'day', f = $('devflash');
+    var col = m === 'sleep' ? NIGHT_COLORS[S.nightColor] : m === 'soon' ? '#ffb300' : m === 'wake' ? '#34c759' : (DAY_COLORS[S.dayColor] || DAY_COLORS.blue).face;
+    f.textContent = text;
+    f.style.color = col;
+    f.style.opacity = m === 'sleep' ? S.nightDim / 100 : m === 'soon' ? Math.max(S.nightDim / 100, 0.5) : m === 'day' ? S.dayDim / 100 : 1;
+    f.style.display = 'block';
+    setTimeout(function () { f.style.display = 'none'; }, 1500);
+  }
 
   // ---------- settings ----------
   var settingsOpen = false;
@@ -1965,6 +2046,7 @@
     if (!S.savedAt) t += ' · settings not saved yet';
     else t += ' · settings saved ' + (fmtDate(d) === fmtDate(new Date()) ? 'today' : fmtDate(d)) + ' ' + fmt(d);
     $('appinfo').textContent = t;
+    $('devbadge').style.display = S.dev.on ? 'inline-block' : 'none';
   }
   function issueUrl(template) {
     return REPO + '/issues/new?template=' + template + '&version=' + encodeURIComponent(versionText()) + '&device=' + encodeURIComponent(navigator.userAgent);
@@ -2056,6 +2138,12 @@
       '<li>Triple-click Home → <b>Guided Access</b>. Under Options, turn off Volume Buttons and Sleep/Wake. Leave Touch on (the clock ignores taps; this lets you re-enable sound after a reload).</li>' +
       '<li>Keep it on charge, and check the battery for swelling now and then.</li></ol></div>';
 
+    // developer (secret: shown only while dev mode is on)
+    if (S.dev.on) h += '<div class="sec" data-dev="1"><h2>Developer</h2>' +
+      '<div class="row"><label class="l">Stats overlay on the clock</label>' + sw('dev-overlay', S.dev.overlay) + '</div>' +
+      '<div class="row"><label class="l">Dev’s Favourite pictures</label>' + sw('dev-pack', S.dev.pack) + '</div>' +
+      '<p class="hint">Hold the top-right corner for 5 seconds to turn dev mode off. The switches are remembered.</p></div>';
+
     // about & feedback
     h += '<div class="sec"><h2>About &amp; feedback</h2>' +
       '<p class="hint" style="margin-top:0">Sleep Clock ' + versionText() + (standalone ? ' · home-screen mode' : '') + '. Free, no ads, works offline.</p>' +
@@ -2129,6 +2217,9 @@
 
     on('pinSet', 'click', function () { showPin('set'); });
     on('pinDel', 'click', function () { S.pin = ''; save(); renderSettings(); toast('PIN removed'); });
+    ['overlay', 'pack'].forEach(function (k) {
+      on('dev-' + k, 'change', function (e) { S.dev[k] = e.target.checked; save(); MAIN.keys = {}; if (k === 'pack') rerenderSettings(); });
+    });
 
     on('expBtn', 'click', function () {
       var o = JSON.parse(JSON.stringify(S)); o.nap = null;
@@ -2324,7 +2415,7 @@
 
   buildPinKeys();
   tick();
-  setInterval(tick, 1000);
+  setInterval(function () { devMeasureTick(); tick(); devStats(); }, 1000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) { MAIN.keys = {}; MAIN.lastMode = null; tick(); } });
 
   // Offline support (iOS 11.3+). Harmless if unsupported.
