@@ -238,6 +238,270 @@
   <div id="sbody"><div class="wrap" id="swrap"></div></div>
 </div>
 
+<!-- ======================== ANIMAL DRAWINGS ========================
+     One <template> per sleeping animal, in the order they appear in settings. Plain SVG, no script.
+     Canvas viewBox="-40 -40 280 280"; the animal lies on the ground near y=210, facing left.
+     Colours: currentColor = night colour; rgba(0,0,0,.55) darker / rgba(255,255,255,.22) lighter details; a few fixed accents.
+     <g data-part="body"> breathes; <g data-move="deg" data-pivot="x y"> twitches now and then. The clock adds the animation.
+     No ids except on gradients. Every drawing is checked by tests/test_animal_drawings.py (see REQUIREMENTS.md). -->
+<template id="animal-bunny" data-name="Bunny"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <ellipse cx="38" cy="78" rx="13" ry="42" fill="currentColor" transform="rotate(-18 38 78)"/>
+  <g data-move="-14" data-pivot="72 110">
+  <ellipse cx="72" cy="74" rx="13" ry="42" fill="currentColor" transform="rotate(14 72 74)"/>
+  <ellipse cx="72" cy="78" rx="6" ry="30" fill="rgba(0,0,0,.55)" opacity=".35" transform="rotate(14 72 78)"/>
+  </g>
+  <g data-part="body">
+  <ellipse cx="110" cy="160" rx="92" ry="48" fill="currentColor"/>
+  <circle cx="202" cy="150" r="16" fill="currentColor"/>
+  <circle cx="202" cy="150" r="16" fill="rgba(255,255,255,.22)"/>
+  </g>
+  <circle cx="58" cy="140" r="44" fill="currentColor"/>
+  <path d="M36 136 q8 8 16 0 M64 136 q8 8 16 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="58" cy="156" rx="5" ry="4" fill="rgba(0,0,0,.55)"/>
+</svg></template>
+<template id="animal-bear" data-name="Bear"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <g data-move="-10" data-pivot="30 108">
+  <circle cx="24" cy="104" r="17" fill="currentColor"/>
+  <circle cx="24" cy="104" r="8" fill="rgba(0,0,0,.55)" opacity=".4"/>
+  </g>
+  <circle cx="92" cy="104" r="17" fill="currentColor"/>
+  <circle cx="92" cy="104" r="8" fill="rgba(0,0,0,.55)" opacity=".4"/>
+  <g data-part="body">
+  <ellipse cx="110" cy="160" rx="92" ry="48" fill="currentColor"/>
+  <ellipse cx="150" cy="176" rx="34" ry="18" fill="rgba(255,255,255,.22)"/>
+  </g>
+  <circle cx="58" cy="140" r="44" fill="currentColor"/>
+  <path d="M36 134 q8 8 16 0 M64 134 q8 8 16 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="58" cy="158" rx="17" ry="12" fill="rgba(255,255,255,.22)"/>
+  <ellipse cx="58" cy="153" rx="6" ry="4.5" fill="rgba(0,0,0,.55)"/>
+</svg></template>
+<template id="animal-cat" data-name="Cat"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <path d="M22 124 L28 84 L52 106 Z M64 106 L88 84 L94 124 Z" fill="currentColor"/>
+  <path d="M30 112 L32 94 L44 106 Z M72 106 L84 94 L86 112 Z" fill="rgba(0,0,0,.55)" opacity=".35"/>
+  <g data-part="body">
+  <ellipse cx="110" cy="160" rx="92" ry="48" fill="currentColor"/>
+  </g>
+  <circle cx="58" cy="140" r="42" fill="currentColor"/>
+  <path d="M36 136 q8 8 16 0 M64 136 q8 8 16 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="5" stroke-linecap="round"/>
+  <path d="M54 152 l4 4 4 -4 Z" fill="rgba(0,0,0,.55)"/>
+  <path d="M20 152 L44 156 M20 162 L44 160 M96 152 L72 156 M96 162 L72 160" stroke="rgba(0,0,0,.55)" stroke-width="1.5" opacity=".6"/>
+  <g data-move="16" data-pivot="196 176">
+  <path d="M196 176 Q226 204 176 212 Q120 218 96 204" fill="none" stroke="currentColor" stroke-width="15" stroke-linecap="round"/>
+  </g>
+</svg></template>
+<template id="animal-owl" data-name="Owl"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <path d="M-20 214 L230 214" stroke="rgba(0,0,0,.55)" stroke-width="10" stroke-linecap="round"/>
+  <g data-part="body">
+  <g data-move="3" data-pivot="100 200">
+  <ellipse cx="100" cy="140" rx="66" ry="72" fill="currentColor"/>
+  <path d="M42 130 Q30 180 66 206 M158 130 Q170 180 134 206" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="5" opacity=".45"/>
+  <path d="M80 150 q6 6 12 0 M108 150 q6 6 12 0 M86 170 q6 6 12 0 M102 170 q6 6 12 0 M94 188 q6 6 12 0" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="3"/>
+  </g>
+  </g>
+  <path d="M52 70 L60 34 L80 62 Z M148 70 L140 34 L120 62 Z" fill="currentColor"/>
+  <circle cx="100" cy="86" r="50" fill="currentColor"/>
+  <circle cx="80" cy="84" r="17" fill="rgba(255,255,255,.22)"/>
+  <circle cx="120" cy="84" r="17" fill="rgba(255,255,255,.22)"/>
+  <path d="M78 84 q8 8 16 0 M106 84 q8 8 16 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="5" stroke-linecap="round"/>
+  <path d="M94 98 L106 98 L100 110 Z" fill="#e0a13a"/>
+  <path d="M82 212 l0 6 M92 212 l0 6 M108 212 l0 6 M118 212 l0 6" stroke="#e0a13a" stroke-width="4" stroke-linecap="round"/>
+</svg></template>
+<template id="animal-dog" data-name="Dog"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <g data-part="body">
+  <ellipse cx="110" cy="160" rx="92" ry="48" fill="currentColor"/>
+  <ellipse cx="140" cy="146" rx="26" ry="16" fill="rgba(0,0,0,.55)" opacity=".25"/>
+  <path d="M198 150 Q222 136 214 118" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+  </g>
+  <circle cx="58" cy="140" r="42" fill="currentColor"/>
+  <path d="M36 132 q8 8 16 0 M64 132 q8 8 16 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="58" cy="160" rx="18" ry="13" fill="rgba(255,255,255,.22)"/>
+  <ellipse cx="58" cy="154" rx="7" ry="5" fill="rgba(0,0,0,.55)"/>
+  <g data-move="10" data-pivot="22 112">
+  <ellipse cx="18" cy="140" rx="12" ry="30" fill="currentColor"/>
+  <ellipse cx="18" cy="140" rx="12" ry="30" fill="rgba(0,0,0,.55)" opacity=".3"/>
+  </g>
+  <ellipse cx="98" cy="140" rx="12" ry="30" fill="currentColor"/>
+  <ellipse cx="98" cy="140" rx="12" ry="30" fill="rgba(0,0,0,.55)" opacity=".3"/>
+</svg></template>
+<template id="animal-turtle" data-name="Turtle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <path d="M214 186 L236 192 L214 198 Z" fill="currentColor"/>
+  <ellipse cx="186" cy="200" rx="20" ry="10" fill="currentColor"/>
+  <ellipse cx="68" cy="200" rx="20" ry="10" fill="currentColor"/>
+  <g data-move="-8" data-pivot="60 188">
+  <path d="M60 176 Q28 170 14 182 L14 200 Q34 204 62 196 Z" fill="currentColor"/>
+  <ellipse cx="0" cy="188" rx="26" ry="18" fill="currentColor"/>
+  <path d="M-11 184 q7 7 14 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M-20 194 q6 4 12 2" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g data-part="body">
+  <path d="M36 188 Q44 92 126 90 Q208 92 216 188 Z" fill="currentColor"/>
+  <path d="M36 188 Q44 92 126 90 Q208 92 216 188 Z" fill="rgba(0,0,0,.55)" opacity=".35"/>
+  <path d="M126 104 L150 124 L142 156 L110 156 L102 124 Z M102 124 L64 132 M150 124 L188 132 M110 156 L92 186 M142 156 L160 186 M64 132 L52 186 M188 132 L200 186" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="4" stroke-linejoin="round" opacity=".7"/>
+  <path d="M68 112 Q96 96 124 96" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M28 186 L224 186 Q228 198 216 200 L38 200 Q24 198 28 186 Z" fill="currentColor"/>
+  <path d="M28 186 L224 186 Q228 198 216 200 L38 200 Q24 198 28 186 Z" fill="rgba(0,0,0,.55)" opacity=".15"/>
+  </g>
+</svg></template>
+<template id="animal-hedgehog" data-name="Hedgehog"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <ellipse cx="92" cy="214" rx="14" ry="7" fill="currentColor"/>
+  <ellipse cx="176" cy="214" rx="14" ry="7" fill="currentColor"/>
+  <g data-part="body">
+  <path d="M45.2 168.4 L16.5 161.5 L46.8 159.3 Z M46.5 160.1 L20.3 148.8 L51.1 151.4 Z M50.5 152.1 L27.7 136.8 L58 144 Z M57.2 144.7 L38.6 125.8 L67.3 137.4 Z M66.3 138 L52.5 116.3 L78.7 131.8 Z M77.5 132.3 L69 108.5 L91.8 127.5 Z M90.4 127.9 L87.5 102.7 L106.1 124.6 Z M104.6 124.8 L107.4 99.2 L121.1 123.2 Z M119.6 123.2 L128 98 L136.4 123.2 Z M134.9 123.2 L148.6 99.2 L151.4 124.8 Z M149.9 124.6 L168.5 102.7 L165.6 127.9 Z M164.2 127.5 L187 108.5 L178.5 132.3 Z M177.3 131.8 L203.5 116.3 L189.7 138 Z M188.7 137.4 L217.4 125.8 L198.8 144.7 Z M198 144 L228.3 136.8 L205.5 152.1 Z M204.9 151.4 L235.7 148.8 L209.5 160.1 Z M209.2 159.3 L239.5 161.5 L210.8 168.4 Z" fill="currentColor"/>
+  <ellipse cx="128" cy="168" rx="92" ry="50" fill="currentColor"/>
+  <g opacity=".38">
+  <path d="M45.2 168.4 L16.5 161.5 L46.8 159.3 Z M46.5 160.1 L20.3 148.8 L51.1 151.4 Z M50.5 152.1 L27.7 136.8 L58 144 Z M57.2 144.7 L38.6 125.8 L67.3 137.4 Z M66.3 138 L52.5 116.3 L78.7 131.8 Z M77.5 132.3 L69 108.5 L91.8 127.5 Z M90.4 127.9 L87.5 102.7 L106.1 124.6 Z M104.6 124.8 L107.4 99.2 L121.1 123.2 Z M119.6 123.2 L128 98 L136.4 123.2 Z M134.9 123.2 L148.6 99.2 L151.4 124.8 Z M149.9 124.6 L168.5 102.7 L165.6 127.9 Z M164.2 127.5 L187 108.5 L178.5 132.3 Z M177.3 131.8 L203.5 116.3 L189.7 138 Z M188.7 137.4 L217.4 125.8 L198.8 144.7 Z M198 144 L228.3 136.8 L205.5 152.1 Z M204.9 151.4 L235.7 148.8 L209.5 160.1 Z M209.2 159.3 L239.5 161.5 L210.8 168.4 Z" fill="#000"/>
+  <ellipse cx="128" cy="168" rx="92" ry="50" fill="#000"/>
+  </g>
+  </g>
+  <g data-move="6" data-pivot="70 190">
+  <path d="M64 150 Q20 150 -6 186 Q-10 196 4 198 Q40 210 76 200 Q92 176 64 150 Z" fill="currentColor"/>
+  <path d="M64 150 Q20 150 -6 186 Q-10 196 4 198 Q40 210 76 200 Q92 176 64 150 Z" fill="rgba(255,255,255,.22)"/>
+  <circle cx="-6" cy="190" r="6" fill="rgba(0,0,0,.55)"/>
+  <circle cx="58" cy="152" r="9" fill="currentColor"/>
+  <path d="M27 172 q7 7 14 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+</svg></template>
+<template id="animal-chicken" data-name="Chicken"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <path d="M170 150 Q206 96 226 118 Q214 132 222 150 Q206 148 196 166 Z" fill="currentColor"/>
+  <path d="M-20 214 L230 214" stroke="rgba(0,0,0,.55)" stroke-width="8" stroke-linecap="round"/>
+  <g data-part="body">
+  <ellipse cx="120" cy="160" rx="84" ry="52" fill="currentColor"/>
+  <g data-move="6" data-pivot="120 150">
+  <path d="M92 150 Q130 120 176 156 Q134 190 92 150 Z" fill="rgba(0,0,0,.55)" opacity=".25"/>
+  </g>
+  </g>
+  <circle cx="50" cy="110" r="10" fill="#ff5a4a"/>
+  <circle cx="64" cy="104" r="11" fill="#ff5a4a"/>
+  <circle cx="78" cy="110" r="9" fill="#ff5a4a"/>
+  <circle cx="62" cy="138" r="38" fill="currentColor"/>
+  <path d="M40 134 q8 8 16 0 M68 134 q8 8 16 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="5" stroke-linecap="round"/>
+  <path d="M26 142 L40 136 L40 150 Z" fill="#f2b23a"/>
+  <ellipse cx="42" cy="160" rx="6" ry="9" fill="#ff5a4a"/>
+</svg></template>
+<template id="animal-pig" data-name="Pig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <g data-part="body">
+  <ellipse cx="110" cy="160" rx="92" ry="48" fill="currentColor"/>
+  <path d="M200 150 q14 -6 10 -16 q-4 -10 -12 -2 q-6 8 6 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <g data-move="-10" data-pivot="30 110">
+  <path d="M20 124 L26 92 L48 108 Z" fill="currentColor"/>
+  </g>
+  <path d="M68 108 L90 92 L96 124 Z" fill="currentColor"/>
+  <circle cx="58" cy="140" r="42" fill="currentColor"/>
+  <path d="M36 130 q8 8 16 0 M64 130 q8 8 16 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="58" cy="158" rx="17" ry="12" fill="rgba(255,255,255,.22)"/>
+  <ellipse cx="52" cy="158" rx="3" ry="4.5" fill="rgba(0,0,0,.55)"/>
+  <ellipse cx="64" cy="158" rx="3" ry="4.5" fill="rgba(0,0,0,.55)"/>
+</svg></template>
+<template id="animal-horse" data-name="Horse"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <g data-move="12" data-pivot="206 156">
+  <path d="M208 150 Q238 166 230 212 Q222 214 216 206 Q224 176 202 162 Z" fill="currentColor"/>
+  <path d="M208 150 Q238 166 230 212 Q222 214 216 206 Q224 176 202 162 Z" fill="rgba(0,0,0,.55)" opacity=".45"/>
+  </g>
+  <g data-part="body">
+  <ellipse cx="128" cy="166" rx="88" ry="42" fill="currentColor"/>
+  <path d="M150 196 Q184 214 214 204" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"/>
+  <path d="M150 190 Q176 176 196 188" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="3" opacity=".5"/>
+  </g>
+  <path d="M52 176 Q40 128 58 92 L96 104 Q86 140 100 170 Z" fill="currentColor"/>
+  <path d="M60 90 Q82 84 98 104 Q92 132 102 168 L92 170 Q80 136 86 108 Q76 96 60 96 Z" fill="rgba(0,0,0,.55)" opacity=".7"/>
+  <path d="M58 92 Q30 96 14 132 Q6 154 22 160 Q40 162 52 140 Q64 118 76 104 Z" fill="currentColor"/>
+  <path d="M14 132 Q6 154 22 160 Q34 162 40 154 Q28 146 20 132 Z" fill="rgba(255,255,255,.22)"/>
+  <path d="M60 90 L62 68 L74 88 Z M70 92 L78 72 L84 94 Z" fill="currentColor"/>
+  <ellipse cx="18" cy="150" rx="3.5" ry="2.5" fill="rgba(0,0,0,.55)"/>
+  <path d="M37 110 q7 7 14 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M86 200 Q56 212 30 204" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="28" cy="204" r="8" fill="rgba(0,0,0,.55)"/>
+</svg></template>
+<template id="animal-cow" data-name="Cow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <g data-move="14" data-pivot="208 154">
+  <path d="M208 154 Q234 170 226 204" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+  <path d="M226 200 q-8 8 -2 16 q6 -2 10 -8 q-2 -6 -8 -8 Z" fill="currentColor"/>
+  <path d="M226 200 q-8 8 -2 16 q6 -2 10 -8 q-2 -6 -8 -8 Z" fill="rgba(0,0,0,.55)"/>
+  </g>
+  <path d="M150 196 Q182 214 212 206" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="212" cy="206" r="7" fill="rgba(0,0,0,.55)"/>
+  <g data-part="body">
+  <ellipse cx="124" cy="162" rx="90" ry="46" fill="currentColor"/>
+  <path d="M110 124 Q140 116 150 134 Q138 150 116 144 Q100 136 110 124 Z" fill="rgba(0,0,0,.55)" opacity=".6"/>
+  <ellipse cx="180" cy="170" rx="16" ry="12" fill="rgba(0,0,0,.55)" opacity=".6"/>
+  <ellipse cx="96" cy="186" rx="12" ry="8" fill="rgba(0,0,0,.55)" opacity=".6"/>
+  </g>
+  <path d="M80 200 Q52 212 24 206" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="22" cy="206" r="7" fill="rgba(0,0,0,.55)"/>
+  <path d="M36 104 Q24 88 34 76 M80 104 Q92 88 82 76" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+  <path d="M36 104 Q24 88 34 76 M80 104 Q92 88 82 76" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="7" stroke-linecap="round"/>
+  <ellipse cx="10" cy="118" rx="18" ry="8" fill="currentColor" transform="rotate(20 10 118)"/>
+  <ellipse cx="106" cy="118" rx="18" ry="8" fill="currentColor" transform="rotate(-20 106 118)"/>
+  <circle cx="58" cy="134" r="40" fill="currentColor"/>
+  <ellipse cx="58" cy="162" rx="28" ry="17" fill="rgba(255,255,255,.22)"/>
+  <ellipse cx="49" cy="162" rx="3.5" ry="4.5" fill="rgba(0,0,0,.55)"/>
+  <ellipse cx="67" cy="162" rx="3.5" ry="4.5" fill="rgba(0,0,0,.55)"/>
+  <path d="M36 130 q8 8 16 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M64 130 q8 8 16 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="4.5" stroke-linecap="round"/>
+</svg></template>
+<template id="animal-robin" data-name="Robin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <path d="M-20 212 L230 212" stroke="rgba(0,0,0,.55)" stroke-width="8" stroke-linecap="round"/>
+  <g data-move="8" data-pivot="160 170">
+  <path d="M160 160 L204 178.66666666666666 L198 197.5 Z" fill="currentColor"/>
+  </g>
+  <g data-part="body">
+  <ellipse cx="110" cy="146" rx="64" ry="54" fill="currentColor"/>
+  <ellipse cx="74" cy="150" rx="26" ry="32" fill="rgba(255,110,60,.85)"/>
+  <g data-move="5" data-pivot="118 140">
+  <path d="M92 134 Q140 112 172 154 Q128 176 92 134 Z" fill="rgba(0,0,0,.55)" opacity=".25"/>
+  </g>
+  </g>
+  <circle cx="78" cy="104" r="36" fill="currentColor"/>
+  <path d="M50 96 q7 6 14 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="4" stroke-linecap="round"/>
+  <path d="M44 102 L24 110 L44 116 Z" fill="currentColor"/>
+  <path d="M44 102 L24 110 L44 116 Z" fill="rgba(0,0,0,.55)"/>
+  <path d="M96 198 l0 14 M116 198 l0 14" stroke="rgba(60,40,30,.8)" stroke-width="4" stroke-linecap="round"/>
+</svg></template>
+<template id="animal-blackbird" data-name="Blackbird"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <path d="M-24 208 L236 208" stroke="currentColor" stroke-width="9" stroke-linecap="round"/>
+  <path d="M-24 208 L236 208" stroke="rgba(0,0,0,.55)" stroke-width="9" stroke-linecap="round"/>
+  <path d="M96 184 l-4 24 M122 184 l4 24" stroke="#ffc400" stroke-width="4" stroke-linecap="round"/>
+  <g data-part="body">
+  <path d="M40 128 Q42 92 76 88 Q104 86 118 106 Q160 104 190 130 L230 150 L224 166 L184 160 Q160 186 110 184 Q60 182 44 158 Q38 144 40 128 Z" fill="currentColor"/>
+  <path d="M40 128 Q42 92 76 88 Q104 86 118 106 Q160 104 190 130 L230 150 L224 166 L184 160 Q160 186 110 184 Q60 182 44 158 Q38 144 40 128 Z" fill="rgba(0,0,0,.6)"/>
+  <g data-move="-6" data-pivot="100 140">
+  <path d="M92 128 Q140 112 186 146 Q140 162 100 150 Z" fill="rgba(0,0,0,.6)"/>
+  <path d="M100 134 Q140 124 178 148" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="2.5"/>
+  </g>
+  </g>
+  <path d="M44 114 L16 122 L44 128 Z" fill="#ffc400"/>
+  <circle cx="70" cy="110" r="10" fill="none" stroke="#ffc400" stroke-width="3"/>
+  <path d="M62 110 q8 6 16 0" fill="none" stroke="#ffc400" stroke-width="3" stroke-linecap="round"/>
+</svg></template>
+<template id="animal-lion" data-name="Lion"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 280 280">
+  <g data-move="14" data-pivot="206 158">
+  <path d="M206 158 Q236 150 232 118" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+  <path d="M232 122 q-12 -6 -6 -20 q10 2 12 10 q2 6 -6 10 Z" fill="currentColor"/>
+  <path d="M232 122 q-12 -6 -6 -20 q10 2 12 10 q2 6 -6 10 Z" fill="rgba(0,0,0,.55)"/>
+  </g>
+  <g data-part="body">
+  <ellipse cx="130" cy="166" rx="88" ry="44" fill="currentColor"/>
+  </g>
+  <ellipse cx="34" cy="206" rx="30" ry="11" fill="currentColor"/>
+  <ellipse cx="80" cy="208" rx="30" ry="11" fill="currentColor"/>
+  <path d="M14 206 l0 6 M22 205 l0 7 M60 208 l0 6 M68 207 l0 7" stroke="rgba(0,0,0,.55)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M108 132 Q124.3 147.1 103 153.7 Q111.2 174.4 89.2 171.1 Q87.5 193.3 69.1 180.7 Q58 200 46.9 180.7 Q28.5 193.3 26.8 171.1 Q4.8 174.4 13 153.7 Q-8.3 147.1 8 132 Q-8.3 116.9 13 110.3 Q4.8 89.6 26.8 92.9 Q28.5 70.7 46.9 83.3 Q58 64 69.1 83.3 Q87.5 70.7 89.2 92.9 Q111.2 89.6 103 110.3 Q124.3 116.9 108 132Z" fill="currentColor"/>
+  <path d="M108 132 Q124.3 147.1 103 153.7 Q111.2 174.4 89.2 171.1 Q87.5 193.3 69.1 180.7 Q58 200 46.9 180.7 Q28.5 193.3 26.8 171.1 Q4.8 174.4 13 153.7 Q-8.3 147.1 8 132 Q-8.3 116.9 13 110.3 Q4.8 89.6 26.8 92.9 Q28.5 70.7 46.9 83.3 Q58 64 69.1 83.3 Q87.5 70.7 89.2 92.9 Q111.2 89.6 103 110.3 Q124.3 116.9 108 132Z" fill="rgba(0,0,0,.55)" opacity=".5"/>
+  <circle cx="26" cy="96" r="12" fill="currentColor"/>
+  <circle cx="26" cy="96" r="6" fill="rgba(0,0,0,.55)"/>
+  <circle cx="90" cy="96" r="12" fill="currentColor"/>
+  <circle cx="90" cy="96" r="6" fill="rgba(0,0,0,.55)"/>
+  <circle cx="58" cy="134" r="40" fill="currentColor"/>
+  <ellipse cx="58" cy="156" rx="22" ry="15" fill="rgba(255,255,255,.22)"/>
+  <path d="M50 146 L66 146 L58 156 Z" fill="rgba(0,0,0,.55)"/>
+  <path d="M58 156 q-6 8 -12 6 M58 156 q6 8 12 6" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M34 128 q8 8 16 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M66 128 q8 8 16 0" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M28 156 L42 158 M28 164 L42 162 M88 156 L74 158 M88 164 L74 162" stroke="rgba(0,0,0,.55)" stroke-width="1.5"/>
+</svg></template>
+<!-- ======================== END ANIMAL DRAWINGS ======================== -->
+
 <script>
 (function () {
   'use strict';
@@ -269,127 +533,16 @@
     white: { face: '#f2f2f2', bg: '#141414' }
   };
 
-  // ---------- sleeping animals: one shared curled-up pose, each animal adds its own features ----------
-  // draw(c, mv) returns SVG parts: back (behind), body (breathes), head, front. c = night colour;
-  // DK / LT = dark / light details; mv(px, py, deg, markup) wraps a part in a little movement around px,py.
-  var DK = 'rgba(0,0,0,.55)', LT = 'rgba(255,255,255,.22)';
-  function kitBody(c) { return '<ellipse cx="110" cy="160" rx="92" ry="48" fill="' + c + '"/>'; }
-  function kitHead(c, x, y, r) { return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + c + '"/>'; }
-  function kitEyes(x, y) { // two closed eyes centred on x,y
-    return '<path d="M' + (x - 22) + ' ' + y + ' q8 8 16 0 M' + (x + 6) + ' ' + y + ' q8 8 16 0" fill="none" stroke="' + DK + '" stroke-width="5" stroke-linecap="round"/>';
-  }
-  // Robin and blackbird: a round bird asleep on a branch. breast = colour or null; darkBody shades the whole bird.
-  function birdParts(c, mv, breast, beak, legs, tail, darkBody) {
-    return {
-      back: '<path d="M-20 212 L230 212" stroke="' + DK + '" stroke-width="8" stroke-linecap="round"/>' +
-        mv(160, 170, 8, '<path d="M160 160 L' + (170 + tail) + ' ' + (190 - tail / 3) + ' L' + (164 + tail) + ' ' + (206 - tail / 4) + ' Z" fill="' + c + '"/>'),
-      body: '<ellipse cx="110" cy="146" rx="64" ry="54" fill="' + c + '"/>' +
-        (breast ? '<ellipse cx="74" cy="150" rx="26" ry="32" fill="' + breast + '"/>' : '') + mv(118, 140, 5, '<path d="M92 134 Q140 112 172 154 Q128 176 92 134 Z" fill="' + DK + '" opacity=".25"/>'),
-      head: '<circle cx="78" cy="104" r="36" fill="' + c + '"/>' +
-        (darkBody ? '<ellipse cx="110" cy="146" rx="64" ry="54" fill="' + DK + '" opacity=".55"/><circle cx="78" cy="104" r="36" fill="' + DK + '" opacity=".55"/>' : '') +
-        '<path d="M50 96 q7 6 14 0" fill="none" stroke="' + (darkBody ? '#ffc400' : DK) + '" stroke-width="4" stroke-linecap="round"/>' +
-        '<path d="M44 102 L24 110 L44 116 Z" fill="' + c + '"/><path d="M44 102 L24 110 L44 116 Z" fill="' + beak + '"/>' +
-        '<path d="M96 198 l0 14 M116 198 l0 14" stroke="' + legs + '" stroke-width="4" stroke-linecap="round"/>'
-    };
-  }
-  var ANIMALS = {
-    bunny: { name: 'Bunny', draw: function (c, mv) { return {
-      back: '<ellipse cx="38" cy="78" rx="13" ry="42" fill="' + c + '" transform="rotate(-18 38 78)"/>' +
-        mv(72, 110, -14, '<ellipse cx="72" cy="74" rx="13" ry="42" fill="' + c + '" transform="rotate(14 72 74)"/><ellipse cx="72" cy="78" rx="6" ry="30" fill="' + DK + '" opacity=".35" transform="rotate(14 72 78)"/>'),
-      body: kitBody(c) + '<circle cx="202" cy="150" r="16" fill="' + c + '"/><circle cx="202" cy="150" r="16" fill="' + LT + '"/>',
-      head: kitHead(c, 58, 140, 44) + kitEyes(58, 136) + '<ellipse cx="58" cy="156" rx="5" ry="4" fill="' + DK + '"/>'
-    }; } },
-    bear: { name: 'Bear', draw: function (c, mv) { return {
-      back: mv(30, 108, -10, '<circle cx="24" cy="104" r="17" fill="' + c + '"/><circle cx="24" cy="104" r="8" fill="' + DK + '" opacity=".4"/>') +
-        '<circle cx="92" cy="104" r="17" fill="' + c + '"/><circle cx="92" cy="104" r="8" fill="' + DK + '" opacity=".4"/>',
-      body: kitBody(c) + '<ellipse cx="150" cy="176" rx="34" ry="18" fill="' + LT + '"/>',
-      head: kitHead(c, 58, 140, 44) + kitEyes(58, 134) + '<ellipse cx="58" cy="158" rx="17" ry="12" fill="' + LT + '"/><ellipse cx="58" cy="153" rx="6" ry="4.5" fill="' + DK + '"/>'
-    }; } },
-    cat: { name: 'Cat', draw: function (c, mv) { return {
-      back: '<path d="M22 124 L28 84 L52 106 Z M64 106 L88 84 L94 124 Z" fill="' + c + '"/><path d="M30 112 L32 94 L44 106 Z M72 106 L84 94 L86 112 Z" fill="' + DK + '" opacity=".35"/>',
-      body: kitBody(c),
-      head: kitHead(c, 58, 140, 42) + kitEyes(58, 136) + '<path d="M54 152 l4 4 4 -4 Z" fill="' + DK + '"/>' +
-        '<path d="M20 152 L44 156 M20 162 L44 160 M96 152 L72 156 M96 162 L72 160" stroke="' + DK + '" stroke-width="1.5" opacity=".6"/>',
-      front: mv(196, 176, 16, '<path d="M196 176 Q226 204 176 212 Q120 218 96 204" fill="none" stroke="' + c + '" stroke-width="15" stroke-linecap="round"/>')
-    }; } },
-    owl: { name: 'Owl', draw: function (c, mv) { return {
-      back: '<path d="M-20 214 L230 214" stroke="' + DK + '" stroke-width="10" stroke-linecap="round"/>',
-      body: mv(100, 200, 3, '<ellipse cx="100" cy="140" rx="66" ry="72" fill="' + c + '"/><path d="M42 130 Q30 180 66 206 M158 130 Q170 180 134 206" fill="none" stroke="' + DK + '" stroke-width="5" opacity=".45"/>' +
-        '<path d="M80 150 q6 6 12 0 M108 150 q6 6 12 0 M86 170 q6 6 12 0 M102 170 q6 6 12 0 M94 188 q6 6 12 0" fill="none" stroke="' + LT + '" stroke-width="3"/>'),
-      head: '<path d="M52 70 L60 34 L80 62 Z M148 70 L140 34 L120 62 Z" fill="' + c + '"/>' + kitHead(c, 100, 86, 50) +
-        '<circle cx="80" cy="84" r="17" fill="' + LT + '"/><circle cx="120" cy="84" r="17" fill="' + LT + '"/>' + kitEyes(100, 84) +
-        '<path d="M94 98 L106 98 L100 110 Z" fill="#e0a13a"/>' +
-        '<path d="M82 212 l0 6 M92 212 l0 6 M108 212 l0 6 M118 212 l0 6" stroke="#e0a13a" stroke-width="4" stroke-linecap="round"/>'
-    }; } },
-    dog: { name: 'Dog', draw: function (c, mv) { return {
-      body: kitBody(c) + '<ellipse cx="140" cy="146" rx="26" ry="16" fill="' + DK + '" opacity=".25"/><path d="M198 150 Q222 136 214 118" fill="none" stroke="' + c + '" stroke-width="12" stroke-linecap="round"/>',
-      head: kitHead(c, 58, 140, 42) + kitEyes(58, 132) + '<ellipse cx="58" cy="160" rx="18" ry="13" fill="' + LT + '"/><ellipse cx="58" cy="154" rx="7" ry="5" fill="' + DK + '"/>',
-      front: mv(22, 112, 10, '<ellipse cx="18" cy="140" rx="12" ry="30" fill="' + c + '"/><ellipse cx="18" cy="140" rx="12" ry="30" fill="' + DK + '" opacity=".3"/>') +
-        '<ellipse cx="98" cy="140" rx="12" ry="30" fill="' + c + '"/><ellipse cx="98" cy="140" rx="12" ry="30" fill="' + DK + '" opacity=".3"/>'
-    }; } },
-    turtle: { name: 'Turtle', draw: function (c, mv) { return {
-      back: '<ellipse cx="72" cy="206" rx="14" ry="8" fill="' + c + '"/><ellipse cx="160" cy="206" rx="14" ry="8" fill="' + c + '"/>',
-      body: '<path d="M40 196 Q46 96 120 96 Q194 96 200 196 Z" fill="' + c + '"/><path d="M40 196 Q46 96 120 96 Q194 96 200 196 Z" fill="' + DK + '" opacity=".2"/>' +
-        '<path d="M84 196 L96 140 L144 140 L156 196 M96 140 L120 104 L144 140 M62 170 L96 140 M178 170 L144 140" fill="none" stroke="' + DK + '" stroke-width="4" opacity=".5"/>',
-      head: mv(46, 190, -8, '<path d="M50 194 Q40 180 24 180" fill="none" stroke="' + c + '" stroke-width="22" stroke-linecap="round"/>' +
-        '<ellipse cx="16" cy="182" rx="22" ry="17" fill="' + c + '"/><path d="M4 178 q7 6 14 0" fill="none" stroke="' + DK + '" stroke-width="4" stroke-linecap="round"/>' +
-        '<path d="M-4 190 q6 3 12 1" fill="none" stroke="' + DK + '" stroke-width="2.5" stroke-linecap="round" opacity=".6"/>')
-    }; } },
-    hedgehog: { name: 'Hedgehog', draw: function (c, mv) {
-      var spikes = '', i;
-      for (i = 0; i < 9; i++) spikes += 'M' + (60 + i * 18) + ' ' + (130 - Math.round(Math.sin(i / 8 * Math.PI) * 20)) + ' l10 -24 l10 24 ';
-      return {
-        body: kitBody(c) + '<path d="' + spikes + '" fill="' + c + '"/><path d="' + spikes + '" fill="' + DK + '" opacity=".35"/><ellipse cx="130" cy="150" rx="80" ry="30" fill="' + DK + '" opacity=".25"/>',
-        head: '<ellipse cx="46" cy="160" rx="40" ry="28" fill="' + c + '"/>' + kitEyes(50, 152) + mv(8, 162, 8, '<circle cx="8" cy="162" r="6" fill="' + DK + '"/>')
-      };
-    } },
-    chicken: { name: 'Chicken', draw: function (c, mv) { return {
-      back: '<path d="M170 150 Q206 96 226 118 Q214 132 222 150 Q206 148 196 166 Z" fill="' + c + '"/><path d="M-20 214 L230 214" stroke="' + DK + '" stroke-width="8" stroke-linecap="round"/>',
-      body: '<ellipse cx="120" cy="160" rx="84" ry="52" fill="' + c + '"/>' + mv(120, 150, 6, '<path d="M92 150 Q130 120 176 156 Q134 190 92 150 Z" fill="' + DK + '" opacity=".25"/>'),
-      head: '<circle cx="50" cy="110" r="10" fill="#ff5a4a"/><circle cx="64" cy="104" r="11" fill="#ff5a4a"/><circle cx="78" cy="110" r="9" fill="#ff5a4a"/>' +
-        kitHead(c, 62, 138, 38) + kitEyes(62, 134) + '<path d="M26 142 L40 136 L40 150 Z" fill="#f2b23a"/><ellipse cx="42" cy="160" rx="6" ry="9" fill="#ff5a4a"/>'
-    }; } },
-    pig: { name: 'Pig', draw: function (c, mv) { return {
-      body: kitBody(c) + '<path d="M200 150 q14 -6 10 -16 q-4 -10 -12 -2 q-6 8 6 10" fill="none" stroke="' + c + '" stroke-width="5" stroke-linecap="round"/>',
-      head: mv(30, 110, -10, '<path d="M20 124 L26 92 L48 108 Z" fill="' + c + '"/>') + '<path d="M68 108 L90 92 L96 124 Z" fill="' + c + '"/>' +
-        kitHead(c, 58, 140, 42) + kitEyes(58, 130) + '<ellipse cx="58" cy="158" rx="17" ry="12" fill="' + LT + '"/>' +
-        '<ellipse cx="52" cy="158" rx="3" ry="4.5" fill="' + DK + '"/><ellipse cx="64" cy="158" rx="3" ry="4.5" fill="' + DK + '"/>'
-    }; } },
-    horse: { name: 'Horse', draw: function (c, mv) { return {
-      back: mv(200, 150, 12, '<path d="M200 150 Q236 170 222 212" fill="none" stroke="' + c + '" stroke-width="14" stroke-linecap="round"/><path d="M200 150 Q236 170 222 212" fill="none" stroke="' + DK + '" stroke-width="14" stroke-linecap="round" opacity=".35"/>'),
-      body: kitBody(c),
-      head: '<path d="M44 140 Q34 104 42 70 Q54 46 70 58 Q90 90 126 122 Z" fill="' + c + '"/>' +
-        '<path d="M44 58 L46 32 L58 50 Z M56 54 L64 32 L68 58 Z" fill="' + c + '"/><path d="M48 50 L48 40 L54 48 Z" fill="' + DK + '" opacity=".35"/>' +
-        '<ellipse cx="28" cy="86" rx="16" ry="40" fill="' + c + '" transform="rotate(35 28 86)"/>' +
-        '<ellipse cx="14" cy="108" rx="10" ry="9" fill="' + LT + '" transform="rotate(35 14 108)"/>' +
-        '<path d="M60 52 Q84 70 100 96 Q112 112 124 118" fill="none" stroke="' + DK + '" stroke-width="10" stroke-linecap="round" opacity=".45"/>' +
-        '<path d="M44 90 Q46 104 34 114" fill="none" stroke="' + DK + '" stroke-width="2.5" stroke-linecap="round" opacity=".45"/>' +
-        '<path d="M28 76 q7 6 14 0" fill="none" stroke="' + DK + '" stroke-width="4" stroke-linecap="round"/><ellipse cx="10" cy="106" rx="3.5" ry="2.5" fill="' + DK + '" transform="rotate(35 10 106)"/>',
-      front: '<path d="M60 200 Q32 208 8 200" fill="none" stroke="' + c + '" stroke-width="13" stroke-linecap="round"/><path d="M60 200 Q32 208 8 200" fill="none" stroke="' + DK + '" stroke-width="13" stroke-linecap="round" opacity=".2"/><circle cx="8" cy="200" r="7" fill="' + DK + '" opacity=".45"/>'
-    }; } },
-    cow: { name: 'Cow', draw: function (c, mv) { return {
-      back: '<path d="M34 104 Q22 84 30 72 M82 104 Q94 84 86 72" fill="none" stroke="' + c + '" stroke-width="8" stroke-linecap="round"/>' +
-        '<path d="M34 104 Q22 84 30 72 M82 104 Q94 84 86 72" fill="none" stroke="' + LT + '" stroke-width="8" stroke-linecap="round"/>' +
-        mv(20, 124, -12, '<ellipse cx="8" cy="126" rx="18" ry="9" fill="' + c + '"/>') + '<ellipse cx="108" cy="126" rx="18" ry="9" fill="' + c + '"/>',
-      body: kitBody(c) + '<ellipse cx="128" cy="148" rx="22" ry="14" fill="' + DK + '" opacity=".3"/><ellipse cx="176" cy="172" rx="16" ry="11" fill="' + DK + '" opacity=".3"/><ellipse cx="100" cy="184" rx="12" ry="8" fill="' + DK + '" opacity=".3"/>',
-      head: kitHead(c, 58, 140, 42) + kitEyes(58, 130) + '<ellipse cx="58" cy="162" rx="24" ry="14" fill="' + LT + '"/>' +
-        '<ellipse cx="50" cy="162" rx="3" ry="4" fill="' + DK + '"/><ellipse cx="66" cy="162" rx="3" ry="4" fill="' + DK + '"/>'
-    }; } },
-    robin: { name: 'Robin', draw: function (c, mv) { return birdParts(c, mv, 'rgba(255,110,60,.85)', DK, 'rgba(60,40,30,.8)', 34, false); } },
-    blackbird: { name: 'Blackbird', draw: function (c, mv) { return birdParts(c, mv, null, '#ffc400', '#ffc400', 52, true); } },
-    lion: { name: 'Lion', draw: function (c, mv) {
-      var mane = '', i;
-      for (i = 0; i < 12; i++) mane += '<circle cx="' + (58 + Math.cos(i / 12 * Math.PI * 2) * 46).toFixed(0) + '" cy="' + (138 + Math.sin(i / 12 * Math.PI * 2) * 46).toFixed(0) + '" r="17"/>';
-      return {
-        back: '<g fill="' + c + '">' + mane + '</g><g fill="' + DK + '" opacity=".35">' + mane + '</g>',
-        body: kitBody(c) + mv(200, 160, 14, '<path d="M200 160 Q226 150 228 126" fill="none" stroke="' + c + '" stroke-width="7" stroke-linecap="round"/><circle cx="228" cy="122" r="9" fill="' + c + '"/><circle cx="228" cy="122" r="9" fill="' + DK + '" opacity=".35"/>'),
-        head: kitHead(c, 58, 138, 40) + '<circle cx="30" cy="104" r="10" fill="' + c + '"/><circle cx="86" cy="104" r="10" fill="' + c + '"/>' +
-          kitEyes(58, 132) + '<ellipse cx="58" cy="156" rx="16" ry="11" fill="' + LT + '"/><path d="M52 150 l6 6 6 -6 Z" fill="' + DK + '"/>'
-      };
-    } }
-  };
-  var ANIMAL_LIST = [];
-  for (var animalId in ANIMALS) ANIMAL_LIST.push([animalId, ANIMALS[animalId].name]);
+  // ---------- sleeping animals: drawings are plain SVG in the ANIMAL DRAWINGS <template> section of the page ----------
+  var ANIMALS = {}, ANIMAL_LIST = [];
+  (function () {
+    var ts = document.querySelectorAll('template[id^="animal-"]');
+    for (var i = 0; i < ts.length; i++) {
+      var id = ts[i].id.slice(7);
+      ANIMALS[id] = { name: ts[i].getAttribute('data-name'), tpl: ts[i] };
+      ANIMAL_LIST.push([id, ANIMALS[id].name]);
+    }
+  })();
 
   // ---------- night animations: registry ----------
   // A scene replaces the night face (choose one); extras draw on top (any number).
@@ -708,20 +861,37 @@
     return h + '</g></svg>';
   }
 
-  // An animal asleep: the body breathes (scaled from its bottom centre, so the belly rises), parts twitch now and then.
+  // An animal asleep, from its template: the body breathes (scaled from its bottom centre, so the belly rises),
+  // [data-move] parts twitch now and then; gradient ids get this copy's prefix so copies on screen don't clash.
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function svgEl(tag, attrs) { var e = document.createElementNS(SVGNS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); return e; }
   function sceneAnimal(o, c) {
-    var dur = o.moves === 'normal' ? 8 : 20;
-    function mv(px, py, deg, part) {
-      if (o.moves === 'off') return part;
-      var z = '0 ' + px + ' ' + py;
-      return '<g data-move="1"><animateTransform attributeName="transform" type="rotate" values="' + z + ';' + z + ';' + deg + ' ' + px + ' ' + py + ';' + z + ';' + z +
-        '" keyTimes="0;.9;.93;.96;1" dur="' + dur + 's" repeatCount="indefinite"/>' + part + '</g>';
+    var box = document.createElement('div'), i;
+    box.innerHTML = ANIMALS[o.animal].tpl.innerHTML;
+    var svg = box.querySelector('svg');
+    svg.setAttribute('data-animal', o.animal);
+    svg.setAttribute('style', 'color:' + c.color);
+    var ided = svg.querySelectorAll('[id]'), refs = svg.querySelectorAll('[fill^="url"], [stroke^="url"]');
+    for (i = 0; i < ided.length; i++) ided[i].setAttribute('id', c.gid + '-' + ided[i].getAttribute('id'));
+    for (i = 0; i < refs.length; i++) ['fill', 'stroke'].forEach(function (a) {
+      var v = refs[i].getAttribute(a);
+      if (v && v.indexOf('url(#') === 0) refs[i].setAttribute(a, 'url(#' + c.gid + '-' + v.slice(5));
+    });
+    var dur = (o.moves === 'normal' ? 8 : 20) + 's', mv = svg.querySelectorAll('[data-move]');
+    for (i = 0; i < mv.length; i++) {
+      if (o.moves === 'off') { mv[i].removeAttribute('data-move'); mv[i].removeAttribute('data-pivot'); continue; }
+      var z = '0 ' + mv[i].getAttribute('data-pivot'), turn = mv[i].getAttribute('data-move') + ' ' + mv[i].getAttribute('data-pivot');
+      mv[i].insertBefore(svgEl('animateTransform', { attributeName: 'transform', type: 'rotate', values: [z, z, turn, z, z].join(';'),
+        keyTimes: '0;.9;.93;.96;1', dur: dur, repeatCount: 'indefinite' }), mv[i].firstChild);
     }
-    var a = ANIMALS[o.animal], p = a.draw(c.color, mv);
-    var breath = !o.breath ? '' : '<animateTransform attributeName="transform" type="scale" values="1 1;1.03 1.05;1 1" keyTimes="0;.5;1" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1" dur="10s" repeatCount="indefinite"/>';
-    return '<svg viewBox="-40 -40 280 280" xmlns="http://www.w3.org/2000/svg" data-animal="' + o.animal + '">' + (p.back || '') +
-      '<g transform="translate(100 205)"><g data-part="body">' + breath + '<g transform="translate(-100 -205)">' + p.body + '</g></g></g>' +
-      p.head + (p.front || '') + '</svg>';
+    var body = svg.querySelector('[data-part="body"]'), outer = svgEl('g', { transform: 'translate(100 205)' }), inner = svgEl('g', { transform: 'translate(-100 -205)' });
+    while (body.firstChild) inner.appendChild(body.firstChild);
+    if (o.breath) body.appendChild(svgEl('animateTransform', { attributeName: 'transform', type: 'scale', values: '1 1;1.03 1.05;1 1', keyTimes: '0;.5;1',
+      calcMode: 'spline', keySplines: '.42 0 .58 1;.42 0 .58 1', dur: '10s', repeatCount: 'indefinite' }));
+    body.appendChild(inner);
+    body.parentNode.insertBefore(outer, body);
+    outer.appendChild(body);
+    return box.innerHTML;
   }
 
   // ---------- night extras ----------
@@ -1312,7 +1482,8 @@
     var svg = d.firstChild, anims = svg.querySelectorAll('animate, animateTransform, animateMotion, set'), i;
     for (i = 0; i < anims.length; i++) anims[i].parentNode.removeChild(anims[i]);
     svg.setAttribute('width', '560'); svg.setAttribute('height', '560');
-    return new XMLSerializer().serializeToString(svg);
+    svg.removeAttribute('style'); // animals paint with currentColor; spell the colour out for drawing tools
+    return new XMLSerializer().serializeToString(svg).replace(/currentColor/g, NIGHT_COLORS[S.nightColor]);
   }
   function showSvg(id) {
     var src = stillSvg(id), animal = id.indexOf('animal:') === 0 ? id.slice(7) : null;
