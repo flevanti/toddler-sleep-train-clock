@@ -32,7 +32,7 @@ Each file can also be run on its own: `.venv/bin/python tests/test_sim.py . test
 | `test_night_render.py` | night timing (since/frac), per-area redraw, ids, dimming, fade, every scene |
 | `test_night_ui.py` | night animation controls built from the registry |
 | `test_night_extras.py` | star countdown, fireflies, shooting stars, in the simulation too |
-| `test_keep_awake.py` | keep the screen on (Wake Lock, silent-video fallback, tap, release) and the full-screen help |
+| `test_keep_awake.py` | keep the screen on (Wake Lock, silent-video fallback: unmuted, no loop, tap, release) and the full-screen help; plays the video for real in WebKit if installed |
 | `test_manifest.py` | the embedded web app manifest: parses, full screen, 512 px normal + maskable icons, Chromium says the page is installable |
 | `test_updates.py` | Reload button, Check now (newer / same / offline), the "new version available" note: off by default, checks every few hours in the day only, picture colour, never at night |
 | `test_changelog.py` | the app version matches the newest `CHANGELOG.md` entry, entries are well-formed, released versions have git tags |

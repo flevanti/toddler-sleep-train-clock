@@ -88,8 +88,9 @@ with sync_playwright() as pw:
         p = fresh(b, vp, NO_WAKELOCK)
         errs = []
         p.on('pageerror', lambda e: errs.append(str(e)))
-        v = p.evaluate("() => { var v = __vid.last; return v ? [v.muted, v.loop, v.hasAttribute('playsinline'), (v.currentSrc || v.src || '').slice(0, 15)] : null; }")
-        check(tag + 'fallback video: muted, looping, inline, tiny built-in mp4', v == [True, True, True, 'data:video/mp4;'], v)
+        v = p.evaluate("() => { var v = __vid.last; return v ? [v.muted, v.loop, v.hasAttribute('playsinline'), (v.currentSrc || v.src || '').slice(0, 15), v.parentNode === document.body] : null; }")
+        # Safari ignores muted or looping videos for keeping the screen on (WebKit HTMLMediaElement::shouldDisableSleep)
+        check(tag + 'fallback video: NOT muted, NOT looping, inline, tiny built-in mp4, in the page', v == [False, False, True, 'data:video/mp4;', True], v)
         open_settings(p, vp)
         check(tag + 'refused before a tap: status asks for a tap', 'Tap the clock once' in (p.evaluate(STATUS) or ''), p.evaluate(STATUS))
         p.click('#done')
@@ -110,5 +111,33 @@ with sync_playwright() as pw:
         check(tag + 'home-screen app: says it is already full screen, no button', 'full screen from the home screen' in fs and not p.is_visible('#goFull'), fs[:120])
         p.close()
     b.close()
+
+    # ---- real playback in WebKit (Safari's engine), if installed: `.venv/bin/playwright install webkit` ----
+    # Checks the conditions WebKit needs to keep the display on: playing, unmuted, sound + video tracks, never looping or ending.
+    try:
+        wk = pw.webkit.launch()
+    except Exception as e:
+        wk = None
+        print('SKIP WebKit playback check (WebKit not installed)', str(e).splitlines()[0])
+    if wk:
+        p = wk.new_page(viewport={'width': 1024, 'height': 768})
+        p.add_init_script("Object.defineProperty(navigator, 'wakeLock', {configurable: true, value: undefined});")
+        errs = []
+        p.on('pageerror', lambda e: errs.append(str(e)))
+        p.goto(URL)
+        p.wait_for_timeout(800)
+        VID = "() => { var v = document.querySelector('body > video'); return {paused: v.paused, muted: v.muted, loop: v.loop, vol: v.volume, t: v.currentTime, dur: v.duration, audio: v.audioTracks.length, video: v.videoTracks.length}; }"
+        check('WebKit: unmuted video waits for a tap', p.evaluate(VID)['paused'] is True)
+        p.mouse.click(512, 400)
+        ts = []
+        for i in range(16):
+            p.wait_for_timeout(250)
+            ts.append(p.evaluate(VID)['t'])
+        v = p.evaluate(VID)
+        check('WebKit: after a tap it plays, unmuted, with sound and video tracks, no loop',
+              not v['paused'] and not v['muted'] and not v['loop'] and v['vol'] > 0 and v['audio'] >= 1 and v['video'] >= 1, v)
+        check('WebKit: rewound before the end, so it never "ends"', max(ts) < v['dur'] - 0.1 and min(ts[4:]) < 0.4, [round(t, 2) for t in ts])
+        check('WebKit: no page errors', not errs, errs)
+        wk.close()
 srv.shutdown()
 sys.exit(check.finish())

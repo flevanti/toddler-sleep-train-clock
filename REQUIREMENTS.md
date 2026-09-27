@@ -173,7 +173,9 @@ Details:
 ### Keep the screen on and full screen (v1.6)
 - **"Keep the screen on"** is a switch under General, **on by default**.
   - **Newer browsers:** it uses the Screen Wake Lock API. The lock is asked for again whenever the page becomes visible, because the system releases it when the page is hidden.
-  - **Older browsers** (no Wake Lock, e.g. old iPads): a tiny silent looping MP4 keeps the screen awake. It's muted, inline and off-screen. The video and technique come from NoSleep.js (MIT, Rich Tibbett), and the file is embedded as a data URI.
+  - **Older browsers** (no Wake Lock, e.g. old iPads): a tiny MP4 with a silent sound track keeps the screen awake while it plays. It's inline, 1 px and nearly transparent in the page. The video and technique come from NoSleep.js (MIT, Rich Tibbett), and the file is embedded as a data URI.
+    - **Safari only keeps the screen on for a video that is playing, not muted (volume above 0), has a sound track and is not looping** (WebKit `HTMLMediaElement::shouldDisableSleep`). v1.6–1.8 played it muted and looping, so it played but the screen still dimmed and locked (seen on an iPad). Since v1.9 it's unmuted (the track is silent) and rewound by hand at ~0.5 s of its 1 s instead of `loop`, so it never ends. Unmuted playback needs a tap first.
+    - The dev overlay shows whether the video is really playing (position, PAUSED, MUTED). `tests/test_keep_awake.py` also plays it for real in WebKit when installed.
   - It may need one tap after a reload, the same tap that enables sound.
   - A status line under the switch says what's working: "built into this device", "older device: tiny silent video", "tap the clock once", or off.
   - It's a safety net only: the device's own screen timeout / Auto-Lock and low-power mode still matter (see the checklist).
