@@ -2,6 +2,10 @@
 
 Every version of Sleep Clock, newest first. The version shown in the app (`VERSION` in `index.html`) must match the newest entry here, and `tests/test_changelog.py` checks that it does. Use `tools/release.py` to add a version: it updates both. Each released version has a git tag (`v1.6`…) on the commit where it was finished. 1.0–1.2 were made before the project used git, so they have no tags.
 
+## 1.7 — 2026-09-27
+- **Installs as a full-screen app on Android:** the page now has a web app manifest (embedded, still just two files to deploy), so "Install app" / "Add to Home screen" gives the clock its own icon and opens it full screen with no address bar.
+- New app icon: the green morning face with sun rays, with a maskable version that fits Android's round and squircle icon shapes.
+
 ## 1.6 — 2026-09-27
 - **Keep the screen on:** a new switch, on by default. It uses the browser's built-in way to keep the screen awake where there is one, and a tiny silent looping video on older devices (the technique from NoSleep.js, MIT). A status line in settings says what's working.
 - **Full-screen help in settings:** how to run the clock from the home screen on iPad/iPhone and Android, plus a "Go full screen" button where the browser supports it.
