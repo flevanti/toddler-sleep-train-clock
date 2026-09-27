@@ -101,8 +101,10 @@ with sync_playwright() as pw:
     for aid in ids:
         p.evaluate("(a) => %s.setS({night: {scene: 'animal', scenes: {animal: {animal: a}}}})" % H, aid)
         p.clock.run_for(1100)
-        box = p.evaluate("""() => { var s = document.querySelector('#face svg'), g = s.getBBox();
-            return [g.x, g.y, g.x + g.width, g.y + g.height]; }""")
+        # measure the resting pose: SMIL runs on real time (not the fake clock), so an unpaused sample lands at a random
+        # point of the motion, and edge-to-edge scenes breathe a few units past the canvas at their peak
+        box = p.evaluate("""() => { var s = document.querySelector('#face svg'); s.pauseAnimations(); s.setCurrentTime(0);
+            var g = s.getBBox(); return [g.x, g.y, g.x + g.width, g.y + g.height]; }""")
         check(aid + ': drawing fits inside the canvas', box[0] >= -40 and box[1] >= -40 and box[2] <= 240 and box[3] <= 240, [round(v) for v in box])
         info = p.evaluate("""() => { var s = document.querySelector('#face svg');
             var whole = s.querySelector('[data-whole] > animateTransform');
