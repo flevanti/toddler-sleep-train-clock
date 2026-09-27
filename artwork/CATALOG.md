@@ -128,3 +128,9 @@ Files in `incoming/` are named as they will appear in the app (`-1`, `-2` for du
 | volleyball-player | People |
 | whale | Animals |
 | wheelbarrow | Toys |
+| cheese | Dev's Favourite |
+| colosseum | Dev's Favourite |
+| florentine-steak | Dev's Favourite |
+| olive-oil | Dev's Favourite |
+| olives | Dev's Favourite |
+| wine-and-grapes | Dev's Favourite |

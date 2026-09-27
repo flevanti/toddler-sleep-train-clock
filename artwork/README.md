@@ -3,8 +3,13 @@
 Not deployed. The clock only needs `index.html` and `sw.js`. This folder holds the source drawings.
 
 - `incoming/`: drop new SVGs here. Name each file as it should appear in the app (`fire-engine.svg`, `rocket-2.svg`), in lower case with hyphens.
-- `originals/`: every imported drawing, as downloaded. The importer moves files here from `incoming/`.
+- `originals/`: every imported drawing as a silhouette SVG. The importer moves files here from `incoming/`.
+- `sources/`: the raw files that were traced into silhouettes (coloured SVGs, PNGs…), kept for reference.
 - `CATALOG.md`: name and category of each picture. The category decides the carousel group and the gentle movement.
+
+Pictures that aren't already one-colour silhouettes (colours, text, styles, PNG/JPG) are turned into one first with `.venv/bin/python tools/trace_artwork.py`. It needs potrace (`brew install potrace`), and it moves the original to `sources/`.
+
+The hand-drawn **Dev's Favourite** pictures don't come from files: they're drawn in code in `tools/draw_dev_favourite.py` (run it after editing a drawing). They're hidden in the app unless dev mode and its switch are on.
 
 To add pictures:
 1. Put the SVGs in `incoming/`.

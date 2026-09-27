@@ -27,7 +27,7 @@ TARGET_BYTES = 2800          # aim per picture
 MAX_BYTES = 6000             # hard limit (tests/test_animal_drawings.py)
 BOX = (-25.0, -25.0, 225.0, 210.0)   # fit area: x0, y0, x1, ground y
 CARTOON_IDS = {'bunny', 'bear', 'cat', 'owl', 'dog', 'turtle', 'hedgehog', 'chicken', 'pig', 'horse', 'cow', 'robin', 'blackbird', 'lion'}
-CATEGORY_ORDER = ['Animals', 'Vehicles', 'Space', 'Nature', 'Food', 'Party', 'Christmas', 'Sports & people', 'Toys & characters']
+CATEGORY_ORDER = ['Animals', 'Vehicles', 'Space', 'Nature', 'Food', 'Party', 'Christmas', 'Sports & people', 'Toys & characters', "Dev's Favourite"]
 MERGE = {'Sports': 'Sports & people', 'People': 'Sports & people', 'Characters': 'Toys & characters', 'Fantasy': 'Toys & characters',
          'Toys': 'Toys & characters', 'Things': 'Toys & characters'}
 

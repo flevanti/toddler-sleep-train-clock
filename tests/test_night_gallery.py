@@ -32,7 +32,7 @@ with sync_playwright() as pw:
         check(tag + 'scene "See all" button', p.is_visible('[data-gallery=scene]'))
         p.click('[data-gallery=scene]')
         scenes = p.evaluate("() => Object.keys(%s.night.SCENES)" % H)
-        animals = p.evaluate("() => Object.keys(%s.night.ANIMALS)" % H)
+        animals = p.evaluate("() => { var A = %s.night.ANIMALS; return Object.keys(A).filter(function (k) { return A[k].cat !== \"Dev's Favourite\"; }); }" % H)   # the dev pack is hidden by default
         expect = [s_ for s_ in scenes if s_ != 'animal'] + ['animal:' + a for a in animals]
         cards = p.evaluate(CARDS)
         check(tag + 'gallery open over settings', p.is_visible('#gallery') and p.is_visible('#settings'))
@@ -80,7 +80,6 @@ with sync_playwright() as pw:
         # with a Night picture chosen: still one "See all" (next to Scene), opening on that picture
         check(tag + 'only one "See all" link in settings', p.evaluate("() => document.querySelectorAll('[data-gallery]').length") == 1)
         p.click('[data-gallery=scene]')
-        animals = p.evaluate("() => Object.keys(%s.night.ANIMALS)" % H)
         cards = p.evaluate(CARDS)
         check(tag + 'scenes then every picture, cat highlighted', [c[0] for c in cards] == expect and len(animals) > 100 and
               [c[0] for c in cards if c[1]] == ['animal:cat'], [c[0] for c in cards if c[1]])

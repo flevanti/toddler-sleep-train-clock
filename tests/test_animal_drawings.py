@@ -26,7 +26,7 @@ html = open(ROOT + '/index.html', encoding='utf-8').read()
 section = re.search(r'<!-- =+ ANIMAL DRAWINGS =+.*?-->(.*?)<!-- =+ END ANIMAL DRAWINGS =+ -->', html, re.S)
 check('ANIMAL DRAWINGS section present', section is not None)
 templates = re.findall(r'<template id="animal-([^"]*)" data-name="([^"]*)" data-cat="([^"]*)">(.*?)</template>', section.group(1) if section else '', re.S)
-CATS = ['Animals', 'Vehicles', 'Space', 'Nature', 'Food', 'Party', 'Christmas', 'Sports & people', 'Toys & characters']
+CATS = ['Animals', 'Vehicles', 'Space', 'Nature', 'Food', 'Party', 'Christmas', 'Sports & people', 'Toys & characters', "Dev's Favourite"]
 ANIMS = {'breathe', 'float', 'sway', 'rock', 'roll'}
 check('at least 14 pictures', len(templates) >= 14, len(templates))
 check('section holds only animal templates and comments',

@@ -197,6 +197,15 @@ Details:
   - storage used;
   - the current phase and the time of the next change.
 
+### Dev's Favourite pictures (v1.5)
+- **A hidden pack of 39 Night pictures**, in the "Dev's Favourite" category (internal id `original_dev_pack`): Florence, Tuscany, Italian food and things, plus a few from the developer's life.
+  - 33 are drawn in `tools/draw_dev_favourite.py`, which writes the DEV FAVOURITE block of the ANIMAL DRAWINGS section.
+  - 6 are imported through `tools/trace_artwork.py` → `tools/import_artwork.py`.
+- **When they're listed:** only while dev mode **and** its "Dev's Favourite pictures" switch are on, in both the picture list (as their own group) and the carousel (as their own chip).
+  - The picture on the clock always stays listed and keeps showing, even after dev mode is turned off. The pack is hidden from the lists, never from what the child sees.
+  - Saved values stay valid either way, because the hiding only affects what's listed.
+- **Pinocchio's nose** is a `<g data-grow="x y">`. It grows from 1× at bedtime to 1.8× by the morning, in 10 steps (it's redrawn only when a step changes).
+
 ### Settings access and PIN
 - A **hidden gesture** opens settings: hold the top-right corner (110×110 px) for **2.5 seconds**. A progress ring fills while you hold.
 - Apart from that, taps on the clock only unlock sound or stop the alarm. Scrolling and pinch-zoom are blocked.
