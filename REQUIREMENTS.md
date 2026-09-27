@@ -180,6 +180,15 @@ Details:
 - **Full screen:** settings say whether the clock is already running full screen from the home screen. Otherwise they explain how to add it (iPad/iPhone and Android), and show a **"Go full screen"** button where the browser supports the Fullscreen API (not on iPhone). It lasts until the page reloads.
 - The setup checklist in settings is now device-neutral: **Device setup checklist**.
 
+### Updates (v1.8)
+- An **Updates** section in settings, because a home-screen / full-screen app has no browser reload button:
+  - **Reload** reloads the app. The offline copy is network-first, so this loads the newest version when online.
+  - **Check now** fetches the published page (bypassing the browser cache), compares its `VERSION` with the running one and says "Version x.y is available", "You have the latest version" or "Couldn't check (no internet?)", with the time.
+  - **"Show on the clock when a new version is available"** (switch, **off by default**): checks every 3 hours, but **only in the green and day phases**. When a newer version is found, a small "New version available" note shows in the top-left corner, in the picture's colour at 60 % (scaled by day brightness).
+- The note never shows at night, in "almost time", during a nap, in the day simulation, or with the day screen set to dark. There are no checks at night either.
+- **Nothing ever updates or reloads by itself**, so an update can't break the clock at a bad moment. The parent taps Reload when it suits them.
+- The dev overlay shows a found newer version next to the running one.
+
 ### Dev mode (v1.5)
 - **Holding the top-right corner does nothing until you let go.** The time held decides what happens:
 
