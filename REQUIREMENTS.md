@@ -165,7 +165,7 @@ Details:
 
 ### Version, save time and feedback (v1.5)
 - **The settings header shows three things:**
-  - the version (`VERSION`, bumped by hand for releases with real changes);
+  - the version (`VERSION`; bumped with `tools/release.py`, which also adds the `CHANGELOG.md` entry; `tests/test_changelog.py` keeps the two in sync, and released versions are git-tagged `vX.Y`);
   - **app updated** `<date>`: the server's `Last-Modified` date for `index.html`, read from `document.lastModified`. It needs no build step and still works offline. It's hidden when the server sends no date (browsers then report the load time);
   - **settings saved** `<when>`: the time settings last actually changed (`S.savedAt`). Saving with nothing new, e.g. closing settings, doesn't count. The value is included in export/import.
 - **The About & feedback section** links to the GitHub repo and to two GitHub issue forms (`.github/ISSUE_TEMPLATE/`: feature request and bug report). The forms are pre-filled with the version and the device's user agent. The links open in the browser with `rel="noopener"`, need internet, and need a GitHub account to submit.

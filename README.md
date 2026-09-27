@@ -111,6 +111,7 @@ The tiny silent video used to keep older screens awake comes from [NoSleep.js](h
 |---|---|
 | `index.html` | The whole app: page, styles, script, and all drawings (Night pictures are plain SVG `<template>`s in one marked section). |
 | `sw.js` | Offline cache (a service worker): tries the network first and falls back to the cached copy. |
+| `CHANGELOG.md` | Every version and what changed, newest first. Versions from 1.3 onwards have git tags. |
 | `REQUIREMENTS.md` | What the clock must do and why: design decisions, Safari 12 limits, behaviour details. |
 | `tests/` | Browser tests (Python + Playwright, headless Chromium with a faked clock) and a Safari 12 syntax/feature check. See [`tests/README.md`](tests/README.md). |
 | `artwork/`, `tools/import_artwork.py` | Source SVGs for the Night pictures and the importer that turns them into small templates in `index.html`. See [`artwork/README.md`](artwork/README.md). |
@@ -146,5 +147,12 @@ tests/run_all.sh         # all browser test suites
 2. Add a line for each to `artwork/CATALOG.md`.
 3. Run `python3 tools/import_artwork.py`.
 4. Run the tests.
+
+**Release a new version:**
+1. On the branch, run `python3 tools/release.py 1.7 "What changed" "Something else"`. It bumps the version shown in the app and adds the entry to [`CHANGELOG.md`](CHANGELOG.md).
+2. Merge into `main`.
+3. Tag it with `git tag v1.7 && git push origin v1.7`.
+
+`tests/test_changelog.py` fails if the app version and the changelog disagree.
 
 Headless Chromium isn't Safari 12, so always give changes a final check on the real iPad.
