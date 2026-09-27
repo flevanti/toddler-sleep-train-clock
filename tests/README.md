@@ -36,6 +36,8 @@ Each file can also be run on its own: `.venv/bin/python tests/test_sim.py . test
 | `test_night_gallery.py` | the "See all" carousel for scenes and animals: opens, big cards, choose / close |
 | `test_night_animals.py` | the 14 sleeping animals, plus `animals_sheet.png` for a visual review |
 
+New Night pictures are imported with `tools/import_artwork.py` (see `artwork/README.md`), then checked by `test_animal_drawings.py`.
+
 `tests/check_static.sh` runs the syntax check and the grep for features Safari 12 lacks.
 
 Headless Chromium isn't Safari 12. Also check on the real iPad, and grep for the forbidden features listed in `REQUIREMENTS.md` §1.

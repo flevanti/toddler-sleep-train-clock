@@ -36,15 +36,28 @@ with sync_playwright() as pw:
         expect = [s_ for s_ in scenes if s_ != 'animal'] + ['animal:' + a for a in animals]
         cards = p.evaluate(CARDS)
         check(tag + 'gallery open over settings', p.is_visible('#gallery') and p.is_visible('#settings'))
-        check(tag + 'every scene and every animal has its own card, current highlighted',
-              [c[0] for c in cards] == expect and len(expect) == 18 and [c[0] for c in cards if c[1]] == ['classic'], [c[0] for c in cards])
-        check(tag + 'animal cards named after the animal', p.evaluate("() => document.querySelector('#gtrack [data-id=\"animal:owl\"] .gname .gn').textContent") == 'Owl')
+        check(tag + 'every scene and every picture has its own card, current highlighted',
+              [c[0] for c in cards] == expect and len(expect) > 100 and [c[0] for c in cards if c[1]] == ['classic'], len(cards))
+        check(tag + 'animal cards named after the animal', p.evaluate("() => document.querySelector('#gtrack [data-id=\"animal:owl\"] .gname .gn').textContent") == 'Owl (cartoon)')
         check(tag + 'starts on the current scene', p.evaluate(CENTRED).startswith('2 /'), p.evaluate(CENTRED))
         big = p.evaluate("() => document.querySelector('#gtrack .gcard .gstage').getBoundingClientRect().width")
         check(tag + 'cards are big (>= 55% of the screen width)', big >= 0.55 * vp[0], big)
         check(tag + 'moon card shows its sky', p.evaluate("() => document.querySelectorAll('#gtrack [data-id=moon] .glayer circle').length") == 25)
         check(tag + 'cards animate (breathing card has SMIL)', p.evaluate("() => !!document.querySelector('#gtrack [data-id=breathing] animateTransform')"))
         check(tag + 'no duplicate ids', p.evaluate(DUP_IDS) == [], p.evaluate(DUP_IDS))
+        drawn = p.evaluate("() => document.querySelectorAll('#gtrack .gstage > svg').length")
+        check(tag + 'only the cards near the middle are drawn (light on the iPad)', 1 <= drawn <= 5, drawn)
+        chips = p.evaluate("() => [].map.call(document.querySelectorAll('#gchips button'), function (b) { return b.textContent; })")
+        check(tag + 'category chips', chips[:4] == ['Scenes', 'Animals', 'Vehicles', 'Space'], chips)
+        p.click('#gchips button:has-text("Vehicles")')
+        p.clock.run_for(100)
+        cur = p.evaluate("() => document.querySelectorAll('#gtrack .gcard')[parseInt(document.getElementById('gcount').textContent, 10) - 1].getAttribute('data-id')")
+        check(tag + 'a chip jumps to its first card and is highlighted',
+              cur == 'animal:aeroplane' and p.evaluate("() => document.querySelector('#gchips .on').textContent") == 'Vehicles', cur)
+        check(tag + 'jumped-to card is drawn', p.evaluate("() => !!document.querySelector('#gtrack [data-id=\"animal:aeroplane\"] .gstage svg')"))
+        p.click('#gchips button:has-text("Scenes")')
+        p.click('#gnext')
+        p.clock.run_for(100)
         p.click('#gnext')
         p.clock.run_for(100)
         check(tag + 'next arrow moves one card', p.evaluate(CENTRED).startswith('3 /'), p.evaluate(CENTRED))
@@ -65,11 +78,11 @@ with sync_playwright() as pw:
         p.click('#gclose')
 
         # animals
-        check(tag + 'animal "See all" button', p.is_visible('[data-gallery=animal]'))
+        check(tag + 'pictures "See all" button', p.is_visible('[data-gallery=animal]') and 'pictures' in p.inner_text('[data-gallery=animal]'))
         p.click('[data-gallery=animal]')
         animals = p.evaluate("() => Object.keys(%s.night.ANIMALS)" % H)
         cards = p.evaluate(CARDS)
-        check(tag + 'one card per animal, cat highlighted', [c[0] for c in cards] == ['animal:' + a for a in animals] and len(animals) == 14 and
+        check(tag + 'one card per picture, cat highlighted', [c[0] for c in cards] == ['animal:' + a for a in animals] and len(animals) > 100 and
               [c[0] for c in cards if c[1]] == ['animal:cat'], [c[0] for c in cards if c[1]])
         check(tag + 'animal cards are animals', p.evaluate("() => document.querySelector('#gtrack [data-id=\"animal:owl\"] svg').getAttribute('data-animal')") == 'owl')
         check(tag + 'no duplicate ids (animals)', p.evaluate(DUP_IDS) == [], p.evaluate(DUP_IDS))
@@ -83,7 +96,7 @@ with sync_playwright() as pw:
         p.click('#gtrack [data-id="animal:lion"]')
         check(tag + 'choosing an animal saves it', p.evaluate("() => %s.S().night.scenes.animal.animal" % H) == 'lion')
         check(tag + 'animal dropdown and preview updated',
-              p.evaluate("() => document.getElementById('na-animal-animal').selectedOptions[0].textContent") == 'Lion' and
+              p.evaluate("() => document.getElementById('na-animal-animal').selectedOptions[0].textContent") == 'Lion (cartoon)' and
               p.evaluate("() => document.querySelector('#miniFace svg').getAttribute('data-animal')") == 'lion')
         # "View SVG": clean still source to copy (card is not picked)
         p.click('[data-gallery=scene]')

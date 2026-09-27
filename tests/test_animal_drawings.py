@@ -25,16 +25,20 @@ COLOUR_OK = re.compile(r'^(none|currentColor|#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?|rg
 html = open(ROOT + '/index.html', encoding='utf-8').read()
 section = re.search(r'<!-- =+ ANIMAL DRAWINGS =+.*?-->(.*?)<!-- =+ END ANIMAL DRAWINGS =+ -->', html, re.S)
 check('ANIMAL DRAWINGS section present', section is not None)
-templates = re.findall(r'<template id="animal-([^"]*)" data-name="([^"]*)">(.*?)</template>', section.group(1) if section else '', re.S)
-check('at least 14 animals', len(templates) >= 14, len(templates))
+templates = re.findall(r'<template id="animal-([^"]*)" data-name="([^"]*)" data-cat="([^"]*)">(.*?)</template>', section.group(1) if section else '', re.S)
+CATS = ['Animals', 'Vehicles', 'Space', 'Nature', 'Food', 'Party', 'Christmas', 'Sports & people', 'Toys & characters']
+ANIMS = {'breathe', 'float', 'sway', 'rock', 'roll'}
+check('at least 14 pictures', len(templates) >= 14, len(templates))
 check('section holds only animal templates and comments',
-      re.sub(r'<template id="animal-[^"]*" data-name="[^"]*">.*?</template>|<!--.*?-->|\s+', '', section.group(1) if section else '', flags=re.S) == '')
+      re.sub(r'<template id="animal-[^"]*" data-name="[^"]*" data-cat="[^"]*">.*?</template>|<!--.*?-->|\s+', '', section.group(1) if section else '', flags=re.S) == '')
 ids = [t[0] for t in templates]
 names = [t[1] for t in templates]
-check('ids are unique lower-case words', len(set(ids)) == len(ids) and all(re.match(r'^[a-z]+$', i) for i in ids), ids)
+check('ids are unique: lower-case words, digits and hyphens', len(set(ids)) == len(ids) and all(re.match(r'^[a-z][a-z0-9-]*$', i) for i in ids), ids)
+check('every picture has a known category, grouped in category order', all(t[2] in CATS for t in templates) and
+      [t[2] for t in templates] == sorted([t[2] for t in templates], key=CATS.index), sorted({t[2] for t in templates}))
 check('names are unique and non-empty', len(set(names)) == len(names) and all(n.strip() for n in names), names)
 
-for aid, name, src in templates:
+for aid, name, cat, src in templates:
     tag = aid + ': '
     src = src.strip()
     check(tag + 'size <= %d bytes' % MAX_BYTES, len(src.encode()) <= MAX_BYTES, len(src.encode()))
@@ -69,11 +73,15 @@ for aid, name, src in templates:
           all(t.endswith('Gradient') for t, _ in ids_found) and set(refs) <= {v for _, v in ids_found}, (ids_found, refs))
     check(tag + 'main colour follows the night colour (uses currentColor)', 'currentColor' in src)
     bodies = [el for el in root.iter() if el.get('data-part') == 'body']
-    check(tag + 'exactly one breathing body group', len(bodies) == 1 and bodies[0].tag == SVGNS + 'g', len(bodies))
     moves = [el for el in root.iter() if el.get('data-move') is not None]
-    check(tag + 'at least one twitch group with angle + pivot',
-          len(moves) >= 1 and all(m.tag == SVGNS + 'g' and re.match(r'^-?\d+(\.\d+)?$', m.get('data-move')) and
-                                  re.match(r'^-?[\d.]+ -?[\d.]+$', m.get('data-pivot') or '') for m in moves), len(moves))
+    if root.get('data-anim') is not None:   # silhouette: the whole picture moves
+        check(tag + 'whole-picture movement is known, with a pivot, and no parts',
+              root.get('data-anim') in ANIMS and re.match(r'^-?[\d.]+ -?[\d.]+$', root.get('data-pivot') or '') and not bodies and not moves, root.attrib)
+    else:                                   # cartoon: breathing body + twitching parts
+        check(tag + 'exactly one breathing body group', len(bodies) == 1 and bodies[0].tag == SVGNS + 'g', len(bodies))
+        check(tag + 'at least one twitch group with angle + pivot',
+              len(moves) >= 1 and all(m.tag == SVGNS + 'g' and re.match(r'^-?\d+(\.\d+)?$', m.get('data-move')) and
+                                      re.match(r'^-?[\d.]+ -?[\d.]+$', m.get('data-pivot') or '') for m in moves), len(moves))
     check(tag + 'no animation elements (the clock adds them)', not re.search(r'<(animate|set)', src))
 
 # ---- render checks: every animal fits the canvas and animates in the app ----
@@ -97,9 +105,10 @@ with sync_playwright() as pw:
             return [g.x, g.y, g.x + g.width, g.y + g.height]; }""")
         check(aid + ': drawing fits inside the canvas', box[0] >= -40 and box[1] >= -40 and box[2] <= 240 and box[3] <= 240, [round(v) for v in box])
         info = p.evaluate("""() => { var s = document.querySelector('#face svg');
-            return [s.getAttribute('data-animal'), !!s.querySelector('[data-part=body] > animateTransform'), s.querySelectorAll('[data-move] > animateTransform').length,
-                    getComputedStyle(s).color]; }""")
-        check(aid + ': drawn in the night colour, breathing and twitching', info[0] == aid and info[1] and info[2] >= 1 and info[3] == 'rgb(255, 59, 31)', info)
+            var whole = s.querySelector('[data-whole] > animateTransform');
+            return [s.getAttribute('data-animal'), !!s.querySelector('[data-part=body] > animateTransform') || !!whole,
+                    s.querySelectorAll('[data-move] > animateTransform').length + (whole ? 1 : 0), getComputedStyle(s).color]; }""")
+        check(aid + ': drawn in the night colour and moving', info[0] == aid and info[1] and info[2] >= 1 and info[3] == 'rgb(255, 59, 31)', info)
     check('no page errors', not errs, errs)
     b.close()
 srv.shutdown()

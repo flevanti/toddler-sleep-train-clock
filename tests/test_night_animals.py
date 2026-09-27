@@ -8,7 +8,7 @@ from playwright.sync_api import sync_playwright
 from harness import Checks, H, VIEWPORTS, open_settings, serve
 
 ROOT, SHOTS = sys.argv[1], sys.argv[2]
-EXPECTED = ['bunny', 'bear', 'cat', 'owl', 'dog', 'turtle', 'hedgehog', 'chicken', 'pig', 'horse', 'cow', 'robin', 'blackbird', 'lion']
+EXPECTED = ['bunny', 'bear', 'cat', 'owl', 'dog', 'turtle', 'hedgehog', 'chicken', 'pig', 'horse', 'cow', 'robin', 'blackbird', 'lion']  # the cartoon animals, first in the list
 check = Checks()
 srv, URL = serve(ROOT)
 STRAY = "() => [].filter.call(document.querySelectorAll('#face [id]'), function (e) { return !(e.id.indexOf('shMain') === 0 && /Gradient$/.test(e.tagName)); }).length"
@@ -25,8 +25,12 @@ with sync_playwright() as pw:
         p.evaluate("() => localStorage.clear()")
         p.reload()
         p.clock.run_for(300)
-        names = p.evaluate("() => %s.night.ANIMALS ? Object.keys(%s.night.ANIMALS) : []" % (H, H))
-        check(tag + 'animals registered in order', names == EXPECTED, names)
+        allnames = p.evaluate("() => %s.night.ANIMALS ? Object.keys(%s.night.ANIMALS) : []" % (H, H))
+        names = allnames[:len(EXPECTED)]
+        check(tag + 'cartoon animals registered first, in order', names == EXPECTED, names)
+        shown = p.evaluate("() => ['bunny', 'owl', 'lion', 'bear'].map(function (k) { return %s.night.ANIMALS[k].name; })" % H)
+        check(tag + 'cartoon animals that share a name with a silhouette are marked (cartoon)',
+              shown == ['Bunny (cartoon)', 'Owl (cartoon)', 'Lion (cartoon)', 'Bear'], shown)
         check(tag + 'default animal is bunny', p.evaluate("() => %s.S().night.scenes.animal && %s.S().night.scenes.animal.animal" % (H, H)) == 'bunny')
         for a in names:
             p.evaluate("(a) => %s.setS({night: {scene: 'animal', scenes: {animal: {animal: a}}}})" % H, a)
@@ -48,10 +52,17 @@ with sync_playwright() as pw:
               p.evaluate("() => [].every.call(document.querySelectorAll('#face [data-move] > animateTransform'), function (m) { return m.getAttribute('dur') === '8s'; })"))
         open_settings(p, vp)
         opts = p.evaluate("() => [].map.call(document.querySelectorAll('#na-animal-animal option'), function (o) { return o.textContent; })")
-        check(tag + 'settings list every animal', len(opts) == len(EXPECTED), opts)
-        p.select_option('#na-animal-animal', label=opts[-1])
-        check(tag + 'choosing an animal saves it', p.evaluate("() => %s.S().night.scenes.animal.animal" % H) == EXPECTED[-1])
-        check(tag + 'mini shows the chosen animal', p.evaluate("() => document.querySelector('#miniFace svg').getAttribute('data-animal')") == EXPECTED[-1])
+        check(tag + 'settings list every picture', len(opts) == len(allnames), len(opts))
+        groups = p.evaluate("() => [].map.call(document.querySelectorAll('#na-animal-animal optgroup'), function (g) { return g.label; })")
+        check(tag + 'picture list grouped by category', groups[:3] == ['Animals', 'Vehicles', 'Space'], groups)
+        check(tag + 'scene is called Night picture', p.evaluate("() => document.querySelector('#na-scene option[value=animal]').textContent") == 'Night picture')
+        p.select_option('#na-animal-animal', label='Lion (cartoon)')
+        check(tag + 'choosing an animal saves it', p.evaluate("() => %s.S().night.scenes.animal.animal" % H) == 'lion')
+        check(tag + 'mini shows the chosen animal', p.evaluate("() => document.querySelector('#miniFace svg').getAttribute('data-animal')") == 'lion')
+        p.select_option('#na-animal-animal', label='Tractor 1')
+        check(tag + 'choosing a silhouette saves it and shows it moving',
+              p.evaluate("() => %s.S().night.scenes.animal.animal" % H) == 'tractor-1' and
+              p.evaluate("() => !!document.querySelector('#miniFace svg[data-animal=\"tractor-1\"] [data-whole] > animateTransform')"))
         check(tag + 'no page errors', not errs, errs)
         p.close()
 
