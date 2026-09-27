@@ -5,7 +5,6 @@ Not deployed. The clock only needs `index.html` and `sw.js`. This folder holds t
 - `incoming/`: drop new SVGs here. Name each file as it should appear in the app (`fire-engine.svg`, `rocket-2.svg`), in lower case with hyphens.
 - `originals/`: every imported drawing, as downloaded. The importer moves files here from `incoming/`.
 - `CATALOG.md`: name and category of each picture. The category decides the carousel group and the gentle movement.
-- `SOURCES.md`: where each drawing came from.
 
 To add pictures:
 1. Put the SVGs in `incoming/`.
