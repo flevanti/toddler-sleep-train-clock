@@ -81,6 +81,10 @@ with sync_playwright() as pw:
             p.clock.run_for(3000)
             check(tag + sc + ': no redraw between ticks',
                   p.evaluate("() => window.__f === document.querySelector('#face svg') && window.__l === document.getElementById('layer').firstChild"))
+            if sc == 'off':
+                deco = p.evaluate("""() => [document.querySelectorAll('#face .twinkle').length, document.querySelectorAll('#face .zz').length,
+                    document.querySelectorAll('#face animate').length, document.querySelectorAll('#face animateTransform').length, document.getElementById('layer').innerHTML]""")
+                check(tag + 'off scene: no decoration at all', deco == [0, 0, 0, 0, ''], deco)
             p.screenshot(path=os.path.join(SHOTS, 'night_%s_%dx%d.png' % (sc, vp[0], vp[1])))
 
         # Z's & stars: default look unchanged, settings apply
@@ -111,8 +115,22 @@ with sync_playwright() as pw:
         check(tag + 'sky stars keep clear of moon and time', all(not (22 < x < 78 and 8 < y < 88) for x, y in sky['pos']))
         p.evaluate("() => %s.setS({nightDim: 30, night: {scene: 'moon', scenes: {moon: {sky: 50, twinkle: 'off', face: false}}}})" % H)
         p.clock.run_for(1100)
-        sky = p.evaluate("() => { var l = document.getElementById('layer'); return [l.querySelectorAll('circle').length, l.querySelectorAll('animate').length, document.querySelectorAll('#face path').length, l.style.opacity]; }")
-        check(tag + 'moon 50 stars, no twinkle, no face, dimmed', sky == [50, 0, 0, '0.3'], sky)
+        sky = p.evaluate("""() => { var l = document.getElementById('layer');
+            return { n: [l.querySelectorAll('circle').length, l.querySelectorAll('animate').length, document.querySelectorAll('#face path').length, l.style.opacity],
+                     pos: [].map.call(l.querySelectorAll('circle'), function (c) { return [parseFloat(c.getAttribute('cx')), parseFloat(c.getAttribute('cy'))]; }) }; }""")
+        check(tag + 'moon 50 stars, no twinkle, no face, dimmed', sky['n'] == [50, 0, 0, '0.3'], sky['n'])
+        check(tag + '50 stars keep clear of moon and time', all(not (22 < x < 78 and 8 < y < 88) for x, y in sky['pos']))
+
+        def min_dist(pts):
+            best = 1e9
+            for i in range(len(pts)):
+                for j in range(i + 1, len(pts)):
+                    dx, dy = pts[i][0] - pts[j][0], pts[i][1] - pts[j][1]
+                    best = min(best, (dx * dx + dy * dy) ** 0.5)
+            return best
+
+        d50 = min_dist(sky['pos'])
+        check(tag + '50 stars spread out (min pairwise spacing >= 3%)', d50 >= 3, d50)
 
         # night brightness reaches every area
         p.evaluate("() => %s.setS({nightDim: 40})" % H)

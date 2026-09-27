@@ -35,7 +35,7 @@ The code already exists: `index.html` (everything, including the icon) and `sw.j
 ### Display states
 | State | When | Look |
 |---|---|---|
-| **Sleep (red)** | From bedtime until the next morning's wake time | Black background, red face with closed eyes, "z"s and twinkling stars, dimmed to night brightness |
+| **Sleep (red)** | From bedtime until the next morning's wake time | Black background, red face with closed eyes, the chosen night scene (default: "z"s and twinkling stars) plus any optional extras, dimmed to night brightness |
 | **Almost time (amber)** | N minutes before wake (optional, off by default) | Amber face with half-closed eyes |
 | **Wake (green)** | From wake time for the "green duration" | Dark green background, bright green smiling face with sun rays |
 | **Day** | The rest of the day | Soft blue awake face, or just the time, or a black screen (setting) |
@@ -136,7 +136,7 @@ Grouped so each control sits with the phase it affects. The mini preview and the
 
 1. **General:** sound status, alarm volume, test a sound, show the time, 24-hour clock, words under the face, phase change fade.
 2. **Weekly schedule:** wake, bedtime and wake sound for each day, plus the copy buttons.
-3. **● Night** (bedtime → wake): colour, brightness, show the time at night, soft noise, noise volume.
+3. **● Night** (bedtime → wake): colour, brightness, show the time at night, soft noise, noise volume, the Animation (scene + its settings) and Extras controls.
 4. **● Almost time** (amber): minutes before wake, or Off.
 5. **● Wake** (green): how long green stays on, how long the wake sound plays, fade-in.
 6. **● Day:** what it shows, colour, brightness.

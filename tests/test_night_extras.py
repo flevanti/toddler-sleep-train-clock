@@ -51,6 +51,10 @@ with sync_playwright() as pw:
               p.evaluate("() => { var a = document.querySelector('#below [data-star=going] animate'); return a && a.getAttribute('dur'); }") == '3s')
         p.screenshot(path=os.path.join(SHOTS, 'countdown_arc_%dx%d.png' % vp))
         at(p, 2026, 9, 24, 1, 10, 0)
+        check(tag + 'well after switch-off: 4 lit, 4 gone, 0 going', p.evaluate(LIT, '#below') == [4, 4, 0], p.evaluate(LIT, '#below'))
+        p.evaluate("() => %s.repaint()" % H)
+        p.clock.run_for(300)
+        check(tag + 'repaint well after switch-off: still 0 going (no replay)', p.evaluate(LIT, '#below') == [4, 4, 0], p.evaluate(LIT, '#below'))
         p.evaluate("() => { window.__b = document.querySelector('#below svg'); }")
         p.clock.run_for(60000)
         check(tag + 'no redraw while no star goes out', p.evaluate("() => window.__b === document.querySelector('#below svg')"))
@@ -113,6 +117,7 @@ with sync_playwright() as pw:
 
     mx, my = path_max(ff)
     check('firefly paths inside the screen', mx <= 1024 and my <= 768, (mx, my))
+    p.screenshot(path=os.path.join(SHOTS, 'fireflies_1024x768.png'))
     p.evaluate("() => { window.__l = document.querySelector('#layer svg'); }")
     p.clock.run_for(5000)
     check('fireflies: no redraw between ticks', p.evaluate("() => window.__l === document.querySelector('#layer svg')"))
@@ -132,6 +137,13 @@ with sync_playwright() as pw:
     check('fireflies dimmed with the night', p.evaluate("() => document.getElementById('layer').style.opacity") == '0.2')
     p.screenshot(path=os.path.join(SHOTS, 'fireflies_768x1024.png'))
 
+    # mini preview also draws fireflies
+    open_settings(p, (768, 1024))
+    p.click('#pvtabs [data-pv="sleep"]')
+    check('mini preview draws fireflies', p.evaluate("() => document.querySelectorAll('#miniLayer circle').length") == 8,
+          p.evaluate("() => document.querySelectorAll('#miniLayer circle').length"))
+    p.click('#done')
+
     # ---- shooting stars ----
     def ms(*a):
         return int(datetime.datetime(*a).timestamp() * 1000)
@@ -150,6 +162,7 @@ with sync_playwright() as pw:
     check('all night when not first hour only', max(t2) > since + 5 * 3600000 and 30 <= len(t2) <= 37, len(t2))
     check('window respected', all(since + 3600000 <= t < since + 7200000 for t in times({'every': 2, 'firstHour': False}, since + 3600000, since + 7200000)))
 
+    p.set_viewport_size({'width': 1024, 'height': 768})
     p.evaluate("() => %s.setS({fadeSec: 0, night: {extras: {shooting: {on: true, every: 2}}}})" % H)
     at(p, 2026, 9, 26, 19, 10, 0)
     now = ms(2026, 9, 26, 19, 10, 1)
@@ -157,12 +170,28 @@ with sync_playwright() as pw:
     expect = times({'every': 2, 'firstHour': True}, now - 1000, since + 3600000 + 60000)
     check('drawn shooting stars = scheduled ones this hour', [s[0] for s in shots] == expect, (len(shots), len(expect)))
     check('each starts at its time', all(abs(s[1] - (s[0] - now) / 1000) < 2 for s in shots))
+    p.screenshot(path=os.path.join(SHOTS, 'shooting_1024x768.png'))
     p.evaluate("() => { window.__l = document.querySelector('#layer svg'); }")
     p.clock.run_for(60000)
     check('shooting: no redraw within the hour', p.evaluate("() => window.__l === document.querySelector('#layer svg')"))
     at(p, 2026, 9, 26, 21, 0, 0)
     check('none after the first hour', p.evaluate("() => document.querySelectorAll('#layer [data-shoot]').length") == 0)
     check('no duplicate ids with all extras', p.evaluate(DUP_IDS) == [], p.evaluate(DUP_IDS))
+
+    # mini preview also draws a shooting star, independent of the real schedule
+    open_settings(p, (1024, 768))
+    p.click('#pvtabs [data-pv="sleep"]')
+    check('mini preview draws a shooting star', p.evaluate("() => !!document.querySelector('#miniLayer [data-shoot]')"))
+    p.click('#done')
+
+    # once the first hour has passed, the layer stops rebuilding hourly (fireflies keep their state)
+    p.evaluate("() => %s.setS({fadeSec: 0, night: {extras: {fireflies: {on: true}, shooting: {on: true, every: 5, firstHour: true}}}})" % H)
+    at(p, 2026, 9, 26, 21, 0, 0)
+    p.evaluate("() => { window.__l2 = document.querySelector('#layer svg'); }")
+    at(p, 2026, 9, 26, 22, 0, 0)
+    check('layer unchanged across the hour once shooting is done (fireflies do not restart)',
+          p.evaluate("() => window.__l2 === document.querySelector('#layer svg')"))
+    p.set_viewport_size({'width': 768, 'height': 1024})
 
     # simulation: begin times use the sped-up clock
     p.evaluate("() => %s.setS({fadeSec: 0, night: {extras: {shooting: {on: true, every: 2, firstHour: false}}}})" % H)
