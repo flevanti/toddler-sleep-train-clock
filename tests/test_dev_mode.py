@@ -49,21 +49,27 @@ with sync_playwright() as pw:
         p.mouse.down()
         p.clock.run_for(1000)
         r0 = ring(p)
-        p.clock.run_for(2000)   # 3 s: settings armed, purple starts
+        p.clock.run_for(2000)   # 3 s: settings armed, the ring just sits there complete for a second
+        rp = ring(p)
+        p.clock.run_for(1500)   # 4.5 s: purple starts after the pause
         r1 = ring(p)
-        p.clock.run_for(2500)   # 5.5 s: dev armed
+        p.clock.run_for(2000)   # 6.5 s: dev armed
         r2 = ring(p)
-        p.clock.run_for(5000)   # 10.5 s: gave up
+        p.clock.run_for(4000)   # 10.5 s: gave up
         r3 = ring(p)
         p.mouse.up()
         p.clock.run_for(200)
         check(tag + 'ring: white while filling', r0[0] == '1' and r0[2] == '#fff', r0)
-        check(tag + 'ring: green base + purple arc after 2.5 s', r1[1] == '#34c759' and r1[2] == '#a66bff', r1)
-        check(tag + 'ring: solid purple after 5 s', r2[1] == '#a66bff', r2)
+        check(tag + 'ring: solid green and still for a second after 2.5 s (looks finished)', rp[1] == '#34c759' and rp[2] == '#34c759', rp)
+        check(tag + 'ring: then a purple arc starts', r1[1] == '#34c759' and r1[2] == '#a66bff', r1)
+        check(tag + 'ring: solid purple after 6 s', r2[1] == '#a66bff', r2)
         check(tag + 'ring: fades after 10 s', r3[0] == '0', r3)
         check(tag + 'held > 10 s: nothing opens, nothing toggles', not p.is_visible('#settings') and not dev(p)['on'])
 
-        # ---- short hold: nothing; 2.5–5 s: settings on release ----
+        # ---- short hold: nothing; 2.5–6 s (pause included): settings on release ----
+        hold(p, vp, 5500)
+        check(tag + 'released at 5.5 s (purple not full yet): settings, no toggle', p.is_visible('#settings') and not dev(p)['on'])
+        p.click('#done')
         hold(p, vp, 1500)
         check(tag + 'released before 2.5 s: nothing opens', not p.is_visible('#settings'))
         p.mouse.move(vp[0] - 30, 30)
@@ -76,8 +82,8 @@ with sync_playwright() as pw:
         check(tag + 'no Developer section when dev mode is off', p.evaluate("() => !document.querySelector('#swrap .sec[data-dev]')"))
         p.click('#done')
 
-        # ---- 5–10 s: dev mode toggles, soft message, then settings ----
-        hold(p, vp, 5500)
+        # ---- 6–10 s: dev mode toggles, soft message, then settings ----
+        hold(p, vp, 6500)
         check(tag + 'dev mode switched on', dev(p)['on'] is True)
         msg = p.evaluate("() => { var f = document.getElementById('devflash'); return [getComputedStyle(f).display, f.textContent, f.style.color, f.style.opacity]; }")
         check(tag + 'soft DEV MODE ON message in the night colour, dimmed', msg[0] != 'none' and msg[1] == 'DEV MODE ON' and msg[2] == 'rgb(255, 59, 31)' and float(msg[3]) <= 0.35 + 1e-9, msg)
@@ -111,7 +117,7 @@ with sync_playwright() as pw:
 
         # ---- PIN before toggling; OFF keeps the switches ----
         p.evaluate("() => { var s = %s.S(); s.pin = '1234'; }" % H)
-        hold(p, vp, 5500)
+        hold(p, vp, 6500)
         check(tag + 'PIN asked before toggling', p.is_visible('#pinpad') and dev(p)['on'] is True)
         for k in '1234':
             p.click('#pinkeys [data-k="%s"]' % k)

@@ -33,7 +33,7 @@ Each file can also be run on its own: `.venv/bin/python tests/test_sim.py . test
 | `test_night_ui.py` | night animation controls built from the registry |
 | `test_night_extras.py` | star countdown, fireflies, shooting stars, in the simulation too |
 | `test_about.py` | settings header (version, app date, save time), GitHub links and issue forms |
-| `test_dev_mode.py` | the long-hold trigger (settings / dev toggle / give up), PIN, ON/OFF message, Developer section, stats overlay |
+| `test_dev_mode.py` | the long-hold trigger (settings / 1 s pause / dev toggle / give up), PIN, ON/OFF message, Developer section, stats overlay |
 | `test_dev_pack.py` | Dev's Favourite pictures hidden unless enabled, the chosen one kept, Pinocchio's nose growing |
 | `test_animal_drawings.py` | every animal template in index.html: safety, Safari 12, format, size, fits the canvas, breathes and twitches |
 | `test_night_gallery.py` | the "See all" carousel for scenes and animals: opens, big cards, choose / close |

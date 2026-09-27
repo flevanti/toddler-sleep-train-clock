@@ -176,8 +176,9 @@ Details:
   | Hold for | Ring | On release |
   |---|---|---|
   | under 2.5 s | white, filling | nothing |
-  | 2.5–5 s | green, with a purple arc filling | settings open |
-  | 5–10 s | solid purple | PIN (if one is set), then **dev mode toggles**, then settings open |
+  | 2.5–3.5 s | solid green, still (looks finished, so nothing hints at more) | settings open |
+  | 3.5–6 s | green, with a purple arc filling | settings open |
+  | 6–10 s | solid purple | PIN (if one is set), then **dev mode toggles**, then settings open |
   | over 10 s | fades | nothing (something is resting on the corner) |
 
 - **Toggling dev mode** shows a soft "DEV MODE ON/OFF" message for 1.5 s, in the current phase colour and brightness (dim at night).

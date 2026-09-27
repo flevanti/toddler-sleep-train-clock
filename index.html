@@ -2051,10 +2051,11 @@
   function refresh() { if (curState && !sim) render(new Date(), curState); if (settingsOpen) renderAudioStatus(); }
 
   // ---------- touches on the clock ----------
-  // Hold the top-right corner: after 2.5 s letting go opens settings; after 5 s it toggles dev mode (then settings);
+  // Hold the top-right corner: after 2.5 s letting go opens settings (the ring then sits there complete for a second,
+  // so nothing hints at more); after 6 s it toggles dev mode (then settings);
   // after 10 s it gives up (something resting on the corner). Nothing happens until the finger is lifted.
   var pressStart = 0, ringTimer = null;
-  var HOLD_MS = 2500, DEV_MS = 5000, GIVEUP_MS = 10000, RING = 163.4;
+  var HOLD_MS = 2500, PAUSE_MS = 1000, DEV_MS = 6000, GIVEUP_MS = 10000, RING = 163.4;
   function holdStage() {
     var ms = Date.now() - pressStart;
     return ms < HOLD_MS ? 0 : ms < DEV_MS ? 1 : ms < GIVEUP_MS ? 2 : 3;
@@ -2063,7 +2064,8 @@
     var ms = Date.now() - pressStart, st = holdStage(), base = $('hotbase'), arc = $('hotarc'), p;
     $('hotring').style.opacity = st === 3 ? '0' : '1';
     if (st === 0) { base.setAttribute('stroke', 'rgba(255,255,255,.25)'); arc.setAttribute('stroke', '#fff'); p = ms / HOLD_MS; }
-    else if (st === 1) { base.setAttribute('stroke', '#34c759'); arc.setAttribute('stroke', '#a66bff'); p = (ms - HOLD_MS) / (DEV_MS - HOLD_MS); }
+    else if (st === 1 && ms < HOLD_MS + PAUSE_MS) { base.setAttribute('stroke', '#34c759'); arc.setAttribute('stroke', '#34c759'); p = 1; }   // complete, still
+    else if (st === 1) { base.setAttribute('stroke', '#34c759'); arc.setAttribute('stroke', '#a66bff'); p = (ms - HOLD_MS - PAUSE_MS) / (DEV_MS - HOLD_MS - PAUSE_MS); }
     else { base.setAttribute('stroke', '#a66bff'); arc.setAttribute('stroke', '#a66bff'); p = 1; }
     arc.setAttribute('stroke-dashoffset', String(RING * (1 - Math.min(1, p))));
   }
