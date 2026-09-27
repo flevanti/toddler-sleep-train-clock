@@ -122,6 +122,7 @@ The code already exists: `index.html` (everything, including the icon) and `sw.j
 ### Night animations (v1.4)
 - Only during the night (sleep) phase, including naps. The design is in `docs/superpowers/specs/2026-09-26-night-animations-design.md`.
 - **Scene** (choose one): Off, Z's & stars (default, same look as before), Breathing, Moon & sky, Sleeping animal. Each scene keeps its own settings.
+- **"See all" carousel:** "See all ▸" next to the Scene dropdown (and "See all animals ▸" when the animal scene is chosen) opens a full-screen carousel. Each card is large and animated and shows the current settings and night colour. Swipe or use ◀ ▶, tap a card or **Choose this** to pick, and **Close** keeps the current choice. The carousel is emptied on close so no animations keep running.
 - **Sleeping animal:** 14 animals (bunny, bear, cat, owl, dog, turtle, hedgehog, chicken, pig, horse, cow, robin, blackbird, lion). They share one drawing style (`kitBody`, `kitHead`, `kitEyes`, `birdParts`), use the night colour, and appear **at night only**. Settings: breathing on/off, little movements off / rare (every 20 s) / normal (every 8 s).
 - **Extras** (any number, all off by default):
   - **Star countdown:** stars go out one by one from bedtime (or nap start) to wake. Gone stars stay as faint outlines. In the simulation it follows the pretend clock.

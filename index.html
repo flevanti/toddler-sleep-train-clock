@@ -139,6 +139,25 @@
   #simbar .slabels { display: flex; justify-content: space-between; font-size: 12px; color: #8a8f9c; margin-top: 3px; }
   body.sim .clk { bottom: 120px; }
   body.sim .clk .face { width: 52vmin; height: 52vmin; }
+  /* "See all" carousel for night scenes / animals: one big card at a time, neighbours peek in */
+  #gallery { background: #0b0c0f; z-index: 25; overflow: hidden; }
+  #gallery .gtop { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0; }
+  #gallery .gtop h2 { margin: 0; font-size: 20px; font-weight: 600; }
+  #gtrack { display: flex; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
+    padding: 18px 0; margin-top: 8px; }
+  #gtrack .gpad { -webkit-flex-shrink: 0; flex-shrink: 0; width: 13.5vw; } /* pad + card margin = 15vw, so a 70vw card sits centred */
+  #gtrack .gcard { -webkit-flex-shrink: 0; flex-shrink: 0; width: 70vw; margin: 0 1.5vw; scroll-snap-align: center; text-align: center; }
+  #gtrack .gstage { position: relative; width: 100%; height: 58vh; border-radius: 18px; overflow: hidden; background: #000;
+    border: 2px solid #2a2e37; display: flex; align-items: center; justify-content: center; }
+  #gtrack .gcard.on .gstage { border-color: #fff; }
+  #gtrack .gstage > svg { width: 62%; height: auto; display: block; }
+  #gtrack .glayer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+  #gtrack .glayer svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  #gtrack .gname { margin-top: 10px; font-size: 18px; color: #e8e8ea; }
+  #gallery .gnav { display: flex; align-items: center; justify-content: center; }
+  #gallery .gnav button.b { min-width: 64px; }
+  #gcount { color: #8a8f9c; min-width: 70px; text-align: center; margin: 0 10px; }
+  button.gl { background: none; border: 0; color: #5b9dff; font-size: 15px; padding: 4px 0 4px 10px; font-family: inherit; }
   #toast { position: fixed; left: 50%; top: 20px; z-index: 40; -webkit-transform: translateX(-50%); transform: translateX(-50%);
     background: #2f6fed; color: #fff; padding: 10px 18px; border-radius: 10px; display: none; font-size: 15px; }
 </style>
@@ -180,6 +199,12 @@
     <div id="pinmsg"></div>
     <div class="keys" id="pinkeys"></div>
   </div>
+</div>
+
+<div id="gallery" class="overlay">
+  <div class="gtop"><h2 id="gtitle"></h2><button class="b g" id="gclose">Close</button></div>
+  <div id="gtrack"></div>
+  <div class="gnav"><button class="b g" id="gprev">◀</button><span id="gcount"></span><button class="b g" id="gnext">▶</button><button class="b ok" id="gpick">Choose this</button></div>
 </div>
 
 <div id="settings" class="overlay">
@@ -1187,10 +1212,11 @@
   }
   function nightSettingsHTML() {
     var n = S.night, so = SCENES[n.scene].opts, k, i;
-    var h = '<h3>Animation</h3><div class="row"><label class="l">Scene</label><select id="na-scene">';
+    var h = '<h3>Animation</h3><div class="row"><label class="l">Scene<button class="gl" data-gallery="scene">See all ▸</button></label><select id="na-scene">';
     for (k in SCENES) h += '<option value="' + k + '"' + (k === n.scene ? ' selected' : '') + '>' + SCENES[k].name + '</option>';
     h += '</select></div>';
     for (i = 0; i < so.length; i++) h += optRow('na-' + n.scene + '-' + so[i].key, so[i], n.scenes[n.scene][so[i].key]);
+    if (n.scene === 'animal') h += '<div class="row sub"><label class="l"></label><button class="gl" data-gallery="animal">See all animals ▸</button></div>';
     if (Object.keys(EXTRAS).length) h += '<h3>Extras</h3>';
     for (k in EXTRAS) {
       var x = n.extras[k], xo = EXTRAS[k].opts;
@@ -1210,6 +1236,52 @@
     store[p[2]] = opt.type === 'toggle' ? el.checked : opt.values[+el.value][0];
     save();
   }
+
+  // ---------- "See all" carousel: every scene (or animal) as a big animated card ----------
+  var gal = null; // { kind: 'scene' | 'animal', ids: [...] }
+  function galleryCard(kind, id, i) {
+    var n = S.night, c = { color: NIGHT_COLORS[S.nightColor], gid: 'shGal' + i, frac: 0.5, now: Date.now(), since: 0, until: 0, scale: 1, w: 600, h: 400 };
+    var sc = kind === 'scene' ? SCENES[id] : SCENES.animal, o = kind === 'scene' ? n.scenes[id] : {};
+    if (kind === 'animal') { for (var k in n.scenes.animal) o[k] = n.scenes.animal[k]; o.animal = id; }
+    var cur = kind === 'scene' ? n.scene === id : n.scenes.animal.animal === id;
+    var name = kind === 'scene' ? sc.name : ANIMALS[id].name;
+    return '<div class="gcard' + (cur ? ' on' : '') + '" data-id="' + id + '"><div class="gstage" style="opacity:' + Math.max(S.nightDim / 100, 0.6) + '">' +
+      sc.face(o, c) + (sc.layer ? '<div class="glayer">' + sc.layer(o, c) + '</div>' : '') + '</div><div class="gname">' + name + '</div></div>';
+  }
+  function openGallery(kind) {
+    var ids = kind === 'scene' ? Object.keys(SCENES) : Object.keys(ANIMALS), h = '<div class="gpad"></div>', i, start = 0;
+    for (i = 0; i < ids.length; i++) {
+      h += galleryCard(kind, ids[i], i);
+      if (kind === 'scene' ? S.night.scene === ids[i] : S.night.scenes.animal.animal === ids[i]) start = i;
+    }
+    gal = { kind: kind, ids: ids };
+    $('gtitle').textContent = kind === 'scene' ? 'Night scenes' : 'Sleeping animals';
+    $('gtrack').innerHTML = h + '<div class="gpad"></div>';
+    $('gallery').className = 'overlay show';
+    galleryGo(start);
+  }
+  function galleryStep() { var c = $('gtrack').querySelectorAll('.gcard'); return c.length > 1 ? c[1].offsetLeft - c[0].offsetLeft : 1; }
+  function galleryIndex() { return Math.max(0, Math.min(gal.ids.length - 1, Math.round($('gtrack').scrollLeft / galleryStep()))); }
+  function galleryGo(i) {
+    i = Math.max(0, Math.min(gal.ids.length - 1, i));
+    $('gtrack').scrollLeft = i * galleryStep();
+    galleryCount();
+  }
+  function galleryCount() { if (gal) $('gcount').textContent = (galleryIndex() + 1) + ' / ' + gal.ids.length; }
+  function closeGallery() { gal = null; $('gallery').className = 'overlay'; $('gtrack').innerHTML = ''; } // empty: no animations left running
+  function galleryPick(id) {
+    if (gal.kind === 'scene') S.night.scene = id;
+    else { S.night.scene = 'animal'; S.night.scenes.animal.animal = id; }
+    save(); closeGallery(); pvMode = 'sleep'; rerenderSettings();
+  }
+  $('gclose').addEventListener('click', closeGallery);
+  $('gprev').addEventListener('click', function () { galleryGo(galleryIndex() - 1); });
+  $('gnext').addEventListener('click', function () { galleryGo(galleryIndex() + 1); });
+  $('gpick').addEventListener('click', function () { galleryPick(gal.ids[galleryIndex()]); });
+  $('gtrack').addEventListener('scroll', galleryCount);
+  $('gtrack').addEventListener('click', function (e) {
+    for (var n = e.target; n && n !== this; n = n.parentNode) if (n.getAttribute && n.getAttribute('data-id')) { galleryPick(n.getAttribute('data-id')); return; }
+  });
 
   function renderSettings() {
     var today = new Date().getDay();
@@ -1336,6 +1408,8 @@
       var sib = w.querySelectorAll('[data-sw="' + key + '"]');
       for (var j = 0; j < sib.length; j++) sib[j].className = 'swc' + (sib[j] === b ? ' on' : '');
     });
+    var gl = w.querySelectorAll('[data-gallery]');
+    for (i = 0; i < gl.length; i++) gl[i].addEventListener('click', function (e) { openGallery(e.currentTarget.getAttribute('data-gallery')); });
     var nc = w.querySelectorAll('[id^="na-"], [id^="nx-"]');
     for (i = 0; i < nc.length; i++) nc[i].addEventListener('change', onNightControl);
     ['napSound', 'dayMode'].forEach(function (id) { on(id, 'change', function (e) { S[id] = e.target.value; save(); MAIN.keys = {}; }); });

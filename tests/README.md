@@ -32,6 +32,7 @@ Each file can also be run on its own: `.venv/bin/python tests/test_sim.py . test
 | `test_night_render.py` | night timing (since/frac), per-area redraw, ids, dimming, fade, every scene |
 | `test_night_ui.py` | night animation controls built from the registry |
 | `test_night_extras.py` | star countdown, fireflies, shooting stars, in the simulation too |
+| `test_night_gallery.py` | the "See all" carousel for scenes and animals: opens, big cards, choose / close |
 | `test_night_animals.py` | the 14 sleeping animals, plus `animals_sheet.png` for a visual review |
 
 `tests/check_static.sh` runs the syntax check and the grep for features Safari 12 lacks.
