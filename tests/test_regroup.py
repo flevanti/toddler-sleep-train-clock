@@ -20,6 +20,7 @@ EXPECT = [
   ('Nap', ['napSound']),
   ('Device & safety', ['pinSet', 'expBtn', 'impBtn', 'resetBtn', 'codeBox']),
   ('Device setup checklist', []),
+  ('Updates', ['reloadApp', 'checkUpd', 'updateNotice']),
   ('About & feedback', []),
 ]
 active = "() => document.querySelector('#pvtabs .b:not(.g)').getAttribute('data-pv')"
