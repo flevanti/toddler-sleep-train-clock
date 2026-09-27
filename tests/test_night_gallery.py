@@ -32,9 +32,13 @@ with sync_playwright() as pw:
         check(tag + 'scene "See all" button', p.is_visible('[data-gallery=scene]'))
         p.click('[data-gallery=scene]')
         scenes = p.evaluate("() => Object.keys(%s.night.SCENES)" % H)
+        animals = p.evaluate("() => Object.keys(%s.night.ANIMALS)" % H)
+        expect = [s_ for s_ in scenes if s_ != 'animal'] + ['animal:' + a for a in animals]
         cards = p.evaluate(CARDS)
         check(tag + 'gallery open over settings', p.is_visible('#gallery') and p.is_visible('#settings'))
-        check(tag + 'one card per scene, current highlighted', [c[0] for c in cards] == scenes and [c[0] for c in cards if c[1]] == ['classic'], cards)
+        check(tag + 'every scene and every animal has its own card, current highlighted',
+              [c[0] for c in cards] == expect and len(expect) == 18 and [c[0] for c in cards if c[1]] == ['classic'], [c[0] for c in cards])
+        check(tag + 'animal cards named after the animal', p.evaluate("() => document.querySelector('#gtrack [data-id=\"animal:owl\"] .gname').textContent") == 'Owl')
         check(tag + 'starts on the current scene', p.evaluate(CENTRED).startswith('2 /'), p.evaluate(CENTRED))
         big = p.evaluate("() => document.querySelector('#gtrack .gcard .gstage').getBoundingClientRect().width")
         check(tag + 'cards are big (>= 55% of the screen width)', big >= 0.55 * vp[0], big)
@@ -53,25 +57,30 @@ with sync_playwright() as pw:
               p.evaluate("() => !!document.querySelector('#miniFace animateTransform')") and
               p.evaluate("() => document.querySelector('#pvtabs .b:not(.g)').getAttribute('data-pv')") == 'sleep')
         p.click('[data-gallery=scene]')
-        p.click('#gtrack [data-id=animal]')
-        check(tag + 'tapping a card chooses it', p.evaluate("() => %s.S().night.scene" % H) == 'animal' and not p.is_visible('#gallery'))
+        p.click('#gtrack [data-id="animal:cat"]')
+        check(tag + 'tapping an animal card chooses the animal scene with that animal',
+              p.evaluate("() => [%s.S().night.scene, %s.S().night.scenes.animal.animal]" % (H, H)) == ['animal', 'cat'] and not p.is_visible('#gallery'))
+        p.click('[data-gallery=scene]')
+        check(tag + 'reopened: the chosen animal card is highlighted', [c[0] for c in p.evaluate(CARDS) if c[1]] == ['animal:cat'])
+        p.click('#gclose')
 
         # animals
         check(tag + 'animal "See all" button', p.is_visible('[data-gallery=animal]'))
         p.click('[data-gallery=animal]')
         animals = p.evaluate("() => Object.keys(%s.night.ANIMALS)" % H)
         cards = p.evaluate(CARDS)
-        check(tag + 'one card per animal, bunny highlighted', [c[0] for c in cards] == animals and len(animals) == 14 and
-              [c[0] for c in cards if c[1]] == ['bunny'], [c[0] for c in cards if c[1]])
-        check(tag + 'animal cards are animals', p.evaluate("() => document.querySelector('#gtrack [data-id=owl] svg').getAttribute('data-animal')") == 'owl')
+        check(tag + 'one card per animal, cat highlighted', [c[0] for c in cards] == ['animal:' + a for a in animals] and len(animals) == 14 and
+              [c[0] for c in cards if c[1]] == ['animal:cat'], [c[0] for c in cards if c[1]])
+        check(tag + 'animal cards are animals', p.evaluate("() => document.querySelector('#gtrack [data-id=\"animal:owl\"] svg').getAttribute('data-animal')") == 'owl')
         check(tag + 'no duplicate ids (animals)', p.evaluate(DUP_IDS) == [], p.evaluate(DUP_IDS))
-        p.click('#gprev')
+        check(tag + 'starts on the chosen animal (cat = 3rd)', p.evaluate(CENTRED).startswith('3 /'), p.evaluate(CENTRED))
+        p.click('#gprev'); p.click('#gprev'); p.click('#gprev')
         check(tag + 'prev at the first card stays there', p.evaluate(CENTRED).startswith('1 /'), p.evaluate(CENTRED))
         p.screenshot(path=os.path.join(SHOTS, 'gallery_animals_%dx%d.png' % vp))
         p.click('#gclose')
-        check(tag + 'close keeps the choice', p.evaluate("() => %s.S().night.scenes.animal.animal" % H) == 'bunny' and not p.is_visible('#gallery'))
+        check(tag + 'close keeps the choice', p.evaluate("() => %s.S().night.scenes.animal.animal" % H) == 'cat' and not p.is_visible('#gallery'))
         p.click('[data-gallery=animal]')
-        p.click('#gtrack [data-id=lion]')
+        p.click('#gtrack [data-id="animal:lion"]')
         check(tag + 'choosing an animal saves it', p.evaluate("() => %s.S().night.scenes.animal.animal" % H) == 'lion')
         check(tag + 'animal dropdown and preview updated',
               p.evaluate("() => document.getElementById('na-animal-animal').selectedOptions[0].textContent") == 'Lion' and

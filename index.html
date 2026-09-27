@@ -1238,23 +1238,25 @@
   }
 
   // ---------- "See all" carousel: every scene (or animal) as a big animated card ----------
-  var gal = null; // { kind: 'scene' | 'animal', ids: [...] }
-  function galleryCard(kind, id, i) {
+  // Card ids: a scene id, or 'animal:<id>' — the scenes carousel lists every animal as its own card instead of one 'Sleeping animal'.
+  var gal = null; // { ids: [...] }
+  function galleryIsCurrent(id) {
+    var n = S.night;
+    return id.indexOf('animal:') === 0 ? n.scene === 'animal' && n.scenes.animal.animal === id.slice(7) : n.scene === id;
+  }
+  function galleryCard(id, i) {
     var n = S.night, c = { color: NIGHT_COLORS[S.nightColor], gid: 'shGal' + i, frac: 0.5, now: Date.now(), since: 0, until: 0, scale: 1, w: 600, h: 400 };
-    var sc = kind === 'scene' ? SCENES[id] : SCENES.animal, o = kind === 'scene' ? n.scenes[id] : {};
-    if (kind === 'animal') { for (var k in n.scenes.animal) o[k] = n.scenes.animal[k]; o.animal = id; }
-    var cur = kind === 'scene' ? n.scene === id : n.scenes.animal.animal === id;
-    var name = kind === 'scene' ? sc.name : ANIMALS[id].name;
-    return '<div class="gcard' + (cur ? ' on' : '') + '" data-id="' + id + '"><div class="gstage" style="opacity:' + Math.max(S.nightDim / 100, 0.6) + '">' +
-      sc.face(o, c) + (sc.layer ? '<div class="glayer">' + sc.layer(o, c) + '</div>' : '') + '</div><div class="gname">' + name + '</div></div>';
+    var animal = id.indexOf('animal:') === 0 ? id.slice(7) : null, sc = animal ? SCENES.animal : SCENES[id], o = n.scenes[animal ? 'animal' : id], k;
+    if (animal) { var ao = {}; for (k in o) ao[k] = o[k]; ao.animal = animal; o = ao; }
+    return '<div class="gcard' + (galleryIsCurrent(id) ? ' on' : '') + '" data-id="' + id + '"><div class="gstage" style="opacity:' + Math.max(S.nightDim / 100, 0.6) + '">' +
+      sc.face(o, c) + (sc.layer ? '<div class="glayer">' + sc.layer(o, c) + '</div>' : '') + '</div><div class="gname">' + (animal ? ANIMALS[animal].name : sc.name) + '</div></div>';
   }
   function openGallery(kind) {
-    var ids = kind === 'scene' ? Object.keys(SCENES) : Object.keys(ANIMALS), h = '<div class="gpad"></div>', i, start = 0;
-    for (i = 0; i < ids.length; i++) {
-      h += galleryCard(kind, ids[i], i);
-      if (kind === 'scene' ? S.night.scene === ids[i] : S.night.scenes.animal.animal === ids[i]) start = i;
-    }
-    gal = { kind: kind, ids: ids };
+    var ids = [], h = '<div class="gpad"></div>', i, k, start = 0;
+    if (kind === 'scene') for (k in SCENES) { if (k !== 'animal') ids.push(k); }
+    for (k in ANIMALS) ids.push('animal:' + k);
+    for (i = 0; i < ids.length; i++) { h += galleryCard(ids[i], i); if (galleryIsCurrent(ids[i])) start = i; }
+    gal = { ids: ids };
     $('gtitle').textContent = kind === 'scene' ? 'Night scenes' : 'Sleeping animals';
     $('gtrack').innerHTML = h + '<div class="gpad"></div>';
     $('gallery').className = 'overlay show';
@@ -1270,8 +1272,8 @@
   function galleryCount() { if (gal) $('gcount').textContent = (galleryIndex() + 1) + ' / ' + gal.ids.length; }
   function closeGallery() { gal = null; $('gallery').className = 'overlay'; $('gtrack').innerHTML = ''; } // empty: no animations left running
   function galleryPick(id) {
-    if (gal.kind === 'scene') S.night.scene = id;
-    else { S.night.scene = 'animal'; S.night.scenes.animal.animal = id; }
+    if (id.indexOf('animal:') === 0) { S.night.scene = 'animal'; S.night.scenes.animal.animal = id.slice(7); }
+    else S.night.scene = id;
     save(); closeGallery(); pvMode = 'sleep'; rerenderSettings();
   }
   $('gclose').addEventListener('click', closeGallery);
