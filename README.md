@@ -32,6 +32,7 @@ It was built for an **iPad mini 2 on iOS 12** (Safari 12), a device that can't r
 - **Colours and brightness:** pick the night colour (red, orange, amber…) and the day colour, and dim each phase. Phase changes can fade smoothly. The clock can show the time in 24-hour or 12-hour format, or not at all.
 - **Parent-only settings:** hold the **top-right corner for 2.5 seconds** to open them. You can add an optional 4-digit PIN (it keeps toddlers out, not adults).
 - **Live preview and "Simulate a day":** see every setting take effect straight away, and watch a whole day and night play in 30–120 seconds.
+- **Keeps the screen on:** it uses the browser's built-in way to keep the screen awake where there is one, and a tiny silent video on older devices. Settings also explain how to run it full screen.
 - **Works offline** after the first visit. Settings stay on the device, and you can export and import them as a text code.
 
 | Moon & sky with the star countdown | A Night picture (amber) |
@@ -101,6 +102,8 @@ The same links are at the bottom of the clock's settings page (**About & feedbac
 The code and the project's own drawings are released under the **[MIT License](LICENSE)**. That covers the cartoon animals, the scenes and the hand-drawn Dev's Favourite pictures.
 
 **Third-party artwork isn't covered by this licence.** That means the downloaded silhouettes imported from `artwork/` and the pictures traced from files in `artwork/sources/`, including the Canottieri Firenze symbol. They belong to their authors, under their own terms. If you reuse the project, check or replace them.
+
+The tiny silent video used to keep older screens awake comes from [NoSleep.js](https://github.com/richtr/NoSleep.js) (MIT, Rich Tibbett).
 
 ## Project layout
 

@@ -170,6 +170,16 @@ Details:
   - **settings saved** `<when>`: the time settings last actually changed (`S.savedAt`). Saving with nothing new, e.g. closing settings, doesn't count. The value is included in export/import.
 - **The About & feedback section** links to the GitHub repo and to two GitHub issue forms (`.github/ISSUE_TEMPLATE/`: feature request and bug report). The forms are pre-filled with the version and the device's user agent. The links open in the browser with `rel="noopener"`, need internet, and need a GitHub account to submit.
 
+### Keep the screen on and full screen (v1.6)
+- **"Keep the screen on"** is a switch under General, **on by default**.
+  - **Newer browsers:** it uses the Screen Wake Lock API. The lock is asked for again whenever the page becomes visible, because the system releases it when the page is hidden.
+  - **Older browsers** (no Wake Lock, e.g. old iPads): a tiny silent looping MP4 keeps the screen awake. It's muted, inline and off-screen. The video and technique come from NoSleep.js (MIT, Rich Tibbett), and the file is embedded as a data URI.
+  - It may need one tap after a reload, the same tap that enables sound.
+  - A status line under the switch says what's working: "built into this device", "older device: tiny silent video", "tap the clock once", or off.
+  - It's a safety net only: the device's own screen timeout / Auto-Lock and low-power mode still matter (see the checklist).
+- **Full screen:** settings say whether the clock is already running full screen from the home screen. Otherwise they explain how to add it (iPad/iPhone and Android), and show a **"Go full screen"** button where the browser supports the Fullscreen API (not on iPhone). It lasts until the page reloads.
+- The setup checklist in settings is now device-neutral: **Device setup checklist**.
+
 ### Dev mode (v1.5)
 - **Holding the top-right corner does nothing until you let go.** The time held decides what happens:
 

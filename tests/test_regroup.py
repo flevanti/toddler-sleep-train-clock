@@ -19,7 +19,7 @@ EXPECT = [
   ('Day', ['dayMode', 'dayDim']),
   ('Nap', ['napSound']),
   ('Device & safety', ['pinSet', 'expBtn', 'impBtn', 'resetBtn', 'codeBox']),
-  ('iPad setup checklist', []),
+  ('Device setup checklist', []),
   ('About & feedback', []),
 ]
 active = "() => document.querySelector('#pvtabs .b:not(.g)').getAttribute('data-pv')"
