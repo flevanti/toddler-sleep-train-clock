@@ -52,7 +52,7 @@ with sync_playwright() as pw:
         saved = p.evaluate("(k) => JSON.parse(localStorage.getItem(k)).savedAt", KEY)
         check(tag + 'save time stored with the settings', abs(saved - p.evaluate("() => Date.now()")) < 5000, saved)
         p.click('#done')
-        p.clock.run_for(3600000)  # an hour later: closing and reopening settings is not a change
+        p.clock.fast_forward(3600000)  # an hour later (jumped, not ticked through): closing and reopening settings is not a change
         open_settings(p, vp)
         check(tag + 'opening/closing settings does not count as a change', 'settings saved today 12:01' in p.inner_text('#appinfo'), p.inner_text('#appinfo'))
         p.click('#expBtn')
