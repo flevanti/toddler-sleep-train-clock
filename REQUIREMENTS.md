@@ -243,6 +243,7 @@ Details:
 - **Deploy exactly two files: `index.html` + `sw.js` (decided).** All CSS, JS and the icon live in `index.html`. A service worker can't be inlined (it must be a separate same-origin script), so `sw.js` stays as its own file.
 - `sw.js` uses a **network-first** service worker that falls back to the cache, so the clock still loads if the Wi-Fi drops and the page reloads. It is only registered on `https:`. Service workers work on iOS 11.3 and later. Bump `CACHE` in `sw.js` when its file list changes.
 - When the page runs in a normal Safari tab, settings shows an "Add to Home Screen" hint.
+- **Web app manifest (v1.7):** embedded in `index.html` as a `data:` URL (so still only two files to deploy), built by `tools/make_manifest.py`. `display: fullscreen` (falling back to standalone), black background, and two 512 px icons: the green morning face with sun rays, one normal and one **maskable** with a safe margin for Android's round/squircle icon shapes. Android/Chromium installs the clock as an app that opens full screen. `tests/test_manifest.py` checks Chromium reports it installable.
 
 ### Setup checklist (shown in settings)
 1. Turn Auto-Lock to Never, and switch off Auto-Brightness.

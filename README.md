@@ -63,7 +63,7 @@ There are two ways to get it.
 ### 2. Add it to the home screen
 
 - **iPad or iPhone:** in Safari, tap **Share → Add to Home Screen**.
-- **Android:** in Chrome, open the menu and tap **Add to Home screen** (or **Install app**).
+- **Android:** in Chrome, open the menu and tap **Install app** (or **Add to Home screen**). It installs as an app with its own icon and opens full screen, with no address bar or status bar.
 
 From then on, always open the clock from that icon. The home-screen app and a normal browser tab keep **separate settings**.
 
@@ -116,6 +116,7 @@ The tiny silent video used to keep older screens awake comes from [NoSleep.js](h
 | `tests/` | Browser tests (Python + Playwright, headless Chromium with a faked clock) and a Safari 12 syntax/feature check. See [`tests/README.md`](tests/README.md). |
 | `artwork/`, `tools/import_artwork.py` | Source SVGs for the Night pictures and the importer that turns them into small templates in `index.html`. See [`artwork/README.md`](artwork/README.md). |
 | `tools/readme_screenshots.py` | Regenerates the screenshots in `docs/screenshots/`. |
+| `tools/make_manifest.py` | Draws the app icon and rebuilds the web app manifest embedded in `index.html`. |
 | `.github/ISSUE_TEMPLATE/` | The "Suggest a feature" and "Report a problem" forms on GitHub. |
 | `docs/superpowers/` | Design spec and implementation plan for the night animations. |
 
