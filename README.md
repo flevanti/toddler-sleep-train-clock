@@ -87,6 +87,15 @@ Hold the **top-right corner for 2.5 seconds** to open settings. Then set:
 
 Use the preview tabs (Night / Amber / Green / Day) to check how each phase looks, or **Simulate a day** to watch a whole day and night play through quickly.
 
+## Feedback and ideas
+
+Use GitHub Issues. A free GitHub account is needed.
+
+- **[Suggest a feature](https://github.com/flevanti/toddler-sleep-train-clock/issues/new?template=feature_request.yml)**
+- **[Report a problem](https://github.com/flevanti/toddler-sleep-train-clock/issues/new?template=bug_report.yml)**
+
+The same links are at the bottom of the clock's settings page (**About & feedback**). From there, the clock version and the device are filled in for you.
+
 ## Project layout
 
 | Path | What it is |
@@ -97,6 +106,7 @@ Use the preview tabs (Night / Amber / Green / Day) to check how each phase looks
 | `tests/` | Browser tests (Python + Playwright, headless Chromium with a faked clock) and a Safari 12 syntax/feature check. See [`tests/README.md`](tests/README.md). |
 | `artwork/`, `tools/import_artwork.py` | Source SVGs for the Night pictures and the importer that turns them into small templates in `index.html`. See [`artwork/README.md`](artwork/README.md). |
 | `tools/readme_screenshots.py` | Regenerates the screenshots in `docs/screenshots/`. |
+| `.github/ISSUE_TEMPLATE/` | The "Suggest a feature" and "Report a problem" forms on GitHub. |
 | `docs/superpowers/` | Design spec and implementation plan for the night animations. |
 
 Neither `artwork/`, `tools/`, `tests/` nor `docs/` is needed to run the clock.

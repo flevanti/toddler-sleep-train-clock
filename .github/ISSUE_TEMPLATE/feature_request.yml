@@ -1,0 +1,27 @@
+name: Suggest a feature
+description: An idea to make Sleep Clock better
+title: "[Idea] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like?
+      description: Describe the idea. Screenshots or drawings are welcome.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would it help?
+      description: What problem would it solve for you or your child?
+  - type: input
+    id: version
+    attributes:
+      label: Clock version
+      description: Filled in automatically when you use the link in the clock's settings.
+  - type: input
+    id: device
+    attributes:
+      label: Device and browser
+      description: Filled in automatically when you use the link in the clock's settings.

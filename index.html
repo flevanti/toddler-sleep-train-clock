@@ -80,8 +80,8 @@
     border: 1px solid #3a3f4b; border-radius: 8px; padding: 6px 8px; font-family: inherit; }
   input[type=range] { width: 220px; }
   textarea { width: 100%; box-sizing: border-box; height: 80px; font-family: Menlo, monospace; font-size: 12px; }
-  button.b { font-size: 16px; background: #2f6fed; color: #fff; border: 0; border-radius: 10px; padding: 10px 16px; margin: 4px 6px 4px 0; font-family: inherit; }
-  button.b.g { background: #2a2e37; }
+  button.b, a.b { font-size: 16px; background: #2f6fed; color: #fff; border: 0; border-radius: 10px; padding: 10px 16px; margin: 4px 6px 4px 0; font-family: inherit; }
+  button.b.g, a.b.g { background: #2a2e37; }
   button.b.r { background: #b3261e; }
   button.b.ok { background: #1f9d55; }
   table.sched { width: 100%; border-collapse: collapse; }
@@ -100,6 +100,8 @@
   .swc.on { box-shadow: 0 0 0 3px #fff; }
   .sec h2 small { text-transform: none; letter-spacing: 0; font-weight: 400; margin-left: 6px; color: #6b7080; }
   .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: 0; }
+  #appinfo { font-size: 12px; color: #8a8f9c; margin-top: 2px; }
+  a.b { display: inline-block; text-decoration: none; }
   .sec h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #8a8f9c; margin: 16px 0 2px; font-weight: 600; }
   .row.sub { padding-left: 18px; }
   .row.sub label.l { color: #b9bdc7; }
@@ -229,7 +231,7 @@
 
 <div id="settings" class="overlay">
   <div id="shead"><div class="hwrap">
-    <div class="topbar"><h1>Sleep Clock</h1><button class="b ok" id="done">Done</button></div>
+    <div class="topbar"><div><h1>Sleep Clock</h1><div id="appinfo"></div></div><button class="b ok" id="done">Done</button></div>
     <div class="pv">
       <div class="miniwrap"><div id="mini" class="mini"><div id="miniFace" class="face"></div><div id="miniBelow" class="below"></div><div id="miniTime" class="time"></div><div id="miniLabel" class="label"></div><div id="miniLayer" class="layer"></div></div></div>
       <div class="pvside">
@@ -887,7 +889,7 @@
   'use strict';
   /* Written for Safari 12: no optional chaining, no ??, no class fields, no replaceAll. */
 
-  var VERSION = '1.4';
+  var VERSION = '1.5';
   var KEY = 'toddler-sleep-train-clock.settings.v1';
   var FIRED_KEY = 'toddler-sleep-train-clock.fired';
   var CODE_PREFIX = 'toddler-sleep-train-clock.v1:';
@@ -1019,6 +1021,7 @@
       dayDim: 100,         // % brightness of face/time in the day
       fadeSec: 3,          // crossfade length at each phase change (0 = hard change)
       night: nightDefaults(), // night scene + extras, see SCENES / EXTRAS
+      savedAt: 0,          // when the settings last changed (ms); 0 = never
       showTime: true,
       showTimeNight: false,
       h24: true,
@@ -1069,11 +1072,18 @@
     if (FADE_OPTS.indexOf(s.fadeSec) < 0) s.fadeSec = 3;
   }
   var storageOK = true;
+  // Settings content without the save time, to tell a real change from a save with nothing new (e.g. closing settings).
+  function settingsBody() { var t = S.savedAt; S.savedAt = 0; var b = JSON.stringify(S); S.savedAt = t; return b; }
+  var lastBody = null;
   function save() {
+    var body = settingsBody();
+    if (body !== lastBody) { S.savedAt = Date.now(); lastBody = body; }
     try { window.localStorage.setItem(KEY, JSON.stringify(S)); storageOK = true; }
     catch (e) { storageOK = false; }
+    if (settingsOpen) renderAppInfo();
   }
   var S = load();
+  lastBody = settingsBody();
 
   // ---------- time helpers ----------
   function hm(str) { var p = str.split(':'); return (+p[0]) * 60 + (+p[1]); }
@@ -1939,6 +1949,28 @@
     toast(ok ? 'SVG copied' : 'SVG selected, tap Copy');
   });
 
+  // ---------- version, app date, settings save time, GitHub links ----------
+  var REPO = 'https://github.com/flevanti/toddler-sleep-train-clock';
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function fmtDate(d) { return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear(); }
+  // When this copy of the app was published: the server's Last-Modified date (kept by the offline copy too).
+  // Without that header browsers report "now", so a date within seconds of loading means unknown.
+  var APP_UPDATED = (function () {
+    var d = new Date(document.lastModified);
+    return isNaN(d.getTime()) || Math.abs(Date.now() - d.getTime()) < 10000 ? null : d;
+  })();
+  function versionText() { return 'v' + VERSION + (APP_UPDATED ? ' (updated ' + fmtDate(APP_UPDATED) + ')' : ''); }
+  function renderAppInfo() {
+    var t = 'v' + VERSION + (APP_UPDATED ? ' · app updated ' + fmtDate(APP_UPDATED) : ''), d = new Date(S.savedAt);
+    if (!S.savedAt) t += ' · settings not saved yet';
+    else t += ' · settings saved ' + (fmtDate(d) === fmtDate(new Date()) ? 'today' : fmtDate(d)) + ' ' + fmt(d);
+    $('appinfo').textContent = t;
+  }
+  function issueUrl(template) {
+    return REPO + '/issues/new?template=' + template + '&version=' + encodeURIComponent(versionText()) + '&device=' + encodeURIComponent(navigator.userAgent);
+  }
+  function link(text, href) { return '<a class="b g" href="' + esc(href) + '" target="_blank" rel="noopener">' + text + '</a>'; }
+
   function renderSettings() {
     var today = new Date().getDay();
     var standalone = !!window.navigator.standalone;
@@ -2022,10 +2054,17 @@
       '<li>Set the iPad volume with its buttons, then test the sound under General.</li>' +
       '<li>Open Sleep Clock from the home-screen icon and <b>tap once</b> so sound is enabled.</li>' +
       '<li>Triple-click Home → <b>Guided Access</b>. Under Options, turn off Volume Buttons and Sleep/Wake. Leave Touch on (the clock ignores taps; this lets you re-enable sound after a reload).</li>' +
-      '<li>Keep it on charge, and check the battery for swelling now and then.</li></ol>' +
-      '<p class="hint">Sleep Clock (toddler-sleep-train-clock) v' + VERSION + (standalone ? ' · home-screen mode' : '') + '</p></div>';
+      '<li>Keep it on charge, and check the battery for swelling now and then.</li></ol></div>';
+
+    // about & feedback
+    h += '<div class="sec"><h2>About &amp; feedback</h2>' +
+      '<p class="hint" style="margin-top:0">Sleep Clock ' + versionText() + (standalone ? ' · home-screen mode' : '') + '. Free, no ads, works offline.</p>' +
+      '<div class="links" style="margin-top:8px">' + link('Suggest a feature', issueUrl('feature_request.yml')) + link('Report a problem', issueUrl('bug_report.yml')) +
+      link('Source code on GitHub', REPO) + '</div>' +
+      '<p class="hint">Opens GitHub in the browser (needs internet; suggestions and reports need a free GitHub account). The version and device are filled in for you.</p></div>';
 
     $('swrap').innerHTML = h;
+    renderAppInfo();
     renderAudioStatus();
     wireSettings();
     if (settingsOpen) updatePreview(); // e.g. after import or reset
