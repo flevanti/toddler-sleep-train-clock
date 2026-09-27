@@ -157,6 +157,12 @@
   #gallery .gnav { display: flex; align-items: center; justify-content: center; }
   #gallery .gnav button.b { min-width: 64px; }
   #gcount { color: #8a8f9c; min-width: 70px; text-align: center; margin: 0 10px; }
+  /* "View SVG": still source of one drawing, to copy into a drawing tool */
+  #svgview { background: rgba(11,12,15,.97); z-index: 27; }
+  #svgview .wrap { max-width: 900px; }
+  #svgpreview { width: 240px; height: 240px; margin: 8px auto 12px; background: #000; border-radius: 12px; border: 1px solid #2a2e37; }
+  #svgpreview svg { width: 100%; height: 100%; display: block; }
+  #svgsrc { height: 38vh; font-size: 11px; }
   button.gl { background: none; border: 0; color: #5b9dff; font-size: 15px; padding: 4px 0 4px 10px; font-family: inherit; }
   #toast { position: fixed; left: 50%; top: 20px; z-index: 40; -webkit-transform: translateX(-50%); transform: translateX(-50%);
     background: #2f6fed; color: #fff; padding: 10px 18px; border-radius: 10px; display: none; font-size: 15px; }
@@ -205,6 +211,16 @@
   <div class="gtop"><h2 id="gtitle"></h2><button class="b g" id="gclose">Close</button></div>
   <div id="gtrack"></div>
   <div class="gnav"><button class="b g" id="gprev">◀</button><span id="gcount"></span><button class="b g" id="gnext">▶</button><button class="b ok" id="gpick">Choose this</button></div>
+</div>
+
+<div id="svgview" class="overlay">
+  <div class="wrap">
+    <div class="topbar"><h1 id="svgtitle"></h1><button class="b g" id="svgclose">Close</button></div>
+    <div id="svgpreview"></div>
+    <textarea id="svgsrc" spellcheck="false"></textarea>
+    <div style="margin-top:8px"><button class="b" id="svgcopy">Select all &amp; copy</button></div>
+    <p class="hint">A still copy of this drawing in the current night colour. Edit it in any drawing tool and paste it back in the Claude chat to use it in the clock.</p>
+  </div>
 </div>
 
 <div id="settings" class="overlay">
@@ -1249,7 +1265,7 @@
     var animal = id.indexOf('animal:') === 0 ? id.slice(7) : null, sc = animal ? SCENES.animal : SCENES[id], o = n.scenes[animal ? 'animal' : id], k;
     if (animal) { var ao = {}; for (k in o) ao[k] = o[k]; ao.animal = animal; o = ao; }
     return '<div class="gcard' + (galleryIsCurrent(id) ? ' on' : '') + '" data-id="' + id + '"><div class="gstage" style="opacity:' + Math.max(S.nightDim / 100, 0.6) + '">' +
-      sc.face(o, c) + (sc.layer ? '<div class="glayer">' + sc.layer(o, c) + '</div>' : '') + '</div><div class="gname">' + (animal ? ANIMALS[animal].name : sc.name) + '</div></div>';
+      sc.face(o, c) + (sc.layer ? '<div class="glayer">' + sc.layer(o, c) + '</div>' : '') + '</div><div class="gname"><span class="gn">' + (animal ? ANIMALS[animal].name : sc.name) + '</span><button class="gl" data-svg="' + id + '">View SVG</button></div></div>';
   }
   function openGallery(kind) {
     var ids = [], h = '<div class="gpad"></div>', i, k, start = 0;
@@ -1282,7 +1298,35 @@
   $('gpick').addEventListener('click', function () { galleryPick(gal.ids[galleryIndex()]); });
   $('gtrack').addEventListener('scroll', galleryCount);
   $('gtrack').addEventListener('click', function (e) {
+    if (e.target.getAttribute && e.target.getAttribute('data-svg')) { showSvg(e.target.getAttribute('data-svg')); return; }
     for (var n = e.target; n && n !== this; n = n.parentNode) if (n.getAttribute && n.getAttribute('data-id')) { galleryPick(n.getAttribute('data-id')); return; }
+  });
+  // Still, standalone SVG of one card (scene face or animal): animations removed, fixed size, current night colour.
+  function stillSvg(id) {
+    var n = S.night, animal = id.indexOf('animal:') === 0 ? id.slice(7) : null, sc = animal ? SCENES.animal : SCENES[id], o = {}, k;
+    var src = n.scenes[animal ? 'animal' : id];
+    for (k in src) o[k] = src[k];
+    if (animal) { o.animal = animal; o.breath = false; o.moves = 'off'; }
+    var d = document.createElement('div');
+    d.innerHTML = sc.face(o, { color: NIGHT_COLORS[S.nightColor], gid: 'svgExport', frac: 0.5, now: Date.now(), since: 0, until: 0, scale: 1, w: 600, h: 400 });
+    var svg = d.firstChild, anims = svg.querySelectorAll('animate, animateTransform, animateMotion, set'), i;
+    for (i = 0; i < anims.length; i++) anims[i].parentNode.removeChild(anims[i]);
+    svg.setAttribute('width', '560'); svg.setAttribute('height', '560');
+    return new XMLSerializer().serializeToString(svg);
+  }
+  function showSvg(id) {
+    var src = stillSvg(id), animal = id.indexOf('animal:') === 0 ? id.slice(7) : null;
+    $('svgtitle').textContent = (animal ? ANIMALS[animal].name : SCENES[id].name) + ' · SVG';
+    $('svgpreview').innerHTML = src;
+    $('svgsrc').value = src;
+    $('svgview').className = 'overlay show';
+  }
+  $('svgclose').addEventListener('click', function () { $('svgview').className = 'overlay'; $('svgpreview').innerHTML = ''; });
+  $('svgcopy').addEventListener('click', function () {
+    var t = $('svgsrc'), ok = false;
+    t.focus(); t.setSelectionRange(0, t.value.length); // iOS 12 needs an editable field for this
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    toast(ok ? 'SVG copied' : 'SVG selected, tap Copy');
   });
 
   function renderSettings() {

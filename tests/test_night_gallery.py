@@ -38,7 +38,7 @@ with sync_playwright() as pw:
         check(tag + 'gallery open over settings', p.is_visible('#gallery') and p.is_visible('#settings'))
         check(tag + 'every scene and every animal has its own card, current highlighted',
               [c[0] for c in cards] == expect and len(expect) == 18 and [c[0] for c in cards if c[1]] == ['classic'], [c[0] for c in cards])
-        check(tag + 'animal cards named after the animal', p.evaluate("() => document.querySelector('#gtrack [data-id=\"animal:owl\"] .gname').textContent") == 'Owl')
+        check(tag + 'animal cards named after the animal', p.evaluate("() => document.querySelector('#gtrack [data-id=\"animal:owl\"] .gname .gn').textContent") == 'Owl')
         check(tag + 'starts on the current scene', p.evaluate(CENTRED).startswith('2 /'), p.evaluate(CENTRED))
         big = p.evaluate("() => document.querySelector('#gtrack .gcard .gstage').getBoundingClientRect().width")
         check(tag + 'cards are big (>= 55% of the screen width)', big >= 0.55 * vp[0], big)
@@ -85,6 +85,27 @@ with sync_playwright() as pw:
         check(tag + 'animal dropdown and preview updated',
               p.evaluate("() => document.getElementById('na-animal-animal').selectedOptions[0].textContent") == 'Lion' and
               p.evaluate("() => document.querySelector('#miniFace svg').getAttribute('data-animal')") == 'lion')
+        # "View SVG": clean still source to copy (card is not picked)
+        p.click('[data-gallery=scene]')
+        p.click('#gtrack [data-id="animal:owl"] [data-svg]')
+        check(tag + 'view SVG opens over the carousel without picking', p.is_visible('#svgview') and p.is_visible('#gallery') and
+              p.evaluate("() => %s.S().night.scenes.animal.animal" % H) == 'lion')
+        src = p.evaluate("() => document.getElementById('svgsrc').value")
+        check(tag + 'source is a standalone still SVG of that animal',
+              src.startswith('<svg') and 'xmlns="http://www.w3.org/2000/svg"' in src and 'data-animal="owl"' in src and '<animate' not in src and
+              p.evaluate("(t) => !new DOMParser().parseFromString(t, 'image/svg+xml').querySelector('parsererror')", src), src[:80])
+        check(tag + 'panel title names the drawing', 'Owl' in p.inner_text('#svgtitle'))
+        check(tag + 'big preview drawn', p.evaluate("() => !!document.querySelector('#svgpreview svg')"))
+        p.click('#svgcopy')
+        sel = p.evaluate("() => { var t = document.getElementById('svgsrc'); return [t.selectionStart, t.selectionEnd, t.value.length]; }")
+        check(tag + 'select all & copy selects the whole source', sel[0] == 0 and sel[1] == sel[2], sel)
+        p.click('#svgclose')
+        check(tag + 'closing the SVG panel returns to the carousel', not p.is_visible('#svgview') and p.is_visible('#gallery'))
+        p.click('#gtrack [data-id=breathing] [data-svg]')
+        src = p.evaluate("() => document.getElementById('svgsrc').value")
+        check(tag + 'scene SVG is still too (breathing without SMIL)', src.startswith('<svg') and '<animate' not in src, src[:80])
+        p.click('#svgclose')
+        p.click('#gclose')
         check(tag + 'gallery emptied after closing (no animations left running)', p.evaluate("() => document.getElementById('gtrack').innerHTML") == '')
         ov = p.evaluate("() => document.documentElement.scrollWidth <= window.innerWidth")
         check(tag + 'no page-level horizontal scroll', ov)
