@@ -96,6 +96,12 @@ Use GitHub Issues. A free GitHub account is needed.
 
 The same links are at the bottom of the clock's settings page (**About & feedback**). From there, the clock version and the device are filled in for you.
 
+## License
+
+The code and the project's own drawings are released under the **[MIT License](LICENSE)**. That covers the cartoon animals, the scenes and the hand-drawn Dev's Favourite pictures.
+
+**Third-party artwork isn't covered by this licence.** That means the downloaded silhouettes imported from `artwork/` and the pictures traced from files in `artwork/sources/`, including the Canottieri Firenze symbol. They belong to their authors, under their own terms. If you reuse the project, check or replace them.
+
 ## Project layout
 
 | Path | What it is |

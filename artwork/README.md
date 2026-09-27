@@ -1,5 +1,7 @@
 # Artwork for Night pictures
 
+> **Licence note:** the drawings in `originals/` and `sources/` are third-party artwork. They aren't covered by the project's MIT licence and stay under their authors' own terms. The hand-drawn pictures made in `tools/draw_dev_favourite.py` are part of the project and MIT-licensed.
+
 Not deployed. The clock only needs `index.html` and `sw.js`. This folder holds the source drawings.
 
 - `incoming/`: drop new SVGs here. Name each file as it should appear in the app (`fire-engine.svg`, `rocket-2.svg`), in lower case with hyphens.
