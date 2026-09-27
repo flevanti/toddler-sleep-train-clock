@@ -1811,7 +1811,6 @@
     for (k in SCENES) h += '<option value="' + k + '"' + (k === n.scene ? ' selected' : '') + '>' + SCENES[k].name + '</option>';
     h += '</select></div>';
     for (i = 0; i < so.length; i++) h += optRow('na-' + n.scene + '-' + so[i].key, so[i], n.scenes[n.scene][so[i].key]);
-    if (n.scene === 'animal') h += '<div class="row sub"><label class="l"></label><button class="gl" data-gallery="animal">See all pictures ▸</button></div>';
     if (Object.keys(EXTRAS).length) h += '<h3>Extras</h3>';
     for (k in EXTRAS) {
       var x = n.extras[k], xo = EXTRAS[k].opts;
@@ -1861,9 +1860,9 @@
       else if (st.firstChild) st.innerHTML = '';
     }
   }
-  function openGallery(kind) {
+  function openGallery() { // every scene, then every Night picture; opens on the current one
     var ids = [], h = '<div class="gpad"></div>', i, k, start = 0, cats = [], chips = '';
-    if (kind === 'scene') for (k in SCENES) { if (k !== 'animal') ids.push(k); }
+    for (k in SCENES) { if (k !== 'animal') ids.push(k); }
     for (k in ANIMALS) ids.push('animal:' + k);
     for (i = 0; i < ids.length; i++) {
       h += galleryCard(ids[i]);
@@ -1871,7 +1870,7 @@
       if (cats.indexOf(galleryCat(ids[i])) < 0) { cats.push(galleryCat(ids[i])); chips += '<button data-cat="' + galleryCat(ids[i]) + '">' + galleryCat(ids[i]) + '</button>'; }
     }
     gal = { ids: ids };
-    $('gtitle').textContent = kind === 'scene' ? 'Night scenes' : 'Night pictures';
+    $('gtitle').textContent = 'Night scenes & pictures';
     $('gchips').innerHTML = chips;
     $('gtrack').innerHTML = h + '<div class="gpad"></div>';
     $('gallery').className = 'overlay show';
@@ -2066,7 +2065,7 @@
       for (var j = 0; j < sib.length; j++) sib[j].className = 'swc' + (sib[j] === b ? ' on' : '');
     });
     var gl = w.querySelectorAll('[data-gallery]');
-    for (i = 0; i < gl.length; i++) gl[i].addEventListener('click', function (e) { openGallery(e.currentTarget.getAttribute('data-gallery')); });
+    for (i = 0; i < gl.length; i++) gl[i].addEventListener('click', function () { openGallery(); });
     var nc = w.querySelectorAll('[id^="na-"], [id^="nx-"]');
     for (i = 0; i < nc.length; i++) nc[i].addEventListener('change', onNightControl);
     ['napSound', 'dayMode'].forEach(function (id) { on(id, 'change', function (e) { S[id] = e.target.value; save(); MAIN.keys = {}; }); });

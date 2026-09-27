@@ -77,25 +77,26 @@ with sync_playwright() as pw:
         check(tag + 'reopened: the chosen animal card is highlighted', [c[0] for c in p.evaluate(CARDS) if c[1]] == ['animal:cat'])
         p.click('#gclose')
 
-        # animals
-        check(tag + 'pictures "See all" button', p.is_visible('[data-gallery=animal]') and 'pictures' in p.inner_text('[data-gallery=animal]'))
-        p.click('[data-gallery=animal]')
+        # with a Night picture chosen: still one "See all" (next to Scene), opening on that picture
+        check(tag + 'only one "See all" link in settings', p.evaluate("() => document.querySelectorAll('[data-gallery]').length") == 1)
+        p.click('[data-gallery=scene]')
         animals = p.evaluate("() => Object.keys(%s.night.ANIMALS)" % H)
         cards = p.evaluate(CARDS)
-        check(tag + 'one card per picture, cat highlighted', [c[0] for c in cards] == ['animal:' + a for a in animals] and len(animals) > 100 and
+        check(tag + 'scenes then every picture, cat highlighted', [c[0] for c in cards] == expect and len(animals) > 100 and
               [c[0] for c in cards if c[1]] == ['animal:cat'], [c[0] for c in cards if c[1]])
-        check(tag + 'animal cards are animals', p.evaluate("() => document.querySelector('#gtrack [data-id=\"animal:owl\"] svg').getAttribute('data-animal')") == 'owl')
-        check(tag + 'no duplicate ids (animals)', p.evaluate(DUP_IDS) == [], p.evaluate(DUP_IDS))
-        check(tag + 'starts on the chosen animal (cat = 3rd)', p.evaluate(CENTRED).startswith('3 /'), p.evaluate(CENTRED))
-        p.click('#gprev'); p.click('#gprev'); p.click('#gprev')
+        check(tag + 'picture cards are the pictures', p.evaluate("() => document.querySelector('#gtrack [data-id=\"animal:owl\"] svg').getAttribute('data-animal')") == 'owl')
+        check(tag + 'no duplicate ids (pictures)', p.evaluate(DUP_IDS) == [], p.evaluate(DUP_IDS))
+        check(tag + 'starts on the chosen picture (cat = 7th: 4 scenes, then bunny, bear, cat)', p.evaluate(CENTRED).startswith('7 /'), p.evaluate(CENTRED))
+        for _ in range(8):
+            p.click('#gprev')
         check(tag + 'prev at the first card stays there', p.evaluate(CENTRED).startswith('1 /'), p.evaluate(CENTRED))
         p.screenshot(path=os.path.join(SHOTS, 'gallery_animals_%dx%d.png' % vp))
         p.click('#gclose')
         check(tag + 'close keeps the choice', p.evaluate("() => %s.S().night.scenes.animal.animal" % H) == 'cat' and not p.is_visible('#gallery'))
-        p.click('[data-gallery=animal]')
+        p.click('[data-gallery=scene]')
         p.click('#gtrack [data-id="animal:lion"]')
-        check(tag + 'choosing an animal saves it', p.evaluate("() => %s.S().night.scenes.animal.animal" % H) == 'lion')
-        check(tag + 'animal dropdown and preview updated',
+        check(tag + 'choosing a picture saves it', p.evaluate("() => %s.S().night.scenes.animal.animal" % H) == 'lion')
+        check(tag + 'picture dropdown and preview updated',
               p.evaluate("() => document.getElementById('na-animal-animal').selectedOptions[0].textContent") == 'Lion (cartoon)' and
               p.evaluate("() => document.querySelector('#miniFace svg').getAttribute('data-animal')") == 'lion')
         # "View SVG": clean still source to copy (card is not picked)
