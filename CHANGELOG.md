@@ -2,6 +2,10 @@
 
 Every version of Sleep Clock, newest first. The version shown in the app (`VERSION` in `index.html`) must match the newest entry here, and `tests/test_changelog.py` checks that it does. Use `tools/release.py` to add a version: it updates both. Each released version has a git tag (`v1.6`…) on the commit where it was finished. 1.0–1.2 were made before the project used git, so they have no tags.
 
+## 1.9 — 2026-09-27
+- **Fixed: the screen still went dark on older devices** (no built-in way to keep the screen on, e.g. older iPads). Safari ignores a muted or looping video for keeping the screen on, and ours was both. The video is now unmuted (its sound track is silent) and rewinds itself instead of looping. It needs one tap on the clock after the app starts.
+- The dev overlay shows whether that video is really playing.
+
 ## 1.8 — 2026-09-27
 - **Updates** in settings: a **Reload** button (a home-screen app has no browser reload), **Check now** for a new version, and an optional switch that checks every few hours and shows a small "New version available" on the clock, in the picture's colour, only in the daytime. Nothing ever updates by itself.
 - Fixed a test that failed at random depending on where a Night picture was in its breathing animation.
