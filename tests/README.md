@@ -8,12 +8,22 @@ Browser tests for Sleep Clock, run in headless Chromium with Playwright. They're
 python3 -m venv .venv
 .venv/bin/pip install -r tests/requirements.txt
 .venv/bin/playwright install chromium
+.venv/bin/playwright install webkit   # optional: real Safari-engine playback check in test_keep_awake.py
 ```
 
 ## Run
 
 ```sh
-tests/run_all.sh
+tests/run_all.sh      # one progress line per suite; failing checks are listed under their suite
+tests/run_all.sh -v   # every check, live
+```
+
+```
+[ 8/20] test_keep_awake            ok     38 checks   10s
+[ 9/20] test_manifest              ok      6 checks    2s
+...
+done in 150s: 20 of 20 suites passed
+RESULT PASS
 ```
 
 Each suite serves the repo root on a local port, fakes the clock with `page.clock`, and runs in 1024×768 and 768×1024. Screenshots go to `tests/screenshots/`, which git ignores.
