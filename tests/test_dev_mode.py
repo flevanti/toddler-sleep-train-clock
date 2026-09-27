@@ -106,7 +106,7 @@ with sync_playwright() as pw:
         p.clock.run_for(3100)
         check(tag + 'overlay switch saved', dev(p) == {'on': True, 'overlay': True, 'pack': False}, dev(p))
         stats = p.inner_text('#devstats') if p.is_visible('#devstats') else ''
-        for label in ['v1.', 'tick delay', 'redraws', 'animations', 'up ', 'loads today', 'sound', 'online', 'offline copy', 'storage', 'phase night']:
+        for label in ['v1.', 'tick delay', 'redraws', 'animations', 'up ', 'loads today', 'sound', 'screen on: ', 'online', 'offline copy', 'storage', 'phase night']:
             check(tag + 'overlay shows ' + label.strip(), label in stats, stats.replace('\n', ' | ')[:160])
         box = p.evaluate("() => { var r = document.getElementById('devstats').getBoundingClientRect(); return [r.left, r.bottom, window.innerHeight, getComputedStyle(document.getElementById('devstats')).pointerEvents]; }")
         check(tag + 'overlay bottom-left, not tappable', box[0] < 40 and box[2] - box[1] < 40 and box[3] == 'none', box)

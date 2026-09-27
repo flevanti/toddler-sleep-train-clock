@@ -2020,6 +2020,7 @@
       'animations ' + document.querySelectorAll('#clock animate, #clock animateTransform, #clock animateMotion, #clock .twinkle, #clock .zz').length,
       'up ' + hms(Date.now() - LOAD_AT) + ' · loads today ' + lt.length + (lt.length ? ' (' + lt.join(', ') + ')' : ''),
       'sound ' + (!AC ? 'none' : audioReady() ? 'on' : 'locked') + (lastAlarmAt ? ' · alarm last ' + fmt(new Date(lastAlarmAt)) : ''),
+      'screen on: ' + (!S.keepAwake ? 'off (switched off)' : awakeHow === 'system' ? 'wake lock' : awakeHow === 'video' ? 'silent video' : awakeHow === 'tap' ? 'needs a tap' : 'starting'),
       'online ' + (navigator.onLine ? 'yes' : 'no') + ' · offline copy ' + (sw && sw.controller ? 'active' : 'not active'),
       'storage ' + (bytes / 1024).toFixed(1) + ' KB',
       'phase ' + PHASE_NAMES[st.mode].toLowerCase() + (st.until ? ' · next ' + fmt(new Date(st.until)) : '')

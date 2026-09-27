@@ -204,6 +204,7 @@ Details:
   - running animations;
   - uptime, and page loads today with their times (the last 30 loads are kept in `toddler-sleep-train-clock.loads`, to spot overnight reloads);
   - sound state and when the alarm last rang;
+  - how the screen is kept on (wake lock, silent video, needs a tap, off);
   - online status and whether the offline copy is active;
   - storage used;
   - the current phase and the time of the next change.
