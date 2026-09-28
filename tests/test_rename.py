@@ -11,7 +11,9 @@ def check(n, c, i=''):
 with sync_playwright() as pw:
     b = pw.chromium.launch(); p = b.new_page(viewport={'width':1024,'height':768})
     p.goto('http://127.0.0.1:8767/index.html')
-    check('title', p.title() == 'Sleep Clock', p.title())
+    check('title starts with the name (the rest is for search engines)', p.title().startswith('Sleep Clock'), p.title())
+    check('description for search engines', 'OK to wake' in (p.get_attribute('meta[name=description]', 'content') or ''))
+    check('structured data is valid JSON', __import__('json').loads(p.inner_text('script[type="application/ld+json"]'))['name'] == 'Sleep Clock')
     check('app title meta', p.get_attribute('meta[name=apple-mobile-web-app-title]', 'content') == 'Sleep Clock')
     # simulate an iPad set up before the rename
     p.evaluate("""() => { localStorage.clear();

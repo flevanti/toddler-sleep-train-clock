@@ -2,6 +2,13 @@
 
 Every version of Sleep Clock, newest first. The version shown in the app (`VERSION` in `index.html`) must match the newest entry here, and `tests/test_changelog.py` checks that it does. Use `tools/release.py` to add a version: it updates both. Each released version has a git tag (`v1.6`…) on the commit where it was finished. 1.0–1.2 were made before the project used git, so they have no tags.
 
+## 1.10 — 2026-09-28
+- **"Tap the screen once" prompt:** after the clock starts, it says when a tap is needed and why (to keep the screen on and/or play sounds), then shows a big thumbs-up once it's done. Small and dim at night.
+- Installed apps on Android and desktop no longer see the "opened in a normal browser tab" warning.
+- **Tech FAQ** in the README: the common problems (screen turning off, no sound, address bar, updating, settings, PIN) and how to fix them.
+- Better for search engines: a descriptive page title and description, link previews, and structured data. The home-screen name is still "Sleep Clock".
+- Tests: live progress per suite and faster runs.
+
 ## 1.9 — 2026-09-27
 - **Fixed: the screen still went dark on older devices** (no built-in way to keep the screen on, e.g. older iPads). Safari ignores a muted or looping video for keeping the screen on, and ours was both. The video is now unmuted (its sound track is silent) and rewinds itself instead of looping. It needs one tap on the clock after the app starts.
 - The dev overlay shows whether that video is really playing.

@@ -182,6 +182,19 @@ Details:
 - **Full screen:** settings say whether the clock is already running full screen from the home screen. Otherwise they explain how to add it (iPad/iPhone and Android), and show a **"Go full screen"** button where the browser supports the Fullscreen API (not on iPhone). It lasts until the page reloads.
 - The setup checklist in settings is now device-neutral: **Device setup checklist**.
 
+### "Tap the screen once" prompt (v1.10)
+- After every start or reload, browsers allow sound, and the keep-awake video on older devices, only after a touch. When either is still waiting, the clock shows a prompt that says why:
+  - by day, a big "👆 Tap the screen once" card: "For technical reasons, the browser needs one tap after the clock starts before it can keep the screen on and play sounds" (only the parts that apply);
+  - at night, a small dim "👆 tap once to …" pill at the bottom.
+- The tap that clears it gets a big **thumbs-up**: a dark disc with the thumb in the phase colour (dimmed at night), popping in and fading out in 1.8 s. If the need goes away without a tap (e.g. a setting changed), the prompt just hides.
+- Newer devices that keep the screen on by themselves, with no sound set, never see the prompt.
+- The "opened in a normal browser tab" warning now also recognises installed apps on Android and desktop (`display-mode`), not only the iPad/iPhone home screen.
+
+### Search engines (v1.10)
+- The page's `<title>` is "Sleep Clock – free OK-to-wake clock for toddlers". The home-screen name stays "Sleep Clock" (`apple-mobile-web-app-title` and the manifest).
+- The page also has a meta description, a canonical link to the GitHub Pages address, Open Graph / Twitter preview tags (image: `docs/screenshots/wake.png`), `WebApplication` structured data (JSON-LD) and a `<noscript>` description.
+- The README opens with the same key phrases and a link to the live clock, and has a FAQ.
+
 ### Updates (v1.8)
 - An **Updates** section in settings, because a home-screen / full-screen app has no browser reload button:
   - **Reload** reloads the app. The offline copy is network-first, so this loads the newest version when online.
