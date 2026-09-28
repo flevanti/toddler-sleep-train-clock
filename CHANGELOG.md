@@ -2,6 +2,9 @@
 
 Every version of Sleep Clock, newest first. The version shown in the app (`VERSION` in `index.html`) must match the newest entry here, and `tests/test_changelog.py` checks that it does. Use `tools/release.py` to add a version: it updates both. Each released version has a git tag (`v1.6`…) on the commit where it was finished. 1.0–1.2 were made before the project used git, so they have no tags.
 
+## 1.11 — 2026-09-28
+- Removed the soft white noise at night (not needed). Saved settings that had it switched on are simply ignored.
+
 ## 1.10 — 2026-09-28
 - **"Tap the screen once" prompt:** after the clock starts, it says when a tap is needed and why (to keep the screen on and/or play sounds), then shows a big thumbs-up once it's done. Small and dim at night.
 - Installed apps on Android and desktop no longer see the "opened in a normal browser tab" warning.

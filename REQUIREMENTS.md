@@ -58,7 +58,7 @@ The code already exists: `index.html` (everything, including the icon) and `sw.j
 - Optional **fade-in** over 20 seconds.
 - **Tapping anywhere** stops a ringing alarm.
 - The alarm fires **once**, within the first 90 seconds of the green phase. The last-fired key is saved to storage (`toddler-sleep-train-clock.fired`) so a reload doesn't set it off again.
-- Optional **soft brown noise** during the red phase, with its own volume.
+- ~~Optional soft brown noise during the red phase~~ (removed in v1.11: not needed).
 - A **silent looping buffer** keeps the audio context awake overnight.
 - Settings has a test button for each tone.
 
@@ -104,7 +104,7 @@ The code already exists: `index.html` (everything, including the icon) and `sw.j
   - a **timeline strip** coloured by phase; tapping it jumps to that time and pauses
   - the pretend time and phase name
   - Exit
-- **Sound:** the wake sound plays for about 3 s with no fade-in when green starts, only during normal playback (not on jumps). Noise plays during night if it's on. Mute turns both off.
+- **Sound:** the wake sound plays for about 3 s with no fade-in when green starts, only during normal playback (not on jumps). Mute turns it off.
 - **Kept separate from real use:**
   - It never writes the alarm-fired marker.
   - It ignores and keeps a running nap.
@@ -151,7 +151,7 @@ Grouped so each control sits with the phase it affects. The mini preview and the
 
 1. **General:** sound status, alarm volume, test a sound, show the time, 24-hour clock, words under the face, phase change fade.
 2. **Weekly schedule:** wake, bedtime and wake sound for each day, plus the copy buttons.
-3. **● Night** (bedtime → wake): colour, brightness, show the time at night, soft noise, noise volume, the Animation (scene + its settings) and Extras controls.
+3. **● Night** (bedtime → wake): colour, brightness, show the time at night, the Animation (scene + its settings) and Extras controls.
 4. **● Almost time** (amber): minutes before wake, or Off.
 5. **● Wake** (green): how long green stays on, how long the wake sound plays, fade-in.
 6. **● Day:** what it shows, colour, brightness.

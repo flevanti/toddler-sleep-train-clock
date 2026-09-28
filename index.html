@@ -1227,7 +1227,7 @@
   'use strict';
   /* Written for Safari 12: no optional chaining, no ??, no class fields, no replaceAll. */
 
-  var VERSION = '1.10';
+  var VERSION = '1.11';
   var KEY = 'toddler-sleep-train-clock.settings.v1';
   var FIRED_KEY = 'toddler-sleep-train-clock.fired';
   var CODE_PREFIX = 'toddler-sleep-train-clock.v1:';
@@ -1371,8 +1371,6 @@
       volume: 60,
       alarmLen: 60,        // seconds the wake sound plays (0 = until tapped, max 5 min)
       fadeIn: true,
-      noise: false,
-      noiseVol: 25,
       napSound: 'chime',
       pin: '',
       nap: null            // {start, end} ms timestamps
@@ -1865,7 +1863,7 @@
 
   // ---------- audio (Web Audio; webkit prefix on iOS 12) ----------
   var AC = window.AudioContext || window.webkitAudioContext;
-  var ctx = null, keepSrc = null, noiseSrc = null, noiseGain = null, alarmGain = null, alarmTimer = null, alarmStopAt = 0;
+  var ctx = null, keepSrc = null, alarmGain = null, alarmTimer = null, alarmStopAt = 0;
 
   function audioReady() { return !!(ctx && ctx.state === 'running'); }
   function ensureCtx() {
@@ -1977,28 +1975,8 @@
   }
   function alarmPlaying() { return !!alarmGain; }
 
-  // Soft brown noise for the night (optional)
-  function setNoise(on) {
-    if (!audioReady()) on = false;
-    if (on && !noiseSrc) {
-      var len = ctx.sampleRate * 4, b = ctx.createBuffer(1, len, ctx.sampleRate), d = b.getChannelData(0), last = 0;
-      for (var i = 0; i < len; i++) { var w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d[i] = last * 3.2; }
-      noiseSrc = ctx.createBufferSource(); noiseSrc.buffer = b; noiseSrc.loop = true;
-      noiseGain = ctx.createGain(); noiseGain.gain.setValueAtTime(0.0001, ctx.currentTime);
-      noiseGain.gain.linearRampToValueAtTime(vol(S.noiseVol) * 0.8, ctx.currentTime + 8);
-      noiseSrc.connect(noiseGain); noiseGain.connect(ctx.destination); noiseSrc.start(0);
-    } else if (on && noiseGain) {
-      noiseGain.gain.setTargetAtTime(vol(S.noiseVol) * 0.8, ctx.currentTime, 0.5);
-    } else if (!on && noiseSrc) {
-      var s = noiseSrc, g = noiseGain; noiseSrc = null; noiseGain = null;
-      try { g.gain.setTargetAtTime(0.0001, ctx.currentTime, 1.5); } catch (e) {}
-      setTimeout(function () { try { s.stop(0); s.disconnect(); g.disconnect(); } catch (e) {} }, 6000);
-    }
-  }
-
   // ---------- sound-locked badge ----------
   function soundNeeded() {
-    if (S.noise) return true;
     if (S.napSound !== 'off' && S.nap) return true;
     for (var i = 0; i < 7; i++) if (S.days[i].tone !== 'off') return true;
     return false;
@@ -2096,7 +2074,6 @@
     }
     // tidy finished nap
     if (S.nap && !st.nap) { S.nap = null; save(); }
-    setNoise(S.noise && st.mode === 'sleep' && !alarmPlaying());
     curState = st;
     render(now, st);
   }
@@ -2566,8 +2543,6 @@
       '<div class="row"><label class="l">Brightness</label><input type="range" min="5" max="100" step="5" id="nightDim" value="' + S.nightDim + '"><span class="val" id="nightDimV">' + S.nightDim + '%</span></div>' +
       '<p class="hint">Red, orange and amber are the most sleep-friendly. Blue and purple light is more stimulating at night.</p>' +
       '<div class="row"><label class="l">Show the time at night</label>' + sw('showTimeNight', S.showTimeNight) + '</div>' +
-      '<div class="row"><label class="l">Soft noise</label>' + sw('noise', S.noise) + '</div>' +
-      '<div class="row"><label class="l">Noise volume</label><input type="range" min="5" max="100" step="5" id="noiseVol" value="' + S.noiseVol + '"><span class="val" id="noiseVolV">' + S.noiseVol + '%</span></div>' +
       nightSettingsHTML() + '</div>';
 
     h += '<div class="sec" data-pv="soon"><h2><span class="dot" style="background:#ffb300"></span>Almost time <small>amber, before wake</small></h2>' +
@@ -2688,9 +2663,9 @@
       var d = document.documentElement, f = d.requestFullscreen || d.webkitRequestFullscreen;
       try { var r = f.call(d); if (r && r.catch) r.catch(function () { toast('This browser didn’t allow full screen'); }); } catch (e) { toast('This browser didn’t allow full screen'); }
     });
-    ['fadeIn', 'noise', 'showTime', 'showTimeNight', 'h24', 'showLabel'].forEach(function (id) { on(id, 'change', function (e) { S[id] = e.target.checked; save(); }); });
-    ['volume', 'noiseVol', 'nightDim', 'dayDim'].forEach(function (id) {
-      on(id, 'input', function (e) { S[id] = +e.target.value; $(id + 'V').textContent = S[id] + '%'; if (id === 'noiseVol' && noiseGain) setNoise(true); });
+    ['fadeIn', 'showTime', 'showTimeNight', 'h24', 'showLabel'].forEach(function (id) { on(id, 'change', function (e) { S[id] = e.target.checked; save(); }); });
+    ['volume', 'nightDim', 'dayDim'].forEach(function (id) {
+      on(id, 'input', function (e) { S[id] = +e.target.value; $(id + 'V').textContent = S[id] + '%'; });
       on(id, 'change', function () { save(); });
     });
     on('testBtn', 'click', function () {
@@ -2747,7 +2722,7 @@
   var pvMode = 'day';
   var PHASE_NAMES = { sleep: 'Night', soon: 'Almost time', wake: 'Green', day: 'Day' };
   // Which preview tab a settings control belongs to.
-  var PV_FOR = { nightColor: 'sleep', nightDim: 'sleep', showTimeNight: 'sleep', noise: 'sleep', dayColor: 'day', dayDim: 'day', dayMode: 'day',
+  var PV_FOR = { nightColor: 'sleep', nightDim: 'sleep', showTimeNight: 'sleep', dayColor: 'day', dayDim: 'day', dayMode: 'day',
     greenMin: 'wake', soonMin: 'soon', bed: 'sleep', wake: 'wake' };
   // The preview's night is tonight (today's bedtime to tomorrow's wake), so the countdown shows half its stars.
   function pvState(mode) {
@@ -2821,7 +2796,7 @@
     if (!sim) return;
     sim = null;
     if (simTimer) { clearInterval(simTimer); simTimer = null; }
-    stopAlarm(); setNoise(false);
+    stopAlarm();
     document.body.className = '';
     $('simbar').style.display = 'none';
     MAIN.keys = {}; tick();
@@ -2840,7 +2815,6 @@
     st.scale = simSpeed * 1000 / DAY_MS; // real ms per pretend ms, for timed night extras
     if (!jump && st.mode === 'wake' && sim.mode !== 'wake' && !sim.muted) playAlarm(st.tone, 3, true);
     sim.mode = st.mode;
-    setNoise(S.noise && !sim.muted && st.mode === 'sleep' && !alarmPlaying());
     paint(MAIN, now, st, Math.min(S.fadeSec * 1000, 500)); // sped-up time: keep fades short
     $('simNow').textContent = DAYS[now.getDay()] + ' ' + fmt(now) + ' · ' + PHASE_NAMES[st.mode];
     $('simhead').style.left = ((sim.v - sim.t0) / DAY_MS * 100) + '%';
