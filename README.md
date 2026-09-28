@@ -30,7 +30,7 @@ It was built for an **iPad mini 2 on iOS 12** (Safari 12), a device that can't r
   - Scenes: a sleeping face with z's and stars, a slowly breathing face, a moon in a starry sky, or a **Night picture**. There are 138 pictures: cartoon animals plus silhouettes of animals, vehicles, rockets, trees, fruit, balloons and more, in 9 categories. Each one breathes, floats, sways or rocks gently.
   - Extras: a **star countdown** that loses one star at a time through the night, so the child can see how long is left; fireflies; shooting stars.
 - **Nap timer:** red now for 30 minutes to 2 hours, then green.
-- **Gentle sounds:** an optional wake-up sound (chime, music box, birds or ding-dong), optional soft brown noise at night, one shared volume, and a fade-in. Tapping anywhere stops a ringing alarm.
+- **Gentle sounds:** an optional wake-up sound (chime, music box, birds or ding-dong) with a volume and a fade-in. Tapping anywhere stops a ringing alarm.
 - **Colours and brightness:** pick the night colour (red, orange, amber…) and the day colour, and dim each phase. Phase changes can fade smoothly. The clock can show the time in 24-hour or 12-hour format, or not at all.
 - **Parent-only settings:** hold the **top-right corner for 2.5 seconds** to open them. You can add an optional 4-digit PIN (it keeps toddlers out, not adults).
 - **Live preview and "Simulate a day":** see every setting take effect straight away, and watch a whole day and night play in 30–120 seconds.

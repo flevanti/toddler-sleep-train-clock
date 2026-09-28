@@ -26,7 +26,7 @@ with sync_playwright() as pw:
         p.goto('http://127.0.0.1:8768/index.html')
         p.evaluate("() => localStorage.clear()"); p.reload(); p.clock.run_for(500)
         days = [{'bed': '19:00', 'wake': '07:00', 'tone': 'chime'} for _ in range(7)]
-        p.evaluate("(d) => %s.setS({days: d, noise: true, soonMin: 15})" % H, days)
+        p.evaluate("(d) => %s.setS({days: d, soonMin: 15})" % H, days)
         # ---- live preview ----
         open_settings(p, vp)
         check(tag + 'mini preview visible, starts on current phase', p.is_visible('#mini') and active_tab(p) == 'day', active_tab(p))

@@ -13,7 +13,7 @@ H = 'window.__toddlerSleepTrainClock'
 EXPECT = [
   ('General', ['volume', 'testTone', 'showTime', 'h24', 'showLabel', 'fadeSec', 'audioStatus']),
   ('Weekly schedule', ['copyWk', 'copyWe']),
-  ('Night', ['nightDim', 'showTimeNight', 'noise', 'noiseVol']),
+  ('Night', ['nightDim', 'showTimeNight']),
   ('Almost time', ['soonMin']),
   ('Wake', ['greenMin', 'alarmLen', 'fadeIn']),
   ('Day', ['dayMode', 'dayDim']),
@@ -47,8 +47,9 @@ with sync_playwright() as pw:
         p.select_option('#alarmLen', '20'); check(tag + 'wake-section control -> Green tab', p.evaluate(active) == 'wake')
         p.click('.sec[data-pv=sleep] h2'); check(tag + 'tap Night heading -> Night tab', p.evaluate(active) == 'sleep')
         p.click('.sec[data-pv=day] h2'); check(tag + 'tap Day heading -> Day tab', p.evaluate(active) == 'day')
-        p.dispatch_event('#noise', 'change')
-        check(tag + 'noise toggle -> Night tab', p.evaluate(active) == 'sleep')
+        p.click('.sec[data-pv=day] h2')
+        p.dispatch_event('#showTimeNight', 'change')
+        check(tag + 'night-section toggle -> Night tab', p.evaluate(active) == 'sleep')
         # colour dots follow swatches
         p.click('[data-sw="nightColor"][data-c="orange"]'); p.click('[data-sw="dayColor"][data-c="teal"]')
         dots = p.evaluate("() => [getComputedStyle(document.getElementById('dotNight')).backgroundColor, getComputedStyle(document.getElementById('dotDay')).backgroundColor]")
