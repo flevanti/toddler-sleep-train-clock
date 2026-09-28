@@ -110,6 +110,18 @@ with sync_playwright() as pw:
         fs = p.evaluate("() => document.querySelector('#swrap .sec').textContent")
         check(tag + 'home-screen app: says it is already full screen, no button', 'full screen from the home screen' in fs and not p.is_visible('#goFull'), fs[:120])
         p.close()
+
+        # ---- installed app on Android / desktop: no navigator.standalone, but display-mode says fullscreen ----
+        p = fresh(b, vp, "var mm = window.matchMedia; window.matchMedia = function (q) { return /display-mode/.test(q) ? {matches: true, media: q} : mm.call(window, q); };" + WAKELOCK)
+        open_settings(p, vp)
+        warn = p.evaluate("() => [].map.call(document.querySelectorAll('#swrap .status.bad'), function (e) { return e.textContent; }).join(' | ')")
+        check(tag + 'installed app (display-mode): no "normal browser tab" warning', 'normal browser tab' not in warn, warn)
+        check(tag + 'installed app (display-mode): says it is already full screen', 'full screen from the home screen' in p.evaluate("() => document.querySelector('#swrap .sec').textContent"))
+        p.close()
+        p = fresh(b, vp, WAKELOCK)
+        open_settings(p, vp)
+        check(tag + 'normal browser tab: warning says so, device-neutral', 'Opened in a normal browser tab' in p.evaluate("() => document.getElementById('swrap').textContent"))
+        p.close()
     b.close()
 
     # ---- real playback in WebKit (Safari's engine), if installed: `.venv/bin/playwright install webkit` ----

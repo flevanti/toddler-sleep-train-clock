@@ -1,8 +1,10 @@
-# Sleep Clock
+# Sleep Clock: a free "OK to wake" clock for toddlers
 
-**Turn an old tablet or phone into an "OK to wake" clock for a toddler.**
+**Turn an old tablet or phone into a toddler sleep training clock.** Free, open source, works offline, no app or account needed.
 
-Young children can't read the time, so "stay in bed until 7" means nothing to them. A sleep-training clock shows it with colours instead:
+**▶ Open it now: [flevanti.github.io/toddler-sleep-train-clock](https://flevanti.github.io/toddler-sleep-train-clock/)**
+
+Young children can't read the time, so "stay in bed until 7" means nothing to them. An "OK to wake" clock (also called a sleep trainer or toddler clock) shows it with colours instead:
 
 - **red** means "it's still night, stay in bed";
 - **green** means "it's morning, you can get up".
@@ -75,7 +77,7 @@ These steps are for an iPad or iPhone. On Android, use the equivalent settings: 
 
 - **Settings → Display & Brightness → Auto-Lock: Never.** Turn Auto-Brightness off and set the brightness to about right for the green face. A web page can't change the real screen brightness, so night dimming only darkens what is drawn.
 - **Settings → General → Use Side Switch To: Lock Rotation**, so the side switch can't mute the sound. Check that Control Centre isn't on mute.
-- Set the volume with the iPad's buttons, then open the clock and **tap once**. iOS only allows sound after a tap, and it asks again after every reload.
+- Set the volume with the device's buttons, then open the clock and **tap once** when it asks. Browsers only allow sound after a tap, and ask again after every reload (see the FAQ below).
 - Turn on **Guided Access** (triple-click Home). Disable the volume and sleep/wake buttons there, but **leave Touch on**, so you can re-enable sound after a reload.
 - Keep it plugged in, and check the battery for swelling now and then.
 
@@ -89,6 +91,55 @@ Hold the **top-right corner for 2.5 seconds** to open settings. Then set:
 - the night scene and extras.
 
 Use the preview tabs (Night / Amber / Green / Day) to check how each phase looks, or **Simulate a day** to watch a whole day and night play through quickly.
+
+## Questions and troubleshooting (FAQ)
+
+**The clock says "Tap the screen once". Why?**
+Browsers only let a page play sound, and on older devices keep the screen on, after someone has touched it. That rule starts again every time the page loads, so after each start or reload the clock asks for one tap and says what it's for. Tap anywhere: a thumbs-up confirms it, and the clock carries on. At night the message is small and dim. Newer devices that keep the screen on by themselves, with no wake-up sound set, never ask.
+
+**The screen dims or turns off.**
+- Check that **Keep the screen on** is on in settings (General). The line under it says what's working: "built into this device", "older device: tiny silent video", or "tap the clock once".
+- On older devices, tap the clock once after it starts (see above).
+- Most reliable of all: set the device's own screen timeout to **Never** while it's charging (iPad/iPhone: Display & Brightness → Auto-Lock; Android: Display → Screen timeout, or Developer options → Stay awake while charging).
+- Low power / battery saver mode can override everything. Keep the device plugged in.
+
+**There's no sound.**
+- Tap the clock once after it starts (see above).
+- Check that the day has a wake sound set (Weekly schedule) and that the device isn't muted. The clock's volume slider can only go as loud as the device's own volume.
+- Use **Test a sound** in settings (General) to check.
+
+**The alarm didn't ring.**
+The wake sound plays only at the start of the green phase, so the clock must be open and awake then. If the device reloaded the page overnight, sound stays locked until someone taps it. The dev overlay (below) shows reloads.
+
+**How do I get rid of the address bar?**
+Add the clock to the home screen and always open it from that icon (see [step 2](#2-add-it-to-the-home-screen)). On Android it then opens full screen. Where the browser supports it, settings also has a **Go full screen** button, which lasts until the page reloads.
+
+**How do I reload or update it when it runs full screen?**
+Settings → **Updates** → **Reload**. **Check now** says if there's a new version, and a switch can show a small "New version available" note on the clock during the day. Nothing ever updates by itself. You can also close the app completely (app switcher) and reopen it.
+
+**My settings are different in the browser and in the home-screen app.**
+They're stored separately. Copy them with Settings → Device & safety → **Export**, then **Import** the code on the other one.
+
+**Settings aren't saved / the clock forgets everything.**
+Private browsing and some "block website data" settings stop the clock from saving. Settings shows a warning when that happens. Use a normal window, and keep an **Export** code as a backup.
+
+**I forgot the PIN.**
+The PIN only keeps toddlers out. Clearing the site's data resets the clock, PIN included (browser settings → website data; for the home-screen app, remove it and add it again). Import an exported code afterwards to get your schedule back.
+
+**Does it need the internet?**
+Only the first time. After that it runs fully offline and picks up new versions when it's online and reloads. It needs to be opened over HTTPS for offline mode to work.
+
+**The time is wrong.**
+The clock uses the device's own clock. Set the device to set the date and time automatically, and check its time zone.
+
+**The night picture is too dim or too bright.**
+Use the **Brightness** slider in the **Night** section of settings. A web page can't change the real screen brightness, only how bright the drawing is, so also set the device's own brightness low.
+
+**Will it run on my old device?**
+It's built to run on old browsers too (down to Safari 12 on an iPad mini 2 from 2013). If a very old device shows certificate warnings, it may not trust the site's HTTPS certificate. Try a different host, or update the device if you can.
+
+**How do I check how it's doing overnight?**
+Hold the top-right corner for **6 seconds** to turn on dev mode, then switch on the **stats overlay**. It shows reloads, timer delays, sound status and how the screen is kept on.
 
 ## Feedback and ideas
 

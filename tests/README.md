@@ -44,6 +44,7 @@ Each file can also be run on its own: `.venv/bin/python tests/test_sim.py . test
 | `test_night_extras.py` | star countdown, fireflies, shooting stars, in the simulation too |
 | `test_keep_awake.py` | keep the screen on (Wake Lock, silent-video fallback: unmuted, no loop, tap, release) and the full-screen help; plays the video for real in WebKit if installed |
 | `test_manifest.py` | the embedded web app manifest: parses, full screen, 512 px normal + maskable icons, Chromium says the page is installable |
+| `test_tap_prompt.py` | the "Tap the screen once" prompt (what it says and why, day vs night), the thumbs-up after the tap, no prompt on newer devices |
 | `test_updates.py` | Reload button, Check now (newer / same / offline), the "new version available" note: off by default, checks every few hours in the day only, picture colour, never at night |
 | `test_changelog.py` | the app version matches the newest `CHANGELOG.md` entry, entries are well-formed, released versions have git tags |
 | `test_about.py` | settings header (version, app date, save time), GitHub links and issue forms |
